@@ -1,5 +1,5 @@
 {
-  "type": "size",
+  "type": "resize",
   "node": "<nodeId>",
   "bench": "<benchId>",
   "dimensions": {
