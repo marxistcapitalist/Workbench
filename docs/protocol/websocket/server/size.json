@@ -2,8 +2,10 @@
   "type": "size",
   "node": "<nodeId>",
   "bench": "<benchId>",
-  "dim_x": "<width>",
-  "dim_y": "<height>",
+  "dimensions": {
+    "w": "<width>",
+    "h": "<height>"
+  },
   "agent": {
     "name": "<username>",
     "id": "<userId>",
