@@ -1,0 +1,13 @@
+{
+  "type": "rename",
+  "node": "<nodeId>",
+  "bench": "<benchId>",
+  "content": {
+    "title": "<title>"
+  },
+  "agent": {
+    "name": "<username>",
+    "id": "<userId>",
+    "token": "<serverToken>"
+  }
+}
