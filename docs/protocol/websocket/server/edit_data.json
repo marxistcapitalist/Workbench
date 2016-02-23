@@ -1,5 +1,5 @@
 {
-  "type": "edit_content",
+  "type": "edit_data",
   "node": "<nodeId>",
   "bench": "<benchId>",
   "content": {
