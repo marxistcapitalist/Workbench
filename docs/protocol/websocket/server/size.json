@@ -1,0 +1,12 @@
+{
+  "type": "size",
+  "node": "<nodeId>",
+  "bench": "<benchId>",
+  "dim_x": "<width>",
+  "dim_y": "<height>",
+  "agent": {
+    "name": "<Username>",
+    "id": "<UserId>",
+    "token": "<ServerToken>"
+  }
+}
