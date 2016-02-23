@@ -1,10 +1,12 @@
 {
   "type": "move",
-  "agent": {
-    "name": "<Username>",
-    "id": "<UserId>",
-    "token": "<ServerToken>"
-  },
+  "node": "<nodeId>",
+  "bench": "<benchId>",
   "pos_x": "<x>",
-  "pos_y": "<y>"
+  "pos_y": "<y>",
+  "agent": {
+    "name": "<username>",
+    "id": "<userId>",
+    "token": "<serverToken>"
+  }
 }
