@@ -1,0 +1,14 @@
+{
+  "type": "edit_content",
+  "node": "<nodeId>",
+  "bench": "<benchId>",
+  "content": {
+    "type": "<type>",
+    "data": "<data>"
+  },
+  "agent": {
+    "name": "<username>",
+    "id": "<userId>",
+    "token": "<serverToken>"
+  }
+}
