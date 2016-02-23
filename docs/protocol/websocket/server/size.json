@@ -5,8 +5,8 @@
   "dim_x": "<width>",
   "dim_y": "<height>",
   "agent": {
-    "name": "<Username>",
-    "id": "<UserId>",
-    "token": "<ServerToken>"
+    "name": "<username>",
+    "id": "<userId>",
+    "token": "<serverToken>"
   }
 }
