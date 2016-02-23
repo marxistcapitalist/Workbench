@@ -1,0 +1,10 @@
+{
+  "type": "delete",
+  "node": "<nodeId>",
+  "bench": "<benchId>",
+  "agent": {
+    "name": "<username>",
+    "id": "<userId>",
+    "token": "<serverToken>"
+  }
+}
