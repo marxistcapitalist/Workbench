@@ -4,7 +4,6 @@ Content-Type: application/json
 
 {
   "node": "<nodeId>",
-  "bench": "<benchId>",
   "dimensions": {
     "x": "<x position>",
     "y": "<y position>"
