@@ -1,0 +1,13 @@
+POST /[benchId]/ignore HTTP/2
+Host: api.workbench.online
+Content-Type: application/json
+
+{
+  "type": "ignore",
+  "node": "<nodeId>",
+  "agent": {
+    "name": "<username>",
+    "id": "<userId>",
+    "token": "<clientToken>"
+  }
+}
