@@ -1,0 +1,22 @@
+POST /[benchId]/create HTTP/2
+Host: api.workbench.online
+Content-Type: application/json
+
+{
+  "dimensions": {
+    "x": "<x position>",
+    "y": "<y position>",
+    "w": "<width>",
+    "h": "<height>"
+  },
+  "content": {
+    "title": "<title>",
+    "type": "<type>",
+    "data": "<data>"
+  },
+  "agent": {
+    "name": "<username>",
+    "id": "<userId>",
+    "token": "<clientToken>"
+  }
+}
