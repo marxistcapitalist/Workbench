@@ -1,0 +1,12 @@
+POST /[benchId]/removeuser HTTP/2
+Host: api.workbench.online
+Content-Type: application/json
+
+{
+  "userId": "<user to remove>",
+  "agent": {
+    "name": "<username>",
+    "id": "<userId>",
+    "token": "<clientToken>"
+  }
+}
