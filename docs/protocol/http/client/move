@@ -1,0 +1,17 @@
+POST /[benchId]/move HTTP/2
+Host: api.workbench.online
+Content-Type: application/json
+
+{
+  "node": "<nodeId>",
+  "bench": "<benchId>",
+  "dimensions": {
+    "x": "<x position>",
+    "y": "<y position>"
+  },
+  "agent": {
+    "name": "<username>",
+    "id": "<userId>",
+    "token": "<clientToken>"
+  }
+}
