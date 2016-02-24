@@ -1,0 +1,11 @@
+{
+  "type": "notify",
+  "data": {
+    "header": "<header>",
+    "text": "<notification text>",
+    "time": "<milliseconds>"
+  },
+  "agent": {
+    "token": "<serverToken>"
+  }
+}
