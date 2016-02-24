@@ -9,6 +9,6 @@
   "agent": {
     "name": "<username>",
     "id": "<userId>",
-    "token": "<serverToken>"
+    "token": "<clientToken>"
   }
 }
