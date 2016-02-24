@@ -1,0 +1,14 @@
+{
+  "type": "textcursor",
+  "node": "<nodeId>",
+  "bench": "<benchId>",
+  "content": {
+    "index": "<cursor index>",
+    "show": "<true / false>"
+  },
+  "agent": {
+    "name": "<username>",
+    "id": "<userId>",
+    "token": "<serverToken>"
+  }
+}
