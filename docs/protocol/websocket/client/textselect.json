@@ -1,0 +1,14 @@
+{
+  "type": "textselect",
+  "node": "<nodeId>",
+  "bench": "<benchId>",
+  "content": {
+    "begin": "<first index>",
+    "end": "<last index>"
+  },
+  "agent": {
+    "name": "<username>",
+    "id": "<userId>",
+    "token": "<serverToken>"
+  }
+}
