@@ -1,0 +1,13 @@
+{
+  "type": "move",
+  "node": "<nodeId>",
+  "bench": "<benchId>",
+  "dimensions": {
+    "x": "<x position>",
+    "y": "<y position>"
+  },
+  "agent": {
+    "id": "<userId>",
+    "token": "<clientToken>"
+  }
+}
