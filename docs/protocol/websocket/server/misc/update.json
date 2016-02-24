@@ -1,0 +1,7 @@
+{
+  "type": "update",
+  "section": "<section of webpage to update>",
+  "agent": {
+    "token": "<serverToken>"
+  }
+}
