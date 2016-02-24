@@ -1,0 +1,13 @@
+POST /[benchId]/adduser HTTP/2
+Host: api.workbench.online
+Content-Type: application/json
+
+{
+  "userId": "<user to add>",
+  "permission": "<staring permissions level>",
+  "agent": {
+    "name": "<username>",
+    "id": "<userId>",
+    "token": "<clientToken>"
+  }
+}
