@@ -1,0 +1,12 @@
+POST /delete HTTP/2
+Host: api.workbench.online
+Content-Type: application/json
+
+{
+  "id": "<bench id>",
+  "agent": {
+    "name": "<username>",
+    "id": "<userId>",
+    "token": "<clientToken>"
+  }
+}
