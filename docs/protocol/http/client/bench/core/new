@@ -1,3 +1,16 @@
 POST /new HTTP/2
 Host: api.workbench.online
 Content-Type: application/json
+
+{
+  "title": "<title>",
+  "dimensions": {
+    "w": "<width>",
+    "h": "<height>"
+  },
+  "agent": {
+    "name": "<username>",
+    "id": "<userId>",
+    "token": "<clientToken>"
+  }
+}
