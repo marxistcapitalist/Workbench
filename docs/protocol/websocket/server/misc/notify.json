@@ -4,7 +4,8 @@
     "header": "<header>",
     "text": "<notification text>",
     "link": "<optional link>",
-    "time": "<milliseconds>"
+    "time": "<milliseconds>",
+    "action": "<optional action>"
   },
   "agent": {
     "token": "<serverToken>"
