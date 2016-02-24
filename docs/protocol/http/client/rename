@@ -1,0 +1,16 @@
+POST /[benchId]/rename HTTP/2
+Host: api.workbench.online
+Content-Type: application/json
+
+{
+  "node": "<nodeId>",
+  "bench": "<benchId>",
+  "content": {
+    "title": "<title>"
+  },
+  "agent": {
+    "name": "<username>",
+    "id": "<userId>",
+    "token": "<clientToken>"
+  }
+}
