@@ -1,0 +1,11 @@
+{
+  "type": "chat",
+  "bench": "<benchId>",
+  "message": "<message content>",
+  "agent": {
+    "name": "<username>",
+    "id": "<userId>",
+    "token": "<serverToken>",
+    "level": "<permission level>"
+  }
+}
