@@ -3,6 +3,7 @@
   "data": {
     "header": "<header>",
     "text": "<notification text>",
+    "link": :"<optional link>",
     "time": "<milliseconds>"
   },
   "agent": {
