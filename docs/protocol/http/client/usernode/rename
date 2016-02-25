@@ -1,0 +1,14 @@
+POST /[userId]/rename HTTP/2
+Host: api.workbench.online
+Content-Type: application/json
+
+{
+  "node": "<user nodeId>",
+  "content": {
+    "title": "<title>"
+  },
+  "agent": {
+    "id": "<userId>",
+    "token": "<clientToken>"
+  }
+}
