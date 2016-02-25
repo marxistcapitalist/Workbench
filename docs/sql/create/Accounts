@@ -6,4 +6,4 @@ username varchar(32) NOT NULL,
 email varchar(254) NOT NULL,
 confirmed tinyint(1) DEFAULT 0,
 PRIMARY KEY (id)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1
+) ENGINE=InnoDB DEFAULT CHARACTER SET=latin1
