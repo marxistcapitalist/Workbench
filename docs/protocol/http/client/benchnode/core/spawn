@@ -1,0 +1,19 @@
+POST /[benchId]/spawn HTTP/2
+Host: api.workbench.online
+Content-Type: application/json
+
+{
+  "dimensions": {
+    "x": "<x position>",
+    "y": "<y position>"
+  },
+  "content": {
+    "retitle": "<new title>",
+    "node": "<user node id>"
+  },
+  "agent": {
+    "name": "<username>",
+    "id": "<userId>",
+    "token": "<clientToken>"
+  }
+}
