@@ -12,7 +12,6 @@ Content-Type: application/json
     "node": "<user node id>"
   },
   "agent": {
-    "name": "<username>",
     "id": "<userId>",
     "token": "<clientToken>"
   }
