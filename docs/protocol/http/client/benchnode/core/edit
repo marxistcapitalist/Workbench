@@ -1,4 +1,4 @@
-POST /[benchId]/create HTTP/2
+POST /[benchId]/edit HTTP/2
 Host: api.workbench.online
 Content-Type: application/json
 
