@@ -5,7 +5,6 @@ Content-Type: application/json
 {
   "node": "<nodeId>",
   "agent": {
-    "name": "<username>",
     "id": "<userId>",
     "token": "<clientToken>"
   }
