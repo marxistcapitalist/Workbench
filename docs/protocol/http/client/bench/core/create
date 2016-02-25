@@ -9,7 +9,6 @@ Content-Type: application/json
     "h": "<height>"
   },
   "agent": {
-    "name": "<username>",
     "id": "<userId>",
     "token": "<clientToken>"
   }
