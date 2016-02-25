@@ -5,7 +5,6 @@ Content-Type: application/json
 {
   "userId": "<user to remove>",
   "agent": {
-    "name": "<username>",
     "id": "<userId>",
     "token": "<clientToken>"
   }
