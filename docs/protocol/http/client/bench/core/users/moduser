@@ -6,7 +6,6 @@ Content-Type: application/json
   "userId": "<user to modify>",
   "permission": "<new permission level>",
   "agent": {
-    "name": "<username>",
     "id": "<userId>",
     "token": "<clientToken>"
   }
