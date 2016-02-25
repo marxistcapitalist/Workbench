@@ -6,7 +6,6 @@ Content-Type: application/json
   "type": "watch",
   "node": "<nodeId>",
   "agent": {
-    "name": "<username>",
     "id": "<userId>",
     "token": "<clientToken>"
   }
