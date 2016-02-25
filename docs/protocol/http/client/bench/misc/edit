@@ -12,7 +12,6 @@ Content-Type: application/json
     "background": "<data>"
   },
   "agent": {
-    "name": "<username>",
     "id": "<userId>",
     "token": "<clientToken>"
   }
