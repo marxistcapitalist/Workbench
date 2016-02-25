@@ -5,8 +5,7 @@ Content-Type: application/json
 {
   "userId": "<user to add>",
   "permission": "<staring permissions level>",
-  "agent": {
-    "name": "<username>",
+  "agent": 
     "id": "<userId>",
     "token": "<clientToken>"
   }
