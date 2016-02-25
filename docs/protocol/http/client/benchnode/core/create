@@ -15,7 +15,6 @@ Content-Type: application/json
     "data": "<data>"
   },
   "agent": {
-    "name": "<username>",
     "id": "<userId>",
     "token": "<clientToken>"
   }
