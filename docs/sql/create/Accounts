@@ -1,0 +1,9 @@
+CREATE TABLE IF NOT EXISTS Accounts
+(
+id int NOT NULL AUTO_INCREMENT,
+password char(64) NOT NULL,
+username varchar(32) NOT NULL,
+email varchar(254) NOT NULL,
+confirmed tinyint(1) DEFAULT 0,
+PRIMARY KEY (id)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1
