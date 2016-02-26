@@ -1,9 +1,11 @@
 CREATE TABLE IF NOT EXISTS BnechNoodes
 (
-benchNodes bigint UNSIGNED NOT NULL AUTO_INCREMENT,
-userId int UNSIGNED NOT NULL,
-benchId varchar(32) NOT NULL,
-email varchar(254) NOT NULL,
-confirmed tinyint(1) DEFAULT 0,
-PRIMARY KEY (userId)
+bNodeId bigint UNSIGNED NOT NULL AUTO_INCREMENT,
+userId int UNSIGNED,
+benchId int UNSIGNED NOT NULL,
+x smallint NOT NULL,
+y smallint NOT NULL,
+width smallint UNSIGNED NOT NULL,
+height UNSIGNED NOT NULL,
+PRIMARY KEY (bNodeId)
 ) ENGINE=InnoDB DEFAULT CHARACTER SET=latin1
