@@ -6,7 +6,7 @@ benchId int UNSIGNED NOT NULL,
 x smallint NOT NULL,
 y smallint NOT NULL,
 width smallint UNSIGNED NOT NULL,
-height UNSIGNED NOT NULL,
+height smallint UNSIGNED NOT NULL,
 archived tinyint(1) DEFAULT 0,
 PRIMARY KEY (bNodeId)
 ) ENGINE=InnoDB DEFAULT CHARACTER SET=latin1
