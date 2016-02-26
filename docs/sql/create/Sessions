@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS Sessions
 (
-userId int NOT NULL,
-token char(128) NOT NULL,
+userId int UNSIGNED NOT NULL,
+token char(128),
 time int UNSIGNED,
 PRIMARY KEY (userId)
 ) ENGINE=InnoDB DEFAULT CHARACTER SET=latin1
