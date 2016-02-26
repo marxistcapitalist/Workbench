@@ -1,0 +1,8 @@
+CREATE TABLE IF NOT EXISTS UserNodes
+(
+uNodeId bigint UNSIGNED NOT NULL AUTO_INCREMENT,
+userId int UNSIGNED,
+title char(255),
+archived tinyint(1) DEFAULT 0,
+PRIMARY KEY (uNodeId)
+) ENGINE=InnoDB DEFAULT CHARACTER SET=latin1
