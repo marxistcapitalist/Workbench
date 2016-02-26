@@ -1,8 +1,10 @@
 CREATE TABLE IF NOT EXISTS UserNodes
 (
 uNodeId bigint UNSIGNED NOT NULL AUTO_INCREMENT,
+folder bigint UNSIGNED,
 userId int UNSIGNED,
 title char(255),
 archived tinyint(1) DEFAULT 0,
-PRIMARY KEY (uNodeId)
+PRIMARY KEY (uNodeId),
+FOREIGN KEY (folder) REFERENCES Folders(folderId)
 ) ENGINE=InnoDB DEFAULT CHARACTER SET=latin1
