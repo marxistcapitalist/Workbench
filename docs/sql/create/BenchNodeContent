@@ -1,0 +1,7 @@
+CREATE TABLE IF NOT EXISTS BenchNodeContent
+(
+bNodeId bigint UNSIGNED NOT NULL,
+lastEdit int UNSIGNED,
+content text,
+PRIMARY KEY (bNodeId)
+) ENGINE=InnoDB DEFAULT CHARACTER SET=latin1
