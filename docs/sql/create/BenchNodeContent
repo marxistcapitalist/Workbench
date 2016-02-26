@@ -1,6 +1,7 @@
 CREATE TABLE IF NOT EXISTS BenchNodeContent
 (
 bNodeId bigint UNSIGNED NOT NULL,
+lastEditor int UNSIGNED,
 lastEdit int UNSIGNED,
 content text,
 PRIMARY KEY (bNodeId)
