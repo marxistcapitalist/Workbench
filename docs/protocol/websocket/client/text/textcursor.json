@@ -7,7 +7,6 @@
     "show": "<true / false>"
   },
   "agent": {
-    "name": "<username>",
     "id": "<userId>",
     "token": "<clientToken>"
   }
