@@ -6,7 +6,5 @@
     "link": "<optional link>",
     "time": "<milliseconds>"
   },
-  "agent": {
-    "token": "<serverToken>"
-  }
+  "agent": {}
 }
