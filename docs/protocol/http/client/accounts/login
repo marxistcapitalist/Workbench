@@ -6,3 +6,13 @@ Content-Type: application/json
   "loginkey": "<username or email>",
   "password": "<account password>"
 }
+
+RESPONSE
+
+{
+  "token": "<client token>",
+  "agent": {
+    "userId": "<user id>",
+    "token": "<server token>"
+  }
+}
