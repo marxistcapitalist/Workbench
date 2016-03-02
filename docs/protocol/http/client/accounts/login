@@ -12,7 +12,7 @@ RESPONSE
 {
   "token": "<client token>",
   "agent": {
-    "userId": "<user id>",
+    "id": "<user id>",
     "token": "<server token>"
   }
 }
