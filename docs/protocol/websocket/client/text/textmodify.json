@@ -8,7 +8,6 @@
     "data": "<new text data>"
   },
   "agent": {
-    "name": "<username>",
     "id": "<userId>",
     "token": "<clientToken>"
   }
