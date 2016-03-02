@@ -12,6 +12,6 @@ RESPONSE
   "token": "<client token>",
   "agent": {
     "id": "<user id>",
-    "token": "<server token>"
+    "user": "<username>"
   }
 }
