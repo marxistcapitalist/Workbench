@@ -7,7 +7,6 @@
     "h": "<height>"
   },
   "agent": {
-    "name": "<username>",
     "id": "<userId>",
     "token": "<clientToken>"
   }
