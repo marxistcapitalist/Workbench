@@ -7,3 +7,12 @@ Content-Type: application/json
   "password": "<requested password>",
   "email": "<requested email>"
 }
+
+RESPONSE
+{
+  "token": "<client token>",
+  "agent": {
+    "id": "<user id>",
+    "user": "<username>"
+  }
+}
