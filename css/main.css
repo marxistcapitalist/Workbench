@@ -23,7 +23,7 @@ body {
 */
 
 /* Loading Screen */
-.loadscreen {
+#about {
   position: absolute;
   top: 0;
   left: 0;
@@ -34,11 +34,11 @@ body {
   font-family: 'Raleway', sans-serif;
 }
 
-.loadscreen .centertext {
+#about .centertext {
   text-align: center;
 }
 
-.loadscreen .centertext .headertext {
+#about .centertext .headertext {
   font-size: 3em;
   position: absolute;
   top: 50px;
@@ -47,7 +47,7 @@ body {
   margin-left: -300px;
 }
 
-.loadscreen .subtext {
+#about .subtext {
   position: absolute;
   bottom: 50px;
   left: 50%;
@@ -55,13 +55,13 @@ body {
   margin-left: -225px;
 }
 
-.loadscreen .centertext .copyright {
+#about .centertext .copyright {
   color: #666;
 }
 
 /* Workbench */
 
-.workbench {
+#workbench {
   width: 4096px;
   height: 2160px;
   background: #222;
@@ -69,7 +69,7 @@ body {
   overflow: auto;
 }
 
-.workbench .window {
+#workbench .window {
   width: 300px;
   height: 200px;
   background: #666;
@@ -79,17 +79,17 @@ body {
   z-index: 100;
 }
 
-.workbench .window .title {
+#workbench .window .title {
   background: #000;
   color: #FFF;
   height: 30px;
   padding-top: 12px;
 }
 
-.workbench .window .title span {
+#workbench .window .title span {
   margin-left: 5px;
 }
 
-.workbench .content {
+#workbench .content {
   padding: 0 10px;
 }

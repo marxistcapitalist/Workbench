@@ -3,7 +3,7 @@
 $ = jQuery;
 
 /**
- * Main Workbench object (initalizes & contains fancy variables)
+ * Main Workbench object (initalizes, contains fancy variables, contains misc functions)
  */
 function Workbench()
 {
@@ -11,22 +11,45 @@ function Workbench()
   var wsTarget = "ws://localhost"; // WebSocket target host; needs to be changed with implementation
   var restTarget = "http://api.workbench.online/"; // RESTful API base URI
 
-  this.loadEvent = function()
-  {
-    workbench.initialize();
-    console.log(this);
+  try {
+    websocket = new WebSocket(wsTarget);
+  } catch(error) {
+    console.error(error);
   }
 
-  this.initialize = function()
-  {
-    try
-    {
-      websocket = new WebSocket(wsTarget);
-    } catch(error) {
-      console.error(error);
-    }
-  }
+  this.getRestTarget = function() { return restTarget; };
+  this.getWebSocket = function() { return websocket; };
+  this.getWebSocketTarget = function() { return wsTarget; };
 }
 
-var workbench = workbench || new Workbench();
-$(window).load(workbench.loadEvent);
+// Define Workbench core/misc variables
+Workbench.prototype.loading = false;
+
+// Initialization Function
+Workbench.prototype.initialize = function()
+{
+  setTimeout(wb.ui.hideAbout, 3000);
+  this.attachListeners();
+
+}
+
+Workbench.prototype.attachListeners = function()
+{
+  $("#about").click(this.ui.hideAbout);
+}
+
+Workbench.prototype.ui = {};
+
+Workbench.prototype.ui.showAbout = function()
+{
+
+}
+
+Workbench.prototype.ui.hideAbout = function()
+{
+  $("#about").fadeOut(750);
+}
+
+var wb = wb || new Workbench();
+$(window).load(function() { wb.initialize(); });
+// $(document).ready(function() { wb.attachListeners; });
