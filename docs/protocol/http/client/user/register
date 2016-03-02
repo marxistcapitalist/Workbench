@@ -1,0 +1,9 @@
+POST /register HTTP/2
+Host: api.workbench.online
+Content-Type: application/json
+
+{
+  "username": "<requested username>",
+  "password": "<requested password>",
+  "email": "<requested email>"
+}
