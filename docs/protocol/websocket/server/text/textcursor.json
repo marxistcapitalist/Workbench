@@ -8,6 +8,6 @@
   },
   "agent": {
     "name": "<username>",
-    "id": "<userId>
+    "id": "<userId>"
   }
 }
