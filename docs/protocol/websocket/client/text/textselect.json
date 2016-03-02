@@ -7,7 +7,6 @@
     "end": "<last index>"
   },
   "agent": {
-    "name": "<username>",
     "id": "<userId>",
     "token": "<clientToken>"
   }
