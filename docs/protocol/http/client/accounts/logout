@@ -5,3 +5,8 @@ Content-Type: application/json
 {
   "token": "<client token>"
 }
+
+RESPONSE
+{
+  "agent": {}
+}
