@@ -2,54 +2,90 @@
 // TODO: Comprehensive JSDOC Documentation & Minification
 $ = jQuery;
 
-/**
- * Main Workbench object (initalizes, contains fancy variables, contains misc functions)
- */
-function Workbench()
-{
-  var websocket = undefined; // WebsSocket object, created during initialization
-  var wsTarget = "ws://localhost"; // WebSocket target host; needs to be changed with implementation
-  var restTarget = "http://api.workbench.online/"; // RESTful API base URI
+var workbench = workbench || {};
+workbench.auth = workbench.auth || {};
+workbench.user = workbench.user || {};
+workbench.bench = workbench.bench || {};
+workbench.core = workbench.core || {};
+workbench.comm = workbench.comm || {};
+workbench.ui = workbench.ui || {};
+workbench.util = workbench.util || {};
 
-  try {
-    websocket = new WebSocket(wsTarget);
-  } catch(error) {
-    console.error(error);
+workbench.auth = {
+  login: function(user, password) {
+
+  },
+  logout: function() {
+
+  },
+  authenticate: function() {
+
   }
+  // TODO: Put register in here or user? Put in user for now.
+};
 
-  this.getRestTarget = function() { return restTarget; };
-  this.getWebSocket = function() { return websocket; };
-  this.getWebSocketTarget = function() { return wsTarget; };
+workbench.bench = {
+
+};
+
+workbench.comm = {
+  websocket: undefined, // Websocket object, not for direct use outside this namespace
+  wsTarget: "ws://localhost", // TODO: Placeholder value for testing, repleace with implementation
+  restTarget: "http://api.workbench.online/", // REST API target (base URI)
+
+  post: function() {
+
+  }
+};
+
+workbench.core = {
+  initialize: function() {
+    console.log($(this).parent());
+    workbench.ui.loading.showTime(3000);
+    console.log("Started Successfully!");
+  }
+};
+
+workbench.user = {
+
+};
+
+workbench.ui = {
+  visibility: {
+    loading: false,
+    about: false,
+    intro: false,
+    login: false,
+    register: false,
+    changepass: false,
+    options: false,
+  },
+
+  loading: {
+    visibility: false,
+    timer: undefined,
+    show: function(duration) {
+      this.visibility = true;
+      if(typeof duration == "undefined")
+        $("#about").css("display", "block");
+      else
+        $("#about").fadeIn(duration);
+    },
+    hide: function(duration) {
+      this.visibility = false;
+      if(typeof duration == "undefined")
+        $("#about").css("display", "none");
+      else
+        $("#about").fadeOut(duration);
+    },
+    showTime: function(time) {
+      workbench.ui.loading.timer = setTimeout(function() { workbench.ui.loading.hide(750); }, time);
+    }
+  }
 }
 
-// Define Workbench core/misc variables
-Workbench.prototype.loading = false;
+workbench.util = {
 
-// Initialization Function
-Workbench.prototype.initialize = function()
-{
-  setTimeout(wb.ui.hideAbout, 3000);
-  this.attachListeners();
+};
 
-}
-
-Workbench.prototype.attachListeners = function()
-{
-  $("#about").click(this.ui.hideAbout);
-}
-
-Workbench.prototype.ui = {};
-
-Workbench.prototype.ui.showAbout = function()
-{
-
-}
-
-Workbench.prototype.ui.hideAbout = function()
-{
-  $("#about").fadeOut(750);
-}
-
-var wb = wb || new Workbench();
-$(window).load(function() { wb.initialize(); });
-// $(document).ready(function() { wb.attachListeners; });
+$(window).load(function() { workbench.core.initialize(); });
