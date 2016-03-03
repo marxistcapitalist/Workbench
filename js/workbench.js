@@ -2,14 +2,14 @@
 // TODO: Comprehensive JSDOC Documentation & Minification
 $ = jQuery;
 
-var workbench = workbench || {};
-workbench.auth = workbench.auth || {};
-workbench.user = workbench.user || {};
-workbench.bench = workbench.bench || {};
-workbench.core = workbench.core || {};
-workbench.comm = workbench.comm || {};
-workbench.ui = workbench.ui || {};
-workbench.util = workbench.util || {};
+var workbench = workbench || {}; // The overarching Workbench object
+workbench.auth = workbench.auth || {}; // Login, Logout, Authenticate, Registration???
+workbench.bench = workbench.bench || {}; // Workbench manipulation, including nodes
+workbench.comm = workbench.comm || {}; // HTTP/Websocket communication
+workbench.core = workbench.core || {}; // Initialization and module management
+workbench.ui = workbench.ui || {}; // UI Manipulation (toolbars, menus, etc)
+workbench.user = workbench.user || {}; // User information retrieval and updates
+workbench.util = workbench.util || {}; // Utility functions
 
 workbench.auth = {
   login: function(user, password) {
