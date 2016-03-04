@@ -33,7 +33,35 @@ workbench.comm = {
   wsTarget: "ws://localhost", // TODO: Placeholder value for testing, repleace with implementation
   restTarget: "http://api.workbench.online/", // REST API target (base URI)
 
-  post: function() {
+  post: function(data, target, callback) { // Make a REST POST request, currently assumed to be in JSON format
+    $.post(target, data, null, "json")
+    .done(function(data, status, xhr) { // Success
+      if(typeof callback == "function")
+        callback({
+          result: true,
+          response: status,
+          jqxhr: xhr
+        });
+      else
+        return {
+          result: true,
+          response: status,
+          jqxhr: xhr
+        };
+      //if(typeof callback == "function")
+      //  callback();
+    })
+    .fail(function(a, b, c) {
+      console.log(a);
+      console.log(b);
+      console.log(c);
+    })
+    .always(function(a) { // Always, despite request fail or success condition
+      //console.log(jqxhr);
+      //callback(a);
+    });
+  },
+  get: function() {
 
   }
 };
