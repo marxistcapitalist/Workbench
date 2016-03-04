@@ -12,8 +12,17 @@ workbench.user = workbench.user || {}; // User information retrieval and updates
 workbench.util = workbench.util || {}; // Utility functions
 
 workbench.auth = {
-  login: function(user, password) {
-
+  login: function(username, password) {
+    var loginobj = {
+      loginkey: username,
+      password: password
+    };
+    workbench.comm.http.post(loginobj, "http://posttestserver.com/post.php", function(resp) {
+      console.log("Response returned " + resp.result);
+      if(!resp.result)
+        console.log("Error was: " + resp.error);
+      console.log(resp.jqxhr);
+    });
   },
   logout: function() {
 
@@ -29,40 +38,36 @@ workbench.bench = {
 };
 
 workbench.comm = {
-  websocket: undefined, // Websocket object, not for direct use outside this namespace
-  wsTarget: "ws://localhost", // TODO: Placeholder value for testing, repleace with implementation
-  restTarget: "http://api.workbench.online/", // REST API target (base URI)
-
-  post: function(data, target, callback) { // Make a REST POST request, currently assumed to be in JSON format
-    $.post(target, data, null, "json")
-    .done(function(data, status, xhr) { // Success
-      if(typeof callback == "function")
+  http: {
+    restTarget: "http://api.workbench.online/", // REST API target (base URI)
+    post: function(data, target, callback) { // Make a REST POST request, currently assumed to be in JSON format
+      $.post(target, data, null, "json")
+      .done(function(data, status, xhr) { // Success
         callback({
           result: true,
           response: status,
+          data: data,
           jqxhr: xhr
         });
-      else
-        return {
-          result: true,
+      })
+      .fail(function(xhr, status, error) { // Failure
+        callback({
+          result: false,
           response: status,
+          error: error,
           jqxhr: xhr
-        };
-      //if(typeof callback == "function")
-      //  callback();
-    })
-    .fail(function(a, b, c) {
-      console.log(a);
-      console.log(b);
-      console.log(c);
-    })
-    .always(function(a) { // Always, despite request fail or success condition
-      //console.log(jqxhr);
-      //callback(a);
-    });
-  },
-  get: function() {
+        });
+      });
+    },
 
+    get: function() {
+      // TODO: Implementation, or removal if not used
+    }
+  },
+
+  websocket: {
+    websocket: undefined, // Websocket object, not for direct use outside this namespace
+    wsTarget: "ws://localhost", // TODO: Placeholder value for testing, repleace with implementation
   }
 };
 
