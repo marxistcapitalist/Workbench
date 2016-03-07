@@ -12,13 +12,14 @@ workbench.user = workbench.user || {}; // User information retrieval and updates
 workbench.util = workbench.util || {}; // Utility functions
 
 workbench.auth = {
+  status: false,
   login: function(username, password) {
     var loginobj = {
       loginkey: username,
       password: password
     };
-    workbench.comm.http.post(loginobj, "http://posttestserver.com/post.php", function(resp) {
-      console.log("Response returned " + resp.result);
+    workbench.comm.http.post(loginobj, "http://syrukide.net/rest-test/post.php?req=login", function(resp) {
+      console.log(resp.result);
       if(!resp.result)
         console.log("Error was: " + resp.error);
       console.log(resp.jqxhr);
@@ -28,7 +29,7 @@ workbench.auth = {
 
   },
   authenticate: function() {
-
+    
   }
   // TODO: Put register in here or user? Put in user for now.
 };
@@ -72,9 +73,11 @@ workbench.comm = {
 };
 
 workbench.core = {
+  version: "0.0.3";
   initialize: function() {
-    console.log($(this).parent());
-    workbench.ui.loading.showTime(3000);
+    var wait = 3000;
+    workbench.ui.intro.showTime(wait);
+    setTimeout(workbehch.auth.authenticate(), wait);
     console.log("Started Successfully!");
   }
 };
@@ -94,7 +97,7 @@ workbench.ui = {
     options: false,
   },
 
-  loading: {
+  intro: {
     visibility: false,
     timer: undefined,
     show: function(duration) {
@@ -103,6 +106,7 @@ workbench.ui = {
         $("#about").css("display", "block");
       else
         $("#about").fadeIn(duration);
+      return this;
     },
     hide: function(duration) {
       this.visibility = false;
@@ -110,15 +114,42 @@ workbench.ui = {
         $("#about").css("display", "none");
       else
         $("#about").fadeOut(duration);
+      return this;
     },
     showTime: function(time) {
-      workbench.ui.loading.timer = setTimeout(function() { workbench.ui.loading.hide(750); }, time);
+      this.timer = setTimeout(function() { workbench.ui.intro.hide(750); }, time);
+      return this;
     }
   }
+
+
 }
 
 workbench.util = {
-
+  timer: {
+    timers: [],
+    getTimer: function(id) {
+      if(this.timers[id])
+        return this.timers[id];
+      else
+        return false;
+    },
+    cancelTimer: function(id) {
+      if(this.timers[id])
+        window.clearTimeout(id);
+      else
+        return false;
+    },
+    setTimer: function(time, callback) {
+      try {
+        var t = window.setTimeout(callback, time);
+        this.timers.push(t);
+        return true;
+      } catch(e) {
+        return false;
+      }
+    }
+  }
 };
 
 $(window).load(function() { workbench.core.initialize(); });
