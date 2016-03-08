@@ -1,15 +1,15 @@
 package online.workbench.server;
 
-public interface RESTAPI
+public interface API
 {
     protected static String BASE_PATH = "/api";
     
     /**
-     * Gives the restful api a reference to the {@link Websocket} instance
+     * Gives the restful api a reference to the {@link WSS} instance
      *
      * @param ws websocket instance
      */
-    void setLinkages(Websocket ws);
+    void setLinkages(WSS ws);
 
     /**
      * Creates user endpoint with basic user data
