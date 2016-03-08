@@ -16,3 +16,8 @@ Content-Type: application/json
     "token": "<clientToken>"
   }
 }
+
+RESPONSE
+{
+  "id": "<bench node id>"
+}
