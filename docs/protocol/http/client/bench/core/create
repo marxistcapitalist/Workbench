@@ -13,3 +13,8 @@ Content-Type: application/json
     "token": "<clientToken>"
   }
 }
+
+RESPONSE:
+{
+  "id": "<TEH BENCH IDDDD>"
+}
