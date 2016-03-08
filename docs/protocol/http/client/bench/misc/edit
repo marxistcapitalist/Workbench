@@ -1,8 +1,9 @@
-POST /[benchId]/edit HTTP/2
+POST /edit HTTP/2
 Host: api.workbench.online
 Content-Type: application/json
 
 {
+  "id": "<workbench id>",
   "dimensions": {
     "w": "<width>",
     "h": "<height>"
