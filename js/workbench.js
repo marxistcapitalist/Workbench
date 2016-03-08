@@ -43,11 +43,18 @@ workbench.auth = {
   logout: function() {
     if(docCookies.getItem("wb_user_token") === null)
       return;
-    var token = docCookies.getItem("wb_user_token");
+    var tok = docCookies.getItem("wb_user_token");
     var logoutobj = {
-      token:
+      token: tok
     };
-    workbench.comm.http.post()
+    workbench.comm.http.post(logoutobj, "http://api.workbench.online/apiendpointhere", function(resp) {
+      if(resp.result) {
+        // TODO UI show logged out message on login box
+      } else {
+        // TODO UI show logged out error box?
+      }
+      // TODO Ensure all login cookies are removed
+    });
   },
   authenticate: function() {
 
