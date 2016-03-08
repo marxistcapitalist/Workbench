@@ -5,6 +5,4 @@ Content-Type: application/json
 {}
 
 RESPONSE
-{
-  "agent": {}
-}
+{}
