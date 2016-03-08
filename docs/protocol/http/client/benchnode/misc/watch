@@ -3,7 +3,6 @@ Host: api.workbench.online
 Content-Type: application/json
 
 {
-  "type": "watch",
   "node": "<nodeId>",
   "agent": {
     "id": "<userId>",
