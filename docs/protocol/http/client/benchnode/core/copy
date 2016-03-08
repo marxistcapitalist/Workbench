@@ -12,3 +12,8 @@ Content-Type: application/json
     "token": "<clientToken>"
   }
 }
+
+RESPONSE
+{
+  "id": "<user node id>"
+}
