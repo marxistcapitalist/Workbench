@@ -1,7 +1,25 @@
 /* Workbench (c) 2016 Jeremy Teissler and Ethan Crowder, ALl Rights Reserved */
+
+/*
+* Z-Index Reference
+*
+* NEGATIVE - 0 :: BACKGROUND range, goes behind everything. Used for Workbench "backgrounds" and the like.
+* 1    - 49    :: RESERVED range, for anything that goes in front of background but behind nodes
+* 50   - 4099  :: NODE range, for current node usage (Assuming 4096 possible nodes, plus 3 to make things even)
+* 4100 - 4198  :: TOOL range, for toolbars, bench tool buttons, tool panels, and the like
+* 4199         :: COVER, goes between nodes/tools and popups to prevent interaction
+* 4200 - 4249  :: POPUP range, for popups that do not allow bench interaction during use
+* 4250 -  ??   :: NOT ASSIGNED
+*/
+
+/* Imports */
 @import url(https://fonts.googleapis.com/css?family=Raleway:400,700);
 
-/* Elements */
+/*
+* Global Elements
+* These properties are applied to global elements, such as body, html, etc.
+* ONLY element definitions, and NOT IDs or classes, are defined in this section.
+*/
 html {
   height: 100%;
 }
@@ -18,12 +36,32 @@ body {
 
 /*
 * Main
-* These classes constitute the "main" functionality of Workbench. These may
+* These classes/IDs constitute the "main" functionality of Workbench. These may
 * eventually need to be separated into their own stylesheets.
 */
 
-/* Loading Screen */
-#about {
+/* There's nothing here! */
+
+/*
+* UI
+* All the User Interface elements, including popups, menus, and message windows.
+* Does NOT include Workbench functions, including nodes
+*/
+
+/* Back Cover - Appears during any UI functions that disable normal Workbench interaction */
+#backcover {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4096px;
+  height: 2160px;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.8);
+  z-index: 4199;
+}
+
+/* Intro Screen - Runs on initial load, until done + additional time to admire */
+#intro {
   position: absolute;
   top: 0;
   left: 0;
@@ -34,11 +72,11 @@ body {
   font-family: 'Raleway', sans-serif;
 }
 
-#about .centertext {
+#intro .centertext {
   text-align: center;
 }
 
-#about .centertext .headertext {
+#intro .centertext .headertext {
   font-size: 3em;
   position: absolute;
   top: 50px;
@@ -47,7 +85,7 @@ body {
   margin-left: -300px;
 }
 
-#about .subtext {
+#intro .subtext {
   position: absolute;
   bottom: 50px;
   left: 50%;
@@ -55,11 +93,16 @@ body {
   margin-left: -225px;
 }
 
-#about .centertext .copyright {
+#intro .centertext .copyright {
   color: #666;
 }
 
-/* Workbench */
+
+/*
+* Workbench
+* Contains classes/IDs for the actual Workbench, including nodes
+* Does NOT include toolbars, message windows, and other UI functions
+*/
 
 #workbench {
   width: 4096px;

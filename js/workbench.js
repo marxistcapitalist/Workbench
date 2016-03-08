@@ -19,19 +19,42 @@ workbench.auth = {
       password: password
     };
     workbench.comm.http.post(loginobj, "http://syrukide.net/rest-test/post.php?req=login", function(resp) {
-      console.log(resp.result);
+      /*console.log(resp.result);
       if(!resp.result)
         console.log("Error was: " + resp.error);
-      console.log(resp.jqxhr);
+      console.log(resp.jqxhr);*/
+      if(resp.result) {
+        if(resp.data.hasOwnProperty("token") && resp.data.hasOwnProperty("agent")) {
+          docCookies.setItem("wb_user_token", resp.data.token, Infinity);
+          docCookies.setItem("wb_user_id", resp.data.agent.id, Infinity);
+          docCookies.setItem("wb_user_name", resp.data.agent.user, Infinity);
+          workbench.auth.status = true;
+          // TODO Logged in UI box, load up the bench
+        } else {
+          // TODO Incorrect username or password message
+        }
+      } else {
+        console.error("There was an error!");
+        console.log(resp);
+        // TODO UI Error Message Box
+      }
     });
   },
   logout: function() {
-
+    if(docCookies.getItem("wb_user_token") === null)
+      return;
+    var token = docCookies.getItem("wb_user_token");
+    var logoutobj = {
+      token:
+    };
+    workbench.comm.http.post()
   },
   authenticate: function() {
-    
+
+  },
+  register: function() {
+
   }
-  // TODO: Put register in here or user? Put in user for now.
 };
 
 workbench.bench = {
@@ -42,27 +65,34 @@ workbench.comm = {
   http: {
     restTarget: "http://api.workbench.online/", // REST API target (base URI)
     post: function(data, target, callback) { // Make a REST POST request, currently assumed to be in JSON format
-      $.post(target, data, null, "json")
-      .done(function(data, status, xhr) { // Success
-        callback({
-          result: true,
-          response: status,
-          data: data,
-          jqxhr: xhr
+      try {
+        $.post(target, data, null, "json")
+        .done(function(data, status, xhr) { // Success
+          callback({
+            result: true,
+            response: status,
+            data: data,
+            jqxhr: xhr
+          });
+        })
+        .fail(function(xhr, status, error) { // Failure
+          callback({
+            result: false,
+            response: status,
+            error: error,
+            jqxhr: xhr,
+            errorobj: null
+          });
         });
-      })
-      .fail(function(xhr, status, error) { // Failure
+      } catch(err) {
         callback({
           result: false,
-          response: status,
-          error: error,
-          jqxhr: xhr
+          response: null,
+          error: null,
+          jqxhr: null,
+          errorobj: err
         });
-      });
-    },
-
-    get: function() {
-      // TODO: Implementation, or removal if not used
+      }
     }
   },
 
@@ -87,7 +117,7 @@ workbench.user = {
 };
 
 workbench.ui = {
-  visibility: {
+  /*visibility: {
     loading: false,
     about: false,
     intro: false,
@@ -95,6 +125,14 @@ workbench.ui = {
     register: false,
     changepass: false,
     options: false,
+  },*/
+
+  cover: {
+    visibility: false,
+    show: function(duration) {
+      $("#backcover").
+      this.visibility = true;
+    }
   },
 
   intro: {
@@ -121,8 +159,6 @@ workbench.ui = {
       return this;
     }
   }
-
-
 }
 
 workbench.util = {
