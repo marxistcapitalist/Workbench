@@ -130,7 +130,8 @@ workbench.core = {
   initialize: function() {
     var wait = 3000;
     workbench.ui.intro.showTime(wait);
-    setTimeout(workbench.auth.authenticate(), wait);
+    //setTimeout(workbench.auth.authenticate(true), wait);
+    setTimeout(function() { workbench.ui.login.show(750) }, wait + 750);
     console.log("Started Successfully!");
   }
 };
@@ -149,6 +150,50 @@ workbench.ui = {
     changepass: false,
     options: false,
   },*/
+
+  // This creates all of the UI overlay and tool objects, as they require workbench.ui to be completed before implementation can occur.
+  initialize: function() {
+    // Define UI Objects
+    this.cover = $.extend({}, workbench.ui.popupbase, {
+      visibility: true,
+      selector: "#backcover"
+    });
+
+    this.intro = $.extend({}, this.popupbase, {
+      visibility: true,
+      selector: "#intro",
+      showTime: function(time) {
+        this.timer = setTimeout(function() { workbench.ui.intro.hide(750); }, time);
+        return this;
+      }
+    });
+
+    this.login = $.extend({}, this.popupbase, {
+      selector: "#login",
+      sizeAdjust: function() {
+        this.show();
+        var realheight = $(this.selector + " > .inner").height();
+        this.hide();
+        $(this.selector).height(realheight + 50);
+      }
+    });
+
+    // Attach UI interaction listeners
+    this.adjustSizes();
+    this.attachListeners();
+  },
+
+  attachListeners: function() {
+    $("#login_submit").click(function(event) {
+      event.preventDefault();
+      console.log("Login Submission!");
+      //workbench.auth.login()
+    });
+  },
+
+  adjustSizes: function() {
+    this.login.sizeAdjust();
+  },
 
   // This is the base popup object. All popups extend this object. Calling functions on this object will do nothing.
   popupbase: {
@@ -174,18 +219,27 @@ workbench.ui = {
     }
   },
 
-  cover: $.extend({}, this.popupbase, {
+  /*cover: $.extend({}, workbench.ui, {
     selector: "#backcover"
-  }),
+  }),*/
 
-  intro: $.extend({}, this.popupbase, {
+  /*intro: $.extend({}, this.popupbase, {
     selector: "#intro",
     showTime: function(time) {
       console.log(this);
       this.timer = setTimeout(function() { workbench.ui.intro.hide(750); }, time);
       return this;
     }
-  }),
+  }),*/
+
+  /*intro: Object.create(workbench.ui.popupbase, {
+    selector: "#intro",
+    showTime: function(time) {
+      console.log(this);
+      this.timer = setTimeout(function() { workbench.ui.intro.hide(750); }, time);
+      return this;
+    }
+  }),*/
 
   /*cover: {
     visibility: true,
@@ -207,8 +261,8 @@ workbench.ui = {
       return this;
     }
   },
-
-  intro: {
+  */
+  /*intro: {
     visibility: false,
     timer: undefined,
     show: function(duration) {
@@ -260,5 +314,5 @@ workbench.util = {
     }
   }
 };
-
+$(document).ready(function() { workbench.ui.initialize(); });
 $(window).load(function() { workbench.core.initialize(); });
