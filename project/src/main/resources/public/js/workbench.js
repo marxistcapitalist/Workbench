@@ -217,75 +217,7 @@ workbench.ui = {
       this.visibility = false;
       return this;
     }
-  },
-
-  /*cover: $.extend({}, workbench.ui, {
-    selector: "#backcover"
-  }),*/
-
-  /*intro: $.extend({}, this.popupbase, {
-    selector: "#intro",
-    showTime: function(time) {
-      console.log(this);
-      this.timer = setTimeout(function() { workbench.ui.intro.hide(750); }, time);
-      return this;
-    }
-  }),*/
-
-  /*intro: Object.create(workbench.ui.popupbase, {
-    selector: "#intro",
-    showTime: function(time) {
-      console.log(this);
-      this.timer = setTimeout(function() { workbench.ui.intro.hide(750); }, time);
-      return this;
-    }
-  }),*/
-
-  /*cover: {
-    visibility: true,
-    timer: undefined,
-    show: function(duration) {
-      if(typeof duration == "undefined")
-        $("#backcover").css("display", "block");
-      else
-        $("#backcover").fadeIn(duration);
-      this.visibility = true;
-      return this;
-    },
-    hide: function(duration) {
-      if(typeof duration == "undefined")
-        $("#backcover").css("display", "none");
-      else
-        $("#backcover").fadeOut(duration);
-      this.visibility = false;
-      return this;
-    }
-  },
-  */
-  /*intro: {
-    visibility: false,
-    timer: undefined,
-    show: function(duration) {
-      if(typeof duration == "undefined")
-        $("#intro").css("display", "block");
-      else
-        $("#intro").fadeIn(duration);
-      this.visibility = true;
-      return this;
-    },
-    hide: function(duration) {
-      if(typeof duration == "undefined")
-        $("#intro").css("display", "none");
-      else
-        $("#intro").fadeOut(duration);
-      this.visibility = false;
-      return this;
-    },
-    showTime: function(time) {
-      this.timer = setTimeout(function() { workbench.ui.intro.hide(750); }, time);
-      return this;
-    }
-  }*/
+  }
 }
 
 workbench.util = {
