@@ -51,7 +51,7 @@ workbench.auth = {
       if(resp.result) {
         // TODO UI show logged out message on login box
       } else {
-        // TODO UI show logged out error box?
+        // TODO Failed to logout message box?
       }
       // TODO Ensure all login cookies are removed
     });
@@ -126,11 +126,11 @@ workbench.comm = {
 };
 
 workbench.core = {
-  version: "0.0.3";
+  version: "0.0.3",
   initialize: function() {
     var wait = 3000;
     workbench.ui.intro.showTime(wait);
-    setTimeout(workbehch.auth.authenticate(), wait);
+    setTimeout(workbench.auth.authenticate(), wait);
     console.log("Started Successfully!");
   }
 };
@@ -150,11 +150,61 @@ workbench.ui = {
     options: false,
   },*/
 
-  cover: {
+  // This is the base popup object. All popups extend this object. Calling functions on this object will do nothing.
+  popupbase: {
     visibility: false,
+    timer: null,
+    selector: "",
     show: function(duration) {
-      $("#backcover").
+      if(typeof duration == "undefined")
+        $(this.selector).css("display", "block");
+      else
+        $(this.selector).fadeIn(duration);
       this.visibility = true;
+      return this;
+    },
+
+    hide: function(duration) {
+      if(typeof duration == "undefined")
+        $(this.selector).css("display", "none");
+      else
+        $(this.selector).fadeOut(duration);
+      this.visibility = false;
+      return this;
+    }
+  },
+
+  cover: $.extend({}, this.popupbase, {
+    selector: "#backcover"
+  }),
+
+  intro: $.extend({}, this.popupbase, {
+    selector: "#intro",
+    showTime: function(time) {
+      console.log(this);
+      this.timer = setTimeout(function() { workbench.ui.intro.hide(750); }, time);
+      return this;
+    }
+  }),
+
+  /*cover: {
+    visibility: true,
+    timer: undefined,
+    show: function(duration) {
+      if(typeof duration == "undefined")
+        $("#backcover").css("display", "block");
+      else
+        $("#backcover").fadeIn(duration);
+      this.visibility = true;
+      return this;
+    },
+    hide: function(duration) {
+      if(typeof duration == "undefined")
+        $("#backcover").css("display", "none");
+      else
+        $("#backcover").fadeOut(duration);
+      this.visibility = false;
+      return this;
     }
   },
 
@@ -162,26 +212,26 @@ workbench.ui = {
     visibility: false,
     timer: undefined,
     show: function(duration) {
-      this.visibility = true;
       if(typeof duration == "undefined")
-        $("#about").css("display", "block");
+        $("#intro").css("display", "block");
       else
-        $("#about").fadeIn(duration);
+        $("#intro").fadeIn(duration);
+      this.visibility = true;
       return this;
     },
     hide: function(duration) {
-      this.visibility = false;
       if(typeof duration == "undefined")
-        $("#about").css("display", "none");
+        $("#intro").css("display", "none");
       else
-        $("#about").fadeOut(duration);
+        $("#intro").fadeOut(duration);
+      this.visibility = false;
       return this;
     },
     showTime: function(time) {
       this.timer = setTimeout(function() { workbench.ui.intro.hide(750); }, time);
       return this;
     }
-  }
+  }*/
 }
 
 workbench.util = {
