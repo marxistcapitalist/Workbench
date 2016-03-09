@@ -43,9 +43,9 @@ workbench.auth = {
   logout: function() {
     if(docCookies.getItem("wb_user_token") === null)
       return;
-    var tok = docCookies.getItem("wb_user_token");
+    var usertoken = docCookies.getItem("wb_user_token");
     var logoutobj = {
-      token: tok
+      token: usertoken
     };
     workbench.comm.http.post(logoutobj, "http://api.workbench.online/apiendpointhere", function(resp) {
       if(resp.result) {
@@ -56,8 +56,24 @@ workbench.auth = {
       // TODO Ensure all login cookies are removed
     });
   },
-  authenticate: function() {
-
+  authenticate: function(autoLogin) {
+    var usertoken = docCookies.getItem("wb_user_token");
+    var userid = docCookies.getItem("wb_user_id");
+    var authobj = {
+      token: usertoken,
+      id: userid
+    };
+    workbench.comm.http.post(authobj, "http://api.workbench.online/apiendpointhere", function(resp) {
+      if(resp.result) {
+        // TODO Functionality
+      } else {
+        if(typeof autoLogin == "boolean" && autoLogin) {
+          // TODO Delete current login cookies, logout, show login pane, authentication error
+        } else {
+          // TODO Show authentication error message
+        }
+      }
+    });
   },
   register: function() {
 
