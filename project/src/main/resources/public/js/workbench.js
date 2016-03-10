@@ -40,6 +40,7 @@ workbench.auth = {
       }
     });
   },
+
   logout: function() {
     if(docCookies.getItem("wb_user_token") === null)
       return;
@@ -56,6 +57,7 @@ workbench.auth = {
       // TODO Ensure all login cookies are removed
     });
   },
+
   authenticate: function(autoLogin) {
     var usertoken = docCookies.getItem("wb_user_token");
     var userid = docCookies.getItem("wb_user_id");
@@ -129,9 +131,10 @@ workbench.core = {
   version: "0.0.3",
   initialize: function() {
     var wait = 3000;
-    workbench.ui.intro.showTime(wait);
+    /* TODO Hash change detection. This is not a top priority, and currently used script is too old. */
+    workbench.ui.popup.intro.showTime(wait);
     //setTimeout(workbench.auth.authenticate(true), wait);
-    setTimeout(function() { workbench.ui.login.show(750) }, wait + 750);
+    setTimeout(function() { workbench.ui.popup.login.show(750) }, wait + 750);
     console.log("Started Successfully!");
   }
 };
@@ -151,72 +154,129 @@ workbench.ui = {
     options: false,
   },*/
 
-  // This creates all of the UI overlay and tool objects, as they require workbench.ui to be completed before implementation can occur.
-  initialize: function() {
-    // Define UI Objects
-    this.cover = $.extend({}, workbench.ui.popupbase, {
-      visibility: true,
-      selector: "#backcover"
-    });
 
-    this.intro = $.extend({}, this.popupbase, {
-      visibility: true,
-      selector: "#intro",
-      showTime: function(time) {
-        this.timer = setTimeout(function() { workbench.ui.intro.hide(750); }, time);
+  popup: {
+
+    defaultDuration: 750, // Default number of msecs that a popup transition should take
+
+    // This is the base popup object. All popups extend this object. Calling functions on this object will do nothing.
+    popupbase: {
+      visibility: false,
+      timer: null,
+      selector: "",
+      show: function(duration, callback) {
+        if(typeof duration == "undefined")
+          $(this.selector).css("display", "block");
+        else {
+          if(typeof callback == "function")
+            $(this.selector).fadeIn(duration, callback);
+          else
+            $(this.selector).fadeIn(duration);
+        }
+        this.visibility = true;
+        return this;
+      },
+
+      hide: function(duration, callback) {
+        if(typeof duration == "undefined")
+          $(this.selector).css("display", "none");
+        else {
+          if(typeof callback == "function")
+            $(this.selector).fadeOut(duration, callback);
+          else
+            $(this.selector).fadeOut(duration);
+        }
+        this.visibility = false;
         return this;
       }
-    });
+    },
 
-    this.login = $.extend({}, this.popupbase, {
-      selector: "#login",
-      sizeAdjust: function() {
-        this.show();
-        var realheight = $(this.selector + " > .inner").height();
-        this.hide();
-        $(this.selector).height(realheight + 50);
-      }
-    });
+    attachListeners: function() {
+      $("#login_submit").click(function(event) {
+        event.preventDefault();
+        console.log("Login Submission!");
+        //workbench.auth.login()
+      });
 
-    // Attach UI interaction listeners
-    this.adjustSizes();
-    this.attachListeners();
+      $("#login_forgotlink").click(function(event) {
+        event.preventDefault();
+        workbench.ui.popup.login.hide(500, function() {
+          workbench.ui.popup.forgotpass.sizeAdjust();
+          workbench.ui.popup.forgotpass.show(500);
+        });
+      });
+
+      $("#login_registerlink").click(function(event) {
+        event.preventDefault();
+        workbench.ui.popup.login.hide(500, function() {
+          workbench.ui.popup.register.sizeAdjust();
+          workbench.ui.popup.register.show(500);
+        });
+      });
+
+      $("#forgotpass_backlink").click(function(event) {
+        event.preventDefault();
+        workbench.ui.popup.forgotpass.hide(500, function() {
+          workbench.ui.popup.login.sizeAdjust();
+          workbench.ui.popup.login.show(500);
+        });
+      });
+
+      $("#register_backlink").click(function(event) {
+        event.preventDefault();
+        workbench.ui.popup.register.hide(500, function() {
+          workbench.ui.popup.login.sizeAdjust();
+          workbench.ui.popup.login.show(500);
+        });
+      });
+    },
+
+    initialize: function() {
+      // Define UI Objects
+      this.cover = $.extend({}, this.popupbase, {
+        visibility: true,
+        selector: "#backcover"
+      });
+
+      this.intro = $.extend({}, this.popupbase, {
+        visibility: true,
+        selector: "#intro",
+        showTime: function(time) {
+          this.timer = setTimeout(function() { workbench.ui.popup.intro.hide(750); }, time);
+          return this;
+        }
+      });
+
+      this.login = $.extend({}, this.popupbase, {
+        selector: "#login",
+        sizeAdjust: function() {
+          this.show();
+          var realheight = $(this.selector + " > .inner").height();
+          this.hide();
+          $(this.selector).height(realheight + 50);
+        }
+      });
+
+      this.forgotpass = $.extend({}, this.login, {
+        selector: "#forgotpass"
+      });
+
+      this.register = $.extend({}, this.login, {
+        selector: "#register"
+      });
+
+      this.attachListeners();
+    }
   },
 
-  attachListeners: function() {
-    $("#login_submit").click(function(event) {
-      event.preventDefault();
-      console.log("Login Submission!");
-      //workbench.auth.login()
-    });
+  // This creates all of the UI overlay and tool objects, as they require workbench.ui to be completed before implementation can occur.
+  initialize: function() {
+    this.popup.initialize();
+    this.adjustSizes();
   },
 
   adjustSizes: function() {
-    this.login.sizeAdjust();
-  },
-
-  // This is the base popup object. All popups extend this object. Calling functions on this object will do nothing.
-  popupbase: {
-    visibility: false,
-    timer: null,
-    selector: "",
-    show: function(duration) {
-      if(typeof duration == "undefined")
-        $(this.selector).css("display", "block");
-      else
-        $(this.selector).fadeIn(duration);
-      this.visibility = true;
-      return this;
-    },
-
-    hide: function(duration) {
-      if(typeof duration == "undefined")
-        $(this.selector).css("display", "none");
-      else
-        $(this.selector).fadeOut(duration);
-      this.visibility = false;
-      return this;
-    }
+    this.popup.login.sizeAdjust();
   }
 }
 
@@ -244,6 +304,10 @@ workbench.util = {
         return false;
       }
     }
+  },
+
+  urlhash: {
+    // TODO Implementation; this feature is not currently top priority.
   }
 };
 $(document).ready(function() { workbench.ui.initialize(); });
