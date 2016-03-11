@@ -13,11 +13,13 @@ workbench.util = workbench.util || {}; // Utility functions
 
 workbench.auth = {
   status: false,
-  login: function(username, password) {
+  login: function(username, password, ui) {
     var loginobj = {
       loginkey: username,
       password: password
     };
+    if(this.login.arguments.length > 2)
+      workbench.ui.popup.login.showLoad(150);
     workbench.comm.http.post(loginobj, "http://syrukide.net/rest-test/post.php?req=login", function(resp) {
       /*console.log(resp.result);
       if(!resp.result)
@@ -191,6 +193,22 @@ workbench.ui = {
       }
     },
 
+    // This is the authbox popup object. All authbox popups extend this object. Calling functions on this object will do nothing.
+    authboxbase: {
+      showLoad: function(duration) {
+        if(typeof duration != "undefined")
+          $(this.selector + " .formcover").fadeIn(duration);
+        else
+          $(this.selector + " .formcover").css("display", "block");
+      },
+      hideLoad: function(duration) {
+        if(typeof duration != "undefined")
+          $(this.selector + " .formcover").fadeOut(duration);
+        else
+          $(this.selector + " .formcover").css("display", "none");
+      }
+    },
+
     attachListeners: function() {
       $("#login_submit").click(function(event) {
         event.preventDefault();
@@ -247,7 +265,7 @@ workbench.ui = {
         }
       });
 
-      this.login = $.extend({}, this.popupbase, {
+      this.login = $.extend({}, this.popupbase, this.authboxbase, {
         selector: "#login",
         sizeAdjust: function() {
           this.show();
