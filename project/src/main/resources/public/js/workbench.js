@@ -39,7 +39,7 @@ workbench.auth = {
     }
     if(showUI)
       workbench.ui.popup.login.showLoad(150);
-    if(username == "marx" && password == "mearse") {
+    if(username == "marx" && password == "mearse") { // TODO TESTING CODE, Remove with server implementation
       workbench.ui.popup.login.hideLoad();
       docCookies.setItem("wb_user_token", "jsdafoksndfasdlfjasidfoasjdfiojasiojdfiaoisejofaowiejfiosdfjidfopqjwoprpqorq3pirq3rri99i3q9ir90ruipfiafipaasidasdaposidpaosidiii", Infinity);
       docCookies.setItem("wb_user_id", "aaaaaaaaaa", Infinity);
@@ -113,8 +113,62 @@ workbench.auth = {
       }
     });
   },
-  register: function() {
 
+  register: function(user, pass, mail, ui) {
+    var regobj = {
+      username: user,
+      password: pass,
+      mail: mail
+    };
+    if(this.timeout)
+      return;
+    this.timeout = true;
+    setTimeout(function() { workbench.auth.timeout = false; }, this.timeoutTime);
+    if(workbench.comm.http.ajaxProgress)
+      return;
+    var showUI = this.login.arguments.length > 2;
+    var errors = [];
+    if(username.length > 32 || username.length < 1) {
+      errors.push("Username must be between 1 and 32 characters long");
+    }
+    if(password.length > 256 || password.length < 7)
+      errors.push("Password must be between 7 and 256 characters long");
+    if(email.length < 6 || email.length > 254)
+      errors.push("EMail must be between 6 and 254 characters long");
+    if(showUI)
+      workbench.ui.popup.register.showLoad(150);
+    if(errors.length > 0) {
+      if(showUI) {
+        var err = "<ul>";
+        for(var i=0;i<errors.length;i++) {
+          err = err + "<li>" + errors[i] + "</li>";
+        }
+        err = err + "</ul>";
+        workbench.ui.popup.register.showError(err);
+      }
+      return;
+    }
+    workbench.comm.http.post(regobj, "http://localhost:80/register", function(resp) {
+      if(resp.result) {
+        if(resp.data.hasOwnProperty("success") && resp.data.success == false) {
+          docCookies.setItem("wb_user_token", resp.data.token, Infinity);
+          docCookies.setItem("wb_user_id", resp.data.agent.id, Infinity);
+          docCookies.setItem("wb_user_name", resp.data.agent.user, Infinity);
+          workbench.auth.status = true;
+          workbench.ui.popup.register.success();
+          workbench.bench.load();
+        } else if(resp.data.hasOwnProperty("success") && resp.data.success == false && resp.data.hasOwnProperty("error")) {
+          workbench.ui.popup.register.hideLoad();
+          workbench.ui.popup.register.showError(resp.data.error);
+        } else {
+          workbench.ui.popup.register.hideLoad();
+          workbench.ui.popup.register.showError("Malformed response; try again");
+        }
+      } else {
+        workbench.ui.popup.register.hideLoad();
+        workbench.ui.popup.register.showError("HTTP Error, check your connection");
+      }
+    });
   }
 };
 
@@ -254,10 +308,10 @@ workbench.ui = {
     attachListeners: function() {
       $("#login_submit").click(function(event) {
         event.preventDefault();
-        workbench.auth.login($("#login_user").val(), $("#login_pass").val(), true);
+        $("#loginform").submit();
       });
 
-      $("#login").submit(function(event) {
+      $("#loginform").submit(function(event) {
         event.preventDefault();
         workbench.auth.login($("#login_user").val(), $("#login_pass").val(), true);
       });
@@ -292,6 +346,21 @@ workbench.ui = {
           workbench.ui.popup.login.sizeAdjust();
           workbench.ui.popup.login.show(500);
         });
+      });
+
+      $("#registerform").submit(function(event) {
+        event.preventDefault();
+        if($("#register_pass").val() == $("#register_pass2").val())
+          workbench.auth.register($("#register_user").val(), $("#register_pass").val(), $("#register_email").val(), true);
+        else {
+          workbench.ui.popup.register.hideLoad();
+          workbench.ui.popup.register.showError("Passwords do not match");
+        }
+      });
+
+      $("#register_submit").click(function(event) {
+        event.preventDefault();
+        $("#registerform").submit();
       });
     },
 

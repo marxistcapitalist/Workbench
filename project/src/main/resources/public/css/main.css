@@ -208,8 +208,8 @@ a:active {
 
 .authbox .errbox p {
   float: right;
-  margin: 0;
-  width: 75%;
+  margin: 0 5% 0 0;
+  width: 70%;
   margin: 12px 0;
 }
 
