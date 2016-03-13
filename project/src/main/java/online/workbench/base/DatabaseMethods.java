@@ -4,9 +4,23 @@ import online.workbench.websocket.data.struct.*;
 
 import java.util.List;
 
-public interface API
+public interface DatabaseMethods
 {
-    static String BASE_PATH = "/api";
+	/**
+     * Determines whether client token is valid
+     *
+     * @param token client token
+     * @return true if valid, false otherwise
+     */
+    boolean checkToken(String token);
+
+	/**
+     * Issues a new token to an account
+     *
+     * @param id account id the token is being issued to
+     * @return the new token
+     */
+    String issueToken(int id);
 
     /**
      * Checks if user login is valid

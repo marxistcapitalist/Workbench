@@ -1,13 +1,16 @@
 package online.workbench.api;
 
 import com.google.gson.annotations.SerializedName;
+import lombok.Data;
+
+import java.util.Date;
 
 public enum Protocol
 {
 	@SerializedName("http|ping <-")HTTP_CLIENT_PING(Empty.class),
 	@SerializedName("http|ping ->")HTTP_SERVER_PING(Empty.class),
 	@SerializedName("http|authenticate <-")HTTP_CLIENT_AUTHENTICATE(Authenticate.class),
-	@SerializedName("http|authenticate ->")HTTP_SERVER_AUTHENTICATE(Authenticate.class),
+	@SerializedName("http|authenticate ->")HTTP_SERVER_AUTHENTICATE(ServerAuthenticate.class),
 	@SerializedName("http|login <-")HTTP_CLIENT_LOGIN(ClientLogin.class),
 	@SerializedName("http|login ->")HTTP_SERVER_LOGIN(ServerLogin.class),
 	@SerializedName("http|logout <-")HTTP_CLIENT_LOGOUT(ClientToken.class),
@@ -56,14 +59,12 @@ public enum Protocol
 	@SerializedName("http|userId/edit ->")HTTP_SERVER_USERNODE_EDIT(BooleanResponse.class),
 	@SerializedName("http|userId/rename <-")HTTP_CLIENT_USERNODE_RENAME(RenameUserNode.class),
 	@SerializedName("http|userId/rename ->")HTTP_SERVER_USERNODE_RENAME(BooleanResponse.class),
-
 	@SerializedName("ws|move <-")WEBSOCKET_CLIENT_MOVE(ClientMove.class),
 	@SerializedName("ws|resize <-")WEBSOCKET_CLIENT_RESIZE(ClientResize.class),
 	@SerializedName("ws|textcursor <-")WEBSOCKET_CLIENT_TEXTCURSOR(ClientTextCursor.class),
 	@SerializedName("ws|textmodify <-")WEBSOCKET_CLIENT_TEXTMODIFY(ClientTextModify.class),
 	@SerializedName("ws|textselect <-")WEBSOCKET_CLIENT_TEXTSELECT(ClientTextSelect.class),
 	@SerializedName("ws|chat <-")WEBSOCKET_CLIENT_CHAT(ClientChat.class),
-
 	@SerializedName("ws|create ->")WEBSOCKET_SERVER_CREATE(ServerCreate.class),
 	@SerializedName("ws|delete ->")WEBSOCKET_SERVER_DELETE(WS.class),
 	@SerializedName("ws|edit ->")WEBSOCKET_SERVER_EDIT(ServerEdit.class),
@@ -78,6 +79,7 @@ public enum Protocol
 	@SerializedName("ws|textmodify ->")WEBSOCKET_SERVER_TEXTMODIFY(ServerTextModify.class),
 	@SerializedName("ws|textselect ->")WEBSOCKET_SERVER_TEXTSELECT(ServerTextSelect.class);
 
+	@Data
 	public class ClientChat
 	{
 		String type;
@@ -87,9 +89,11 @@ public enum Protocol
 		ClientAgent agent;
 	}
 
+	@Data
 	public class ServerTextSelect extends ServerTextBase
 	{
 		Content content;
+		@Data
 		class Content
 		{
 			int being;
@@ -97,9 +101,11 @@ public enum Protocol
 		}
 	}
 
+	@Data
 	public class ServerTextModify extends ServerTextBase
 	{
 		Content content;
+		@Data
 		class Content
 		{
 			int begin;
@@ -108,9 +114,11 @@ public enum Protocol
 		}
 	}
 
+	@Data
 	public class ServerTextCursor extends ServerTextBase
 	{
 		Content content;
+		@Data
 		class Content
 		{
 			int index;
@@ -118,6 +126,7 @@ public enum Protocol
 		}
 	}
 
+	@Data
 	public class ServerTextBase
 	{
 		String type;
@@ -126,9 +135,12 @@ public enum Protocol
 		WSServerAgent agent;
 	}
 
+	@Data
 	public class Notify extends EmptyAgent
 	{
 		String type;
+		Data data;
+		@lombok.Data
 		class Data
 		{
 			String header;
@@ -138,17 +150,20 @@ public enum Protocol
 		}
 	}
 
+	@Data
 	public class ServerWatch extends ServerBase
 	{
 		String interval;
 	}
 
+	@Data
 	public class ServerChat extends ServerBase
 	{
 		String message;
 		String level;
 	}
 
+	@Data
 	public class ServerBase
 	{
 		String type;
@@ -156,28 +171,34 @@ public enum Protocol
 		WSServerAgent agent;
 	}
 
+	@Data
 	public class ServerResize extends WS
 	{
 		WH dimensions;
 	}
 
+	@Data
 	public class ServerRename extends WS
 	{
 		Content content;
+		@Data
 		class Content
 		{
 			String title;
 		}
 	}
 
+	@Data
 	public class ServerMove extends WS
 	{
 		XY dimensions;
 	}
 
+	@Data
 	public class ServerEdit extends WS
 	{
 		Content content;
+		@Data
 		class Content
 		{
 			String type;
@@ -185,10 +206,12 @@ public enum Protocol
 		}
 	}
 
+	@Data
 	public class ServerCreate extends WS
 	{
 		FullDimensions dimensions;
 		Content content;
+		@Data
 		class Content
 		{
 			String title;
@@ -197,6 +220,7 @@ public enum Protocol
 		}
 	}
 
+	@Data
 	public class WS
 	{
 		String type;
@@ -206,6 +230,7 @@ public enum Protocol
 
 	}
 
+	@Data
 	public class FullDimensions
 	{
 		int x;
@@ -214,14 +239,18 @@ public enum Protocol
 		int h;
 	}
 
+	@Data
 	public class WSServerAgent
 	{
 		String name;
 		int id;
 	}
 
+	@Data
 	public class ClientTextSelect extends WC
 	{
+		Content content;
+		@Data
 		class Content
 		{
 			int begin;
@@ -229,9 +258,11 @@ public enum Protocol
 		}
 	}
 
+	@Data
 	public class ClientTextModify extends WC
 	{
 		Content content;
+		@Data
 		class Content
 		{
 			int begin;
@@ -240,9 +271,11 @@ public enum Protocol
 		}
 	}
 
+	@Data
 	public class ClientTextCursor extends WC
 	{
 		Content content;
+		@Data
 		class Content
 		{
 			int index;
@@ -250,22 +283,26 @@ public enum Protocol
 		}
 	}
 
+	@Data
 	public class ClientResize extends WC
 	{
 		WH dimensions;
 	}
 
+	@Data
 	public class ClientMove extends WC
 	{
 		XY dimensions;
 	}
 
+	@Data
 	public class XY
 	{
 		int x;
 		int y;
 	}
 
+	@Data
 	public class WC
 	{
 		String type;
@@ -274,22 +311,26 @@ public enum Protocol
 		ClientAgent agent;
 	}
 
+	@Data
 	public class RenameUserNode
 	{
 		int node;
 		Content content;
 		ClientAgent agent;
+		@Data
 		class Content
 		{
 			String title;
 		}
 	}
 
+	@Data
 	public class EditUserNode
 	{
 		int node;
 		Content content;
 		ClientAgent agent;
+		@Data
 		class Content
 		{
 			String type;
@@ -297,17 +338,20 @@ public enum Protocol
 		}
 	}
 
+	@Data
 	public class DeleteUserNode
 	{
 		int node;
 		ClientAgent agent;
 	}
 
+	@Data
 	public class CreateUserNode
 	{
 		WH dimensions;
 		Content content;
 		ClientAgent agent;
+		@Data
 		class Content
 		{
 			String title;
@@ -316,16 +360,19 @@ public enum Protocol
 		}
 	}
 
+	@Data
 	public class IgnoreWatchNode
 	{
 		int node;
 		ClientAgent agent;
 	}
 
+	@Data
 	public class BenchNodeSpawn
 	{
 		XY dimensions;
 		Content content;
+		@Data
 		class Content
 		{
 			String retitle;
@@ -334,6 +381,7 @@ public enum Protocol
 		ClientAgent agent;
 	}
 
+	@Data
 	public class BenchNodeResize
 	{
 		int node;
@@ -341,18 +389,20 @@ public enum Protocol
 		ClientAgent agent;
 	}
 
+	@Data
 	public class BenchNodeRename
 	{
 		int node;
 		Content content;
 		ClientAgent agent;
-
+		@Data
 		class Content
 		{
 			String title;
 		}
 	}
 
+	@Data
 	public class BenchNodeMove
 	{
 		int node;
@@ -360,12 +410,13 @@ public enum Protocol
 		ClientAgent agent;
 	}
 
+	@Data
 	public class BenchNodeEdit
 	{
 		int node;
 		Content content;
 		ClientAgent agent;
-
+		@Data
 		class Content
 		{
 			String type;
@@ -373,18 +424,20 @@ public enum Protocol
 		}
 	}
 
+	@Data
 	public class BenchNodeDelete
 	{
 		String node;
 		ClientAgent agent;
 	}
 
+	@Data
 	public class BenchNodeCreate
 	{
 		FullDimensions dimensions;
 		Content content;
 		ClientAgent agent;
-
+		@Data
 		class Content
 		{
 			String title;
@@ -393,11 +446,12 @@ public enum Protocol
 		}
 	}
 
+	@Data
 	public class BenchNodeCopy
 	{
 		Content content;
 		ClientAgent agent;
-
+		@Data
 		class Content
 		{
 			String retitle;
@@ -405,13 +459,14 @@ public enum Protocol
 		}
 	}
 
+	@Data
 	public class BenchEdit
 	{
 		int id;
 		WH dimensions;
 		Content content;
 		ClientAgent agent;
-
+		@Data
 		class Content
 		{
 			String title;
@@ -419,17 +474,20 @@ public enum Protocol
 		}
 	}
 
+	@Data
 	public class BenchDelete
 	{
 		int id;
 		ClientAgent agent;
 	}
 
+	@Data
 	public class IdResponse
 	{
 		int id;
 	}
 
+	@Data
 	public class BenchCreate
 	{
 		String title;
@@ -437,12 +495,14 @@ public enum Protocol
 		ClientAgent agent;
 	}
 
+	@Data
 	public class WH
 	{
 		int w;
 		int h;
 	}
 
+	@Data
 	public class GetUsersResponse
 	{
 		String creator;
@@ -450,6 +510,7 @@ public enum Protocol
 
 	}
 
+	@Data
 	public class MetaUser
 	{
 		int id;
@@ -458,11 +519,13 @@ public enum Protocol
 		boolean online;
 	}
 
+	@Data
 	public class ContainedClientAgent
 	{
 		ClientAgent agent;
 	}
 
+	@Data
 	public class UserModObject
 	{
 		int userId;
@@ -470,17 +533,20 @@ public enum Protocol
 		ClientAgent agent;
 	}
 
+	@Data
 	public class UserModNoPermObject
 	{
 		int userId;
 		ClientAgent agent;
 	}
 
+	@Data
 	public class BooleanResponse
 	{
 		boolean result;
 	}
 
+	@Data
 	public class Register
 	{
 		String username;
@@ -488,56 +554,74 @@ public enum Protocol
 		String email;
 	}
 
+	@Data
 	public class Empty { }
 
+	@Data
 	public class EmptyAgent
 	{
 		Agent agent;
-
+		@Data
 		class Agent
 		{
 
 		}
 	}
 
+	@Data
 	public class ServerAgent
 	{
 		int id;
 		String user;
 	}
 
+	@Data
 	public class ClientAgent
 	{
 		int id;
 		String token;
 	}
 
+	@Data
 	public class Authenticate
 	{
 		String token;
 		int id;
 	}
 
+	@Data
 	public class ClientLogin
 	{
 		String loginkey;
 		String password;
 	}
 
+	@Data
 	public class ServerLogin
 	{
 		String token;
 		ServerAgent agent;
 	}
 
+	@Data
+	public class ServerAuthenticate
+	{
+		boolean success;
+		String error;
+		String token;
+		ServerAgent agent;
+
+	}
+
+	@Data
 	public class ClientToken
 	{
 		String token;
 	}
 
-	private final Class<? extends Object> cClass;
+	private Object cClass;
 
-	Protocol (Class<? extends Object> object)
+	Protocol (Object object)
 	{
 		cClass = object;
 	}
