@@ -1,16 +1,12 @@
 package online.workbench;
 
 import online.workbench.base.DatabaseMethods;
-import online.workbench.websocket.data.struct.*;
+import online.workbench.model.struct.*;
 
 import java.util.List;
 
 public class WorkbenchDB implements DatabaseMethods
 {
-	public WorkbenchDB()
-	{
-
-	}
 
 	@Override
 	public boolean checkToken(String token)
@@ -49,55 +45,7 @@ public class WorkbenchDB implements DatabaseMethods
 	}
 
 	@Override
-	public User createUser(User user)
-	{
-		return null;
-	}
-
-	@Override
-	public Bench createBench(Bench bench)
-	{
-		return null;
-	}
-
-	@Override
-	public void submitNodeEdit(List<Node> nodes)
-	{
-
-	}
-
-	@Override
-	public void submitNodeContent(List<Node> nodes)
-	{
-
-	}
-
-	@Override
-	public void submitNodeMove(List<BenchNode> nodes)
-	{
-
-	}
-
-	@Override
-	public void submitNodeResize(List<BenchNode> nodes)
-	{
-
-	}
-
-	@Override
-	public void submitNodeArchive(List<Node> nodes)
-	{
-
-	}
-
-	@Override
-	public UserNode submitNodeCreate(UserNode node)
-	{
-		return null;
-	}
-
-	@Override
-	public BenchNode submitNodeCreate(BenchNode node)
+	public BenchNode submitNodeCopy(UserNode node, Bench bench)
 	{
 		return null;
 	}
@@ -109,7 +57,55 @@ public class WorkbenchDB implements DatabaseMethods
 	}
 
 	@Override
-	public BenchNode submitNodeCopy(UserNode node, Bench bench)
+	public BenchNode submitNodeCreate(BenchNode node)
+	{
+		return null;
+	}
+
+	@Override
+	public UserNode submitNodeCreate(UserNode node)
+	{
+		return null;
+	}
+
+	@Override
+	public void submitNodeArchive(List<Node> nodes)
+	{
+
+	}
+
+	@Override
+	public void submitNodeResize(List<BenchNode> nodes)
+	{
+
+	}
+
+	@Override
+	public void submitNodeMove(List<BenchNode> nodes)
+	{
+
+	}
+
+	@Override
+	public void submitNodeContent(List<Node> nodes)
+	{
+
+	}
+
+	@Override
+	public void submitNodeEdit(List<Node> nodes)
+	{
+
+	}
+
+	@Override
+	public Bench createBench(Bench bench)
+	{
+		return null;
+	}
+
+	@Override
+	public User createUser(User user)
 	{
 		return null;
 	}

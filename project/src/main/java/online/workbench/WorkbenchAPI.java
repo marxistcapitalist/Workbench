@@ -6,8 +6,8 @@ import lombok.Setter;
 import online.workbench.api.Protocol;
 
 import online.workbench.api.UserManager;
-import online.workbench.websocket.data.struct.BenchData;
-import online.workbench.websocket.data.struct.User;
+import online.workbench.model.struct.User;
+
 import static spark.Spark.*;
 
 public class WorkbenchAPI

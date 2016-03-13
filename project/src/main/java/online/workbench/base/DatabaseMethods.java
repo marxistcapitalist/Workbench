@@ -1,6 +1,6 @@
 package online.workbench.base;
 
-import online.workbench.websocket.data.struct.*;
+import online.workbench.model.struct.*;
 
 import java.util.List;
 
