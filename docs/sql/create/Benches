@@ -6,5 +6,5 @@ created int UNSIGNED,
 background varchar(255), 
 archived tinyint(1) DEFAULT 0,
 PRIMARY KEY (benchId)
-) ENGINE=InnoDB DEFAULT CHARACTER SET=latin1
+) ENGINE=InnoDB DEFAULT CHARACTER SET=utf-8
  
