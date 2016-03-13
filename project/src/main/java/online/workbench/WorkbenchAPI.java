@@ -37,8 +37,29 @@ public class WorkbenchAPI
 
 	private void initialize()
 	{
+		//GENERAL
 		ping();
+
+		//ACCOUNTS
 		login();
+		register();
+		authenticate();
+		logout();
+
+		//BENCH - CORE
+
+
+		//BENCH - MISC
+
+
+		//BENCHNODE - CORE
+
+
+		//BENCHNODE - MISC
+
+
+		//USERNODE
+
 	}
 
 	public void createUserEndpoint(User user)
@@ -155,18 +176,59 @@ public class WorkbenchAPI
 					if (usernameArray[i] == disallowed[c])
 					{
 						response.setSuccess(false);
-						response.setError("Username cannot contain \"" + disallowed[c]);
+						response.setError("Username cannot contain \"" + disallowed[c] + "\"");
 						return gson.toJson(response);
 					}
 				}
 			}
 
-			this.database,.)
+			if(!this.database.checkUsernameAvailability(username))
+			{
+				response.setSuccess(false);
+				response.setError("Username is not available :(");
+				return gson.toJson(response);
+			}
+
+			int id = this.database.createUser(username, email, password);
+			String token = this.database.issueToken(id);
+
+			User user = this.database.loadUser(id);
+			this.userManager.put(user);
 
 			response.setSuccess(true);
-			response.getAgent().set
+			response.getAgent().setUser(username);
+			response.getAgent().setId(id);
+			response.setToken(token);
+			return gson.toJson(response);
+		});
+	}
 
+	public void authenticate()
+	{
+		post(API + "authenticate", (req, res) ->
+		{
+			Authenticate body = gson.fromJson(req.body(), Authenticate.class);
 
+			if (!this.database.checkToken(body.getId(), body.getToken()))
+			{
+				return "{}";
+			}
+
+			Authenticate response = new Authenticate();
+			response.setToken(body.getToken());
+			response.setId(body.getId());
+
+			return gson.toJson(response);
+		});
+	}
+
+	public void logout()
+	{
+		post(API + "logout", (req, res) ->
+		{
+			ClientToken body = gson.fromJson(req.body(), ClientToken.class);
+			this.database.invalidateToken(body.getToken());
+			return "{}";
 		});
 	}
 

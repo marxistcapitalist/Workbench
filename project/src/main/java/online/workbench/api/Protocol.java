@@ -10,7 +10,7 @@ public enum Protocol
 	@SerializedName("http|ping <-")HTTP_CLIENT_PING(Empty.class),
 	@SerializedName("http|ping ->")HTTP_SERVER_PING(Empty.class),
 	@SerializedName("http|authenticate <-")HTTP_CLIENT_AUTHENTICATE(Authenticate.class),
-	@SerializedName("http|authenticate ->")HTTP_SERVER_AUTHENTICATE(ServerAuthenticate.class),
+	@SerializedName("http|authenticate ->")HTTP_SERVER_AUTHENTICATE(Authenticate.class),
 	@SerializedName("http|login <-")HTTP_CLIENT_LOGIN(ClientLogin.class),
 	@SerializedName("http|login ->")HTTP_SERVER_LOGIN(ServerLogin.class),
 	@SerializedName("http|logout <-")HTTP_CLIENT_LOGOUT(ClientToken.class),
@@ -77,7 +77,16 @@ public enum Protocol
 	@SerializedName("ws|notify ->")WEBSOCKET_SERVER_NOTIFY(Notify.class),
 	@SerializedName("ws|textcursor ->")WEBSOCKET_SERVER_TEXTCURSOR(ServerTextCursor.class),
 	@SerializedName("ws|textmodify ->")WEBSOCKET_SERVER_TEXTMODIFY(ServerTextModify.class),
-	@SerializedName("ws|textselect ->")WEBSOCKET_SERVER_TEXTSELECT(ServerTextSelect.class);
+	@SerializedName("ws|textselect ->")WEBSOCKET_SERVER_TEXTSELECT(ServerTextSelect.class),
+	@SerializedName("ws|load <-")WEBSOCKET_CLIENT_LOAD(WebsocketLoad.class);
+
+	@Data
+	public static class WebsocketLoad
+	{
+		String type;
+		int bench;
+		ClientAgent agent = new ClientAgent();
+	}
 
 	@Data
 	public static class ServerRegister
@@ -424,7 +433,7 @@ public enum Protocol
 	{
 		int node;
 		Content content = new Content();
-		ClientAgent agent = new ClientAgent;
+		ClientAgent agent = new ClientAgent();
 		@Data
 		class Content
 		{
@@ -474,7 +483,7 @@ public enum Protocol
 		int id;
 		WH dimensions = new WH();
 		Content content = new Content();
-		ClientAgent agent = new ClientAgent()
+		ClientAgent agent = new ClientAgent();
 
 		@Data
 		class Content
@@ -611,16 +620,6 @@ public enum Protocol
 	{
 		String token;
 		ServerAgent agent = new ServerAgent();
-	}
-
-	@Data
-	public static class ServerAuthenticate
-	{
-		boolean success;
-		String error;
-		String token;
-		ServerAgent agent = new ServerAgent();
-
 	}
 
 	@Data

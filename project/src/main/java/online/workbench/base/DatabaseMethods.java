@@ -6,20 +6,31 @@ import java.util.List;
 
 public interface DatabaseMethods
 {
+
+	/**
+     * Empties the token field in the database
+     * to enact a global logout of sorts
+     *
+     * @param token token to invalidate
+     */
+    void invalidateToken(String token);
+
 	/**
      * Determines whether or not a username has already been used
-     * @param username
-     * @return
+     *
+     * @param username Supplied username to check
+     * @return true if the username is available
      */
     boolean checkUsernameAvailability(String username);
 
 	/**
-     * Determines whether client token is valid
+     * Determines whether client token is valid and matches id
      *
+     * @param id client id
      * @param token client token
      * @return true if valid, false otherwise
      */
-    boolean checkToken(String token);
+    boolean checkToken(int id, String token);
 
 	/**
      * Issues a new token to an account
@@ -60,12 +71,15 @@ public interface DatabaseMethods
      */
     Bench loadBench(int benchId);
 
-    /**
-     * Creates a user account in the database
-     * @param user - User object with an ID of '0'
-     * @return Valid User object
+	/**
+     * Creates a new user in the database
+     *
+     * @param username supplied unique username
+     * @param email supplied email
+     * @param password supplied password, unhashed
+     * @return the created user's user ID
      */
-    User createUser(User user);
+    int createUser(String username, String email, String password);
 
     /**
      * Creates a bench in the database

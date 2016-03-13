@@ -9,7 +9,19 @@ public class WorkbenchDB implements DatabaseMethods
 {
 
 	@Override
-	public boolean checkToken(String token)
+	public void invalidateToken(String token)
+	{
+
+	}
+
+	@Override
+	public boolean checkUsernameAvailability(String username)
+	{
+		return false;
+	}
+
+	@Override
+	public boolean checkToken(int id, String token)
 	{
 		return false;
 	}
@@ -42,6 +54,12 @@ public class WorkbenchDB implements DatabaseMethods
 	public Bench loadBench(int benchId)
 	{
 		return null;
+	}
+
+	@Override
+	public int createUser(String username, String email, String password)
+	{
+		return 0;
 	}
 
 	@Override
@@ -100,12 +118,6 @@ public class WorkbenchDB implements DatabaseMethods
 
 	@Override
 	public Bench createBench(Bench bench)
-	{
-		return null;
-	}
-
-	@Override
-	public User createUser(User user)
 	{
 		return null;
 	}
