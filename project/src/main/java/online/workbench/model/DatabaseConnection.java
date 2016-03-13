@@ -1,4 +1,4 @@
-package online.workbench.websocket.data;
+package online.workbench.model;
 
 
 import online.workbench.websocket.util.Logger;
@@ -10,7 +10,7 @@ import java.sql.Statement;
 
 public class DatabaseConnection
 {
-	public SQLiteDatabase(String databaseName)
+	public DatabaseConnection(String databaseName)
 	{
 		try
 		{

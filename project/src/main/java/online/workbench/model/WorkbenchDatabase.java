@@ -1,4 +1,4 @@
-package online.workbench.websocket.data;
+package online.workbench.model;
 
 import online.workbench.websocket.data.struct.*;
 

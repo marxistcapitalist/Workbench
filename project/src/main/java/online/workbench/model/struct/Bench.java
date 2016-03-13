@@ -1,4 +1,4 @@
-package online.workbench.data.struct;
+package online.workbench.model.struct;
 
 
 import online.workbench.websocket.data.struct.PermissionLevel;

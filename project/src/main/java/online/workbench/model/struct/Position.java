@@ -1,4 +1,4 @@
-package online.workbench.data.struct;
+package online.workbench.model.struct;
 
 public class Position
 {
