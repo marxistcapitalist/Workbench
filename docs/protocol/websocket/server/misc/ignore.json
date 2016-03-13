@@ -1,6 +1,5 @@
 {
   "type": "ignore",
-  "node": "<nodeId>",
   "bench": "<benchId>",
   "agent": {
     "name": "<username>",
