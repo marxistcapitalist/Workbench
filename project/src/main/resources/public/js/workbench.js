@@ -20,7 +20,7 @@ workbench.auth = {
     };
     if(this.login.arguments.length > 2)
       workbench.ui.popup.login.showLoad(150);
-    workbench.comm.http.post(loginobj, "http://syrukide.net/rest-test/post.php?req=login", function(resp) {
+    workbench.comm.http.post(loginobj, "http://localhost:80/login", function(resp) {
       /*console.log(resp.result);
       if(!resp.result)
         console.log("Error was: " + resp.error);

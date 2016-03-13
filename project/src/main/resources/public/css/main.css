@@ -170,6 +170,8 @@ a:active {
   font-size: 14px;
 }
 
+/* Formcover Loading Box */
+
 .authbox .formcover {
   height: 100%;
   width: 100%;
@@ -189,6 +191,31 @@ a:active {
 
 .authbox .formcover p {
   margin: auto;
+}
+
+/* Error Box */
+.authbox .errbox {
+  border: 1px solid;
+  margin: 20px;
+}
+
+.authbox .errbox i {
+  float: left;
+  width: 25%;
+  text-align: center;
+  margin: 18px 0;
+}
+
+.authbox .errbox p {
+  float: right;
+  margin: 0;
+  width: 75%;
+  margin: 12px 0;
+}
+
+.authbox .errbox.error {
+  background: #FFBABA;
+  color: #D8000C;
 }
 
 /* Login Box - Obvious */
@@ -230,4 +257,14 @@ a:active {
 
 #workbench .content {
   padding: 0 10px;
+}
+
+/*
+* Miscellaneous
+* Contains universal, yet miscellaneous utility classes
+* E.g. Float clears
+*/
+
+.clear {
+  clear: both;
 }
