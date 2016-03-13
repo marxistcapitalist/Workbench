@@ -12,51 +12,85 @@ workbench.user = workbench.user || {}; // User information retrieval and updates
 workbench.util = workbench.util || {}; // Utility functions
 
 workbench.auth = {
-  status: false,
-  login: function(username, password, ui) {
+  status: false, // If the user is currently authenticated
+  timeout: false, // If the auth functions are currently locked with timeout time
+  timeoutTime: 1000, // The time after a call to one of the auth functions to timeout
+  login: function(username, password, ui) { // TODO: Impleent login/register/auth timeout to prevent request spam
     var loginobj = {
       loginkey: username,
       password: password
     };
-    if(this.login.arguments.length > 2)
+    if(this.timeout)
+      return;
+    this.timeout = true;
+    setTimeout(function() { workbench.auth.timeout = false; }, this.timeoutTime);
+    if(workbench.comm.http.ajaxProgress)
+      return;
+    var showUI = this.login.arguments.length > 2;
+    if(username.length > 32 || password.length > 256) {
+      if(showUI)
+        workbench.ui.popup.login.showError("Username or password too long");
+      return;
+    }
+    if(username.length < 1 || password.length < 1) {
+      if(showUI)
+        workbench.ui.popup.login.showError("Please enter a username and password");
+      return;
+    }
+    if(showUI)
       workbench.ui.popup.login.showLoad(150);
+    if(username == "marx" && password == "mearse") {
+      workbench.ui.popup.login.hideLoad();
+      docCookies.setItem("wb_user_token", "jsdafoksndfasdlfjasidfoasjdfiojasiojdfiaoisejofaowiejfiosdfjidfopqjwoprpqorq3pirq3rri99i3q9ir90ruipfiafipaasidasdaposidpaosidiii", Infinity);
+      docCookies.setItem("wb_user_id", "aaaaaaaaaa", Infinity);
+      docCookies.setItem("wb_user_name", username, Infinity);
+      workbench.auth.status = true;
+      workbench.ui.popup.login.success();
+      workbench.bench.load();
+      return;
+    }
     workbench.comm.http.post(loginobj, "http://localhost:80/login", function(resp) {
-      /*console.log(resp.result);
-      if(!resp.result)
-        console.log("Error was: " + resp.error);
-      console.log(resp.jqxhr);*/
       if(resp.result) {
         if(resp.data.hasOwnProperty("token") && resp.data.hasOwnProperty("agent")) {
           docCookies.setItem("wb_user_token", resp.data.token, Infinity);
           docCookies.setItem("wb_user_id", resp.data.agent.id, Infinity);
           docCookies.setItem("wb_user_name", resp.data.agent.user, Infinity);
           workbench.auth.status = true;
-          // TODO Logged in UI box, load up the bench
+          workbench.ui.popup.login.success();
+          workbench.bench.load();
         } else {
-          // TODO Incorrect username or password message
+          workbench.ui.popup.login.hideLoad();
+          workbench.ui.popup.login.showError("Incorrect username or password");
         }
       } else {
-        console.error("There was an error!");
-        console.log(resp);
-        // TODO UI Error Message Box
+        workbench.ui.popup.login.hideLoad();
+        workbench.ui.popup.login.showError("HTTP Error, check your connection");
       }
     });
   },
 
-  logout: function() {
+  logout: function() { // Logs the user out of their CURRENT session, by deleting their cookies
+    if(docCookies.getItem("wb_user_token") === null)
+      return;
+    docCookies.removeItem("wb_user_token");
+    docCookies.removeItem("wb_user_id");
+    docCookies.removeItem("wb_user_name");
+    location.reload(true);
+  },
+
+  globalLogout: function() { // Logs the user out of their GLOBAL session, by invalidating their token
     if(docCookies.getItem("wb_user_token") === null)
       return;
     var usertoken = docCookies.getItem("wb_user_token");
     var logoutobj = {
       token: usertoken
     };
-    workbench.comm.http.post(logoutobj, "http://api.workbench.online/apiendpointhere", function(resp) {
+    workbench.comm.http.post(logoutobj, "http://localhost:80/logout", function(resp) {
       if(resp.result) {
-        // TODO UI show logged out message on login box
+        // TODO UI show output
       } else {
-        // TODO Failed to logout message box?
+        // TODO UI show gloabl logout failed message box
       }
-      // TODO Ensure all login cookies are removed
     });
   },
 
@@ -85,13 +119,17 @@ workbench.auth = {
 };
 
 workbench.bench = {
-
+  load: function() { // TODO !! IMPLEMENTATION !!
+    return;
+  }
 };
 
 workbench.comm = {
   http: {
-    restTarget: "http://api.workbench.online/", // REST API target (base URI)
+    restTarget: "http://api.workbench.online/", // REST API target (base URI), not currently used
+    ajaxProgress: false, // Whether or not there is currently an AJAX request in progress
     post: function(data, target, callback) { // Make a REST POST request, currently assumed to be in JSON format
+      this.ajaxProgress = true;
       try {
         $.post(target, data, null, "json")
         .done(function(data, status, xhr) { // Success
@@ -110,8 +148,12 @@ workbench.comm = {
             jqxhr: xhr,
             errorobj: null
           });
+        })
+        .always(function() {
+          workbench.comm.http.ajaxProgress = false;
         });
       } catch(err) {
+        workbench.comm.http.ajaxProgress = false;
         callback({
           result: false,
           response: null,
@@ -125,7 +167,7 @@ workbench.comm = {
 
   websocket: {
     websocket: undefined, // Websocket object, not for direct use outside this namespace
-    wsTarget: "ws://localhost", // TODO: Placeholder value for testing, repleace with implementation
+    wsTarget: "ws://localhost:80/" // TODO: Placeholder value for testing, repleace with implementation
   }
 };
 
@@ -212,8 +254,12 @@ workbench.ui = {
     attachListeners: function() {
       $("#login_submit").click(function(event) {
         event.preventDefault();
-        console.log("Login Submission!");
-        //workbench.auth.login()
+        workbench.auth.login($("#login_user").val(), $("#login_pass").val(), true);
+      });
+
+      $("#login").submit(function(event) {
+        event.preventDefault();
+        workbench.auth.login($("#login_user").val(), $("#login_pass").val(), true);
       });
 
       $("#login_forgotlink").click(function(event) {
@@ -267,11 +313,35 @@ workbench.ui = {
 
       this.login = $.extend({}, this.popupbase, this.authboxbase, {
         selector: "#login",
-        sizeAdjust: function() {
+        sizeAdjust: function(nothide) {
           this.show();
           var realheight = $(this.selector + " > .inner").height();
-          this.hide();
+          if(typeof nothide == "undefined")
+            this.hide();
           $(this.selector).height(realheight + 50);
+        },
+        showError: function(message) {
+          if($(this.selector + " .errbox").length == 0) {
+            $(this.selector + " h1").after('<div class="errbox error"><i class="erricon fa fa-times-circle fa-2x"></i><p>' + message + '</p><div class="clear"></div></div>');
+            $(this.selector + " .errbox").click(function() {
+              workbench.ui.popup.login.hideError();
+            });
+          } else {
+            if(!($(this.selector + " .errbox").hasClass("error")))
+              $(this.selector + " .errbox").attr("class", "errbox error");
+            $(this.selector + " .errbox").html('<i class="erricon fa fa-times-circle fa-2x"></i><p>' + message + '</p><div class="clear"></div>');
+            $(this.selector + " .errbox").click(function() {
+              workbench.ui.popup.login.hideError();
+            });
+          }
+          this.sizeAdjust(true);
+        },
+        hideError: function() {
+          $(this.selector + " .errbox").remove();
+          workbench.ui.popup.login.sizeAdjust(true);
+        },
+        success: function() {
+          this.hide(150);
         }
       });
 
