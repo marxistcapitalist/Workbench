@@ -15,10 +15,10 @@ workbench.auth = {
   status: false, // If the user is currently authenticated
   timeout: false, // If the auth functions are currently locked with timeout time
   timeoutTime: 1000, // The time after a call to one of the auth functions to timeout
-  login: function(username, password, ui) { // TODO: Impleent login/register/auth timeout to prevent request spam
+  login: function(user, pass, ui) { // TODO: Impleent login/register/auth timeout to prevent request spam
     var loginobj = {
-      loginkey: username,
-      password: password
+      loginkey: user,
+      password: pass
     };
     if(this.timeout)
       return;
@@ -27,23 +27,23 @@ workbench.auth = {
     if(workbench.comm.http.ajaxProgress)
       return;
     var showUI = this.login.arguments.length > 2;
-    if(username.length > 32 || password.length > 256) {
+    if(user.length > 32 || pass.length > 256) {
       if(showUI)
         workbench.ui.popup.login.showError("Username or password too long");
       return;
     }
-    if(username.length < 1 || password.length < 1) {
+    if(user.length < 1 || pass.length < 1) {
       if(showUI)
         workbench.ui.popup.login.showError("Please enter a username and password");
       return;
     }
     if(showUI)
       workbench.ui.popup.login.showLoad(150);
-    if(username == "marx" && password == "mearse") { // TODO TESTING CODE, Remove with server implementation
+    if(user == "marx" && pass == "mearse") { // TODO TESTING CODE, Remove with server implementation
       workbench.ui.popup.login.hideLoad();
       docCookies.setItem("wb_user_token", "jsdafoksndfasdlfjasidfoasjdfiojasiojdfiaoisejofaowiejfiosdfjidfopqjwoprpqorq3pirq3rri99i3q9ir90ruipfiafipaasidasdaposidpaosidiii", Infinity);
       docCookies.setItem("wb_user_id", "aaaaaaaaaa", Infinity);
-      docCookies.setItem("wb_user_name", username, Infinity);
+      docCookies.setItem("wb_user_name", user, Infinity);
       workbench.auth.status = true;
       workbench.ui.popup.login.success();
       workbench.bench.load();
@@ -126,24 +126,30 @@ workbench.auth = {
     setTimeout(function() { workbench.auth.timeout = false; }, this.timeoutTime);
     if(workbench.comm.http.ajaxProgress)
       return;
-    var showUI = this.login.arguments.length > 2;
+    var showUI = this.register.arguments.length > 2;
     var errors = [];
-    if(username.length > 32 || username.length < 1) {
+    if(user.length > 32 || user.length < 1) {
       errors.push("Username must be between 1 and 32 characters long");
     }
-    if(password.length > 256 || password.length < 7)
+    if(pass.length > 256 || pass.length < 7)
       errors.push("Password must be between 7 and 256 characters long");
-    if(email.length < 6 || email.length > 254)
+    if(mail.length < 6 || mail.length > 254)
       errors.push("EMail must be between 6 and 254 characters long");
     if(showUI)
       workbench.ui.popup.register.showLoad(150);
     if(errors.length > 0) {
       if(showUI) {
-        var err = "<ul>";
-        for(var i=0;i<errors.length;i++) {
-          err = err + "<li>" + errors[i] + "</li>";
+        var err = "";
+        if(errors.length > 1) {
+          err = 'Multiple Errors<br /><br /><div class="clear"></div><ul>';
+          for(var i=0;i < errors.length;i++) {
+            err = err + "<li>" + errors[i] + "</li>";
+          }
+          err = err + "</ul>";
         }
-        err = err + "</ul>";
+        else
+          err = errors[0];
+        workbench.ui.popup.register.hideLoad();
         workbench.ui.popup.register.showError(err);
       }
       return;

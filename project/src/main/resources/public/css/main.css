@@ -208,9 +208,19 @@ a:active {
 
 .authbox .errbox p {
   float: right;
-  margin: 0 5% 0 0;
+  margin: 12px 5% 12px 0;
   width: 70%;
-  margin: 12px 0;
+}
+
+.authbox .errbox ul {
+  margin: 0;
+  float: left;
+  padding-left: 35px;
+}
+
+.authbox .errbox ul li {
+  margin-right: 10px;
+  font-size: 14px;
 }
 
 .authbox .errbox.error {
