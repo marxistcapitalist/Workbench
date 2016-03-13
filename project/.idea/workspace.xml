@@ -35,15 +35,27 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="WorkbenchAPI.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="WorkbenchAPI.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/online/workbench/WorkbenchAPI.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.60784316">
-              <caret line="90" column="23" selection-start-line="90" selection-start-column="23" selection-end-line="90" selection-end-column="23" />
+            <state vertical-scroll-proportion="0.0">
+              <caret line="163" column="27" selection-start-line="163" selection-start-column="27" selection-end-line="163" selection-end-column="27" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#641#642#0" expanded="true" />
-                <element signature="e#654#655#0" expanded="true" />
+                <element signature="e#1296#1297#0" expanded="true" />
+                <element signature="e#1341#1342#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Protocol.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/online/workbench/api/Protocol.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="-8.888889">
+              <caret line="21" column="49" selection-start-line="21" selection-start-column="49" selection-end-line="21" selection-end-column="49" />
+              <folding>
+                <element signature="imports" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -77,11 +89,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="DatabaseMethods.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="DatabaseMethods.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/online/workbench/base/DatabaseMethods.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="8.888889">
-              <caret line="4" column="22" selection-start-line="4" selection-start-column="22" selection-end-line="4" selection-end-column="22" />
+            <state vertical-scroll-proportion="-1.0769231">
+              <caret line="9" column="65" selection-start-line="9" selection-start-column="65" selection-end-line="9" selection-end-column="65" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -102,7 +114,7 @@
       <file leaf-file-name="WorkbenchDB.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/online/workbench/WorkbenchDB.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="34.444443">
+            <state vertical-scroll-proportion="-9.444445">
               <caret line="17" column="22" selection-start-line="17" selection-start-column="22" selection-end-line="17" selection-end-column="22" />
               <folding>
                 <element signature="imports" expanded="true" />
@@ -207,12 +219,12 @@
         <option value="$PROJECT_DIR$/src/main/java/online/workbench/model/DatabaseConnection.java" />
         <option value="$PROJECT_DIR$/src/main/java/online/workbench/websocket/data/statement/BaseStatement.java" />
         <option value="$PROJECT_DIR$/src/main/java/online/workbench/api/ContextWrapper.java" />
-        <option value="$PROJECT_DIR$/src/main/java/online/workbench/api/Protocol.java" />
         <option value="$PROJECT_DIR$/src/main/java/online/workbench/model/pairs/UsernameId.java" />
         <option value="$PROJECT_DIR$/src/main/java/online/workbench/base/API.java" />
         <option value="$PROJECT_DIR$/src/main/java/online/workbench/api/UserManager.java" />
-        <option value="$PROJECT_DIR$/src/main/java/online/workbench/WorkbenchAPI.java" />
         <option value="$PROJECT_DIR$/src/main/java/online/workbench/WorkbenchDB.java" />
+        <option value="$PROJECT_DIR$/src/main/java/online/workbench/api/Protocol.java" />
+        <option value="$PROJECT_DIR$/src/main/java/online/workbench/WorkbenchAPI.java" />
         <option value="$PROJECT_DIR$/src/main/java/online/workbench/base/DatabaseMethods.java" />
       </list>
     </option>
@@ -1128,16 +1140,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/online/workbench/api/Protocol.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="628" column="1" selection-start-line="628" selection-start-column="1" selection-end-line="628" selection-end-column="1" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/online/workbench/model/DatabaseConnection.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -1145,22 +1147,6 @@
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/online/workbench/model/WorkbenchDatabase.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="15" column="13" selection-start-line="15" selection-start-column="13" selection-end-line="15" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/online/workbench/Workbench.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="9" column="0" selection-start-line="9" selection-start-column="0" selection-end-line="9" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1188,19 +1174,47 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/online/workbench/base/DatabaseMethods.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/online/workbench/Workbench.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="8.888889">
-          <caret line="4" column="22" selection-start-line="4" selection-start-column="22" selection-end-line="4" selection-end-column="22" />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="9" column="0" selection-start-line="9" selection-start-column="0" selection-end-line="9" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/online/workbench/model/WorkbenchDatabase.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="15" column="13" selection-start-line="15" selection-start-column="13" selection-end-line="15" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/online/workbench/api/Protocol.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-8.888889">
+          <caret line="21" column="49" selection-start-line="21" selection-start-column="49" selection-end-line="21" selection-end-column="49" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/online/workbench/WorkbenchAPI.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="163" column="27" selection-start-line="163" selection-start-column="27" selection-end-line="163" selection-end-column="27" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#1296#1297#0" expanded="true" />
+            <element signature="e#1341#1342#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/online/workbench/WorkbenchDB.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="34.444443">
+        <state vertical-scroll-proportion="-9.444445">
           <caret line="17" column="22" selection-start-line="17" selection-start-column="22" selection-end-line="17" selection-end-column="22" />
           <folding>
             <element signature="imports" expanded="true" />
@@ -1232,14 +1246,12 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/online/workbench/WorkbenchAPI.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/online/workbench/base/DatabaseMethods.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.60784316">
-          <caret line="90" column="23" selection-start-line="90" selection-start-column="23" selection-end-line="90" selection-end-column="23" />
+        <state vertical-scroll-proportion="-1.0769231">
+          <caret line="9" column="65" selection-start-line="9" selection-start-column="65" selection-end-line="9" selection-end-column="65" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#641#642#0" expanded="true" />
-            <element signature="e#654#655#0" expanded="true" />
           </folding>
         </state>
       </provider>

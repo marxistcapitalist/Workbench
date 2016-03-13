@@ -7,6 +7,13 @@ import java.util.List;
 public interface DatabaseMethods
 {
 	/**
+     * Determines whether or not a username has already been used
+     * @param username
+     * @return
+     */
+    boolean checkUsernameAvailability(String username);
+
+	/**
      * Determines whether client token is valid
      *
      * @param token client token

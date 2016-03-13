@@ -3,7 +3,7 @@ package online.workbench.api;
 import com.google.gson.annotations.SerializedName;
 import lombok.Data;
 
-import java.util.Date;
+import java.util.ArrayList;
 
 public enum Protocol
 {
@@ -16,7 +16,7 @@ public enum Protocol
 	@SerializedName("http|logout <-")HTTP_CLIENT_LOGOUT(ClientToken.class),
 	@SerializedName("http|logout ->")HTTP_SERVER_LOGOUT(EmptyAgent.class),
 	@SerializedName("http|register <-")HTTP_CLIENT_REGISTER(Register.class),
-	@SerializedName("http|register ->")HTTP_SERVER_REGISTER(ServerLogin.class),
+	@SerializedName("http|register ->")HTTP_SERVER_REGISTER(ServerRegister.class),
 	@SerializedName("http|benchId/adduser <-")HTTP_CLIENT_ADDUSER(UserModObject.class),
 	@SerializedName("http|benchId/adduser ->")HTTP_SERVER_ADDUSER(BooleanResponse.class),
 	@SerializedName("http|benchId/getusers <-")HTTP_CLIENT_GETUSERS(ContainedClientAgent.class),
@@ -80,19 +80,28 @@ public enum Protocol
 	@SerializedName("ws|textselect ->")WEBSOCKET_SERVER_TEXTSELECT(ServerTextSelect.class);
 
 	@Data
-	public class ClientChat
+	public static class ServerRegister
+	{
+		boolean success;
+		String error;
+		String token;
+		ServerAgent agent = new ServerAgent();
+	}
+
+	@Data
+	public static class ClientChat
 	{
 		String type;
 		int bench;
 		String message;
 		String level;
-		ClientAgent agent;
+		ClientAgent agent = new ClientAgent();
 	}
 
 	@Data
-	public class ServerTextSelect extends ServerTextBase
+	public static class ServerTextSelect extends ServerTextBase
 	{
-		Content content;
+		Content content = new Content();
 		@Data
 		class Content
 		{
@@ -102,9 +111,9 @@ public enum Protocol
 	}
 
 	@Data
-	public class ServerTextModify extends ServerTextBase
+	public static class ServerTextModify extends ServerTextBase
 	{
-		Content content;
+		Content content = new Content();
 		@Data
 		class Content
 		{
@@ -115,9 +124,9 @@ public enum Protocol
 	}
 
 	@Data
-	public class ServerTextCursor extends ServerTextBase
+	public static class ServerTextCursor extends ServerTextBase
 	{
-		Content content;
+		Content content = new Content();
 		@Data
 		class Content
 		{
@@ -127,19 +136,19 @@ public enum Protocol
 	}
 
 	@Data
-	public class ServerTextBase
+	public static class ServerTextBase
 	{
 		String type;
 		int node;
 		int bench;
-		WSServerAgent agent;
+		WSServerAgent agent = new WSServerAgent();
 	}
 
 	@Data
-	public class Notify extends EmptyAgent
+	public static class Notify extends EmptyAgent
 	{
 		String type;
-		Data data;
+		Data data = new Data();
 		@lombok.Data
 		class Data
 		{
@@ -151,36 +160,36 @@ public enum Protocol
 	}
 
 	@Data
-	public class ServerWatch extends ServerBase
+	public static class ServerWatch extends ServerBase
 	{
 		String interval;
 	}
 
 	@Data
-	public class ServerChat extends ServerBase
+	public static class ServerChat extends ServerBase
 	{
 		String message;
 		String level;
 	}
 
 	@Data
-	public class ServerBase
+	public static class ServerBase
 	{
 		String type;
 		int bench;
-		WSServerAgent agent;
+		WSServerAgent agent = new WSServerAgent();
 	}
 
 	@Data
-	public class ServerResize extends WS
+	public static class ServerResize extends WS
 	{
-		WH dimensions;
+		WH dimensions = new WH();
 	}
 
 	@Data
-	public class ServerRename extends WS
+	public static class ServerRename extends WS
 	{
-		Content content;
+		Content content = new Content();
 		@Data
 		class Content
 		{
@@ -189,15 +198,15 @@ public enum Protocol
 	}
 
 	@Data
-	public class ServerMove extends WS
+	public static class ServerMove extends WS
 	{
-		XY dimensions;
+		XY dimensions = new XY();
 	}
 
 	@Data
-	public class ServerEdit extends WS
+	public static class ServerEdit extends WS
 	{
-		Content content;
+		Content content = new Content();
 		@Data
 		class Content
 		{
@@ -207,10 +216,10 @@ public enum Protocol
 	}
 
 	@Data
-	public class ServerCreate extends WS
+	public static class ServerCreate extends WS
 	{
-		FullDimensions dimensions;
-		Content content;
+		FullDimensions dimensions = new FullDimensions();
+		Content content = new Content();
 		@Data
 		class Content
 		{
@@ -221,17 +230,17 @@ public enum Protocol
 	}
 
 	@Data
-	public class WS
+	public static class WS
 	{
 		String type;
 		int node;
 		int bench;
-		WSServerAgent agent;
+		WSServerAgent agent = new WSServerAgent();
 
 	}
 
 	@Data
-	public class FullDimensions
+	public static class FullDimensions
 	{
 		int x;
 		int y;
@@ -240,16 +249,16 @@ public enum Protocol
 	}
 
 	@Data
-	public class WSServerAgent
+	public static class WSServerAgent
 	{
 		String name;
 		int id;
 	}
 
 	@Data
-	public class ClientTextSelect extends WC
+	public static class ClientTextSelect extends WC
 	{
-		Content content;
+		Content content = new Content();
 		@Data
 		class Content
 		{
@@ -259,9 +268,9 @@ public enum Protocol
 	}
 
 	@Data
-	public class ClientTextModify extends WC
+	public static class ClientTextModify extends WC
 	{
-		Content content;
+		Content content = new Content();
 		@Data
 		class Content
 		{
@@ -272,9 +281,9 @@ public enum Protocol
 	}
 
 	@Data
-	public class ClientTextCursor extends WC
+	public static class ClientTextCursor extends WC
 	{
-		Content content;
+		Content content = new Content();
 		@Data
 		class Content
 		{
@@ -284,39 +293,39 @@ public enum Protocol
 	}
 
 	@Data
-	public class ClientResize extends WC
+	public static class ClientResize extends WC
 	{
-		WH dimensions;
+		WH dimensions = new WH();
 	}
 
 	@Data
-	public class ClientMove extends WC
+	public static class ClientMove extends WC
 	{
-		XY dimensions;
+		XY dimensions = new XY();
 	}
 
 	@Data
-	public class XY
+	public static class XY
 	{
 		int x;
 		int y;
 	}
 
 	@Data
-	public class WC
+	public static class WC
 	{
 		String type;
 		int node;
 		int bench;
-		ClientAgent agent;
+		ClientAgent agent = new ClientAgent();
 	}
 
 	@Data
-	public class RenameUserNode
+	public static class RenameUserNode
 	{
 		int node;
-		Content content;
-		ClientAgent agent;
+		Content content = new Content();
+		ClientAgent agent = new ClientAgent();
 		@Data
 		class Content
 		{
@@ -325,11 +334,11 @@ public enum Protocol
 	}
 
 	@Data
-	public class EditUserNode
+	public static class EditUserNode
 	{
 		int node;
-		Content content;
-		ClientAgent agent;
+		Content content = new Content();
+		ClientAgent agent = new ClientAgent();
 		@Data
 		class Content
 		{
@@ -339,18 +348,18 @@ public enum Protocol
 	}
 
 	@Data
-	public class DeleteUserNode
+	public static class DeleteUserNode
 	{
 		int node;
-		ClientAgent agent;
+		ClientAgent agent = new ClientAgent();
 	}
 
 	@Data
-	public class CreateUserNode
+	public static class CreateUserNode
 	{
-		WH dimensions;
-		Content content;
-		ClientAgent agent;
+		WH dimensions = new WH();
+		Content content = new Content();
+		ClientAgent agent = new ClientAgent();
 		@Data
 		class Content
 		{
@@ -361,40 +370,40 @@ public enum Protocol
 	}
 
 	@Data
-	public class IgnoreWatchNode
+	public static class IgnoreWatchNode
 	{
 		int node;
-		ClientAgent agent;
+		ClientAgent agent = new ClientAgent();
 	}
 
 	@Data
-	public class BenchNodeSpawn
+	public static class BenchNodeSpawn
 	{
-		XY dimensions;
-		Content content;
+		XY dimensions = new XY();
+		Content content = new Content();
+		ClientAgent agent = new ClientAgent();
 		@Data
 		class Content
 		{
 			String retitle;
 			int node;
 		}
-		ClientAgent agent;
 	}
 
 	@Data
-	public class BenchNodeResize
+	public static class BenchNodeResize
 	{
 		int node;
-		WH dimensions;
-		ClientAgent agent;
+		WH dimensions = new WH();
+		ClientAgent agent = new ClientAgent();
 	}
 
 	@Data
-	public class BenchNodeRename
+	public static class BenchNodeRename
 	{
 		int node;
-		Content content;
-		ClientAgent agent;
+		Content content = new Content();
+		ClientAgent agent = new ClientAgent();
 		@Data
 		class Content
 		{
@@ -403,19 +412,19 @@ public enum Protocol
 	}
 
 	@Data
-	public class BenchNodeMove
+	public static class BenchNodeMove
 	{
 		int node;
-		XY dimensions;
-		ClientAgent agent;
+		XY dimensions = new XY();
+		ClientAgent agent = new ClientAgent();
 	}
 
 	@Data
-	public class BenchNodeEdit
+	public static class BenchNodeEdit
 	{
 		int node;
-		Content content;
-		ClientAgent agent;
+		Content content = new Content();
+		ClientAgent agent = new ClientAgent;
 		@Data
 		class Content
 		{
@@ -425,18 +434,18 @@ public enum Protocol
 	}
 
 	@Data
-	public class BenchNodeDelete
+	public static class BenchNodeDelete
 	{
 		String node;
-		ClientAgent agent;
+		ClientAgent agent = new ClientAgent();
 	}
 
 	@Data
-	public class BenchNodeCreate
+	public static class BenchNodeCreate
 	{
-		FullDimensions dimensions;
-		Content content;
-		ClientAgent agent;
+		FullDimensions dimensions = new FullDimensions();
+		Content content = new Content();
+		ClientAgent agent = new ClientAgent();
 		@Data
 		class Content
 		{
@@ -447,10 +456,10 @@ public enum Protocol
 	}
 
 	@Data
-	public class BenchNodeCopy
+	public static class BenchNodeCopy
 	{
-		Content content;
-		ClientAgent agent;
+		Content content = new Content();
+		ClientAgent agent = new ClientAgent();
 		@Data
 		class Content
 		{
@@ -460,12 +469,13 @@ public enum Protocol
 	}
 
 	@Data
-	public class BenchEdit
+	public static class BenchEdit
 	{
 		int id;
-		WH dimensions;
-		Content content;
-		ClientAgent agent;
+		WH dimensions = new WH();
+		Content content = new Content();
+		ClientAgent agent = new ClientAgent()
+
 		@Data
 		class Content
 		{
@@ -475,43 +485,43 @@ public enum Protocol
 	}
 
 	@Data
-	public class BenchDelete
+	public static class BenchDelete
 	{
 		int id;
-		ClientAgent agent;
+		ClientAgent agent = new ClientAgent();
 	}
 
 	@Data
-	public class IdResponse
+	public static class IdResponse
 	{
 		int id;
 	}
 
 	@Data
-	public class BenchCreate
+	public static class BenchCreate
 	{
 		String title;
-		WH dimensions;
-		ClientAgent agent;
+		WH dimensions = new WH();
+		ClientAgent agent = new ClientAgent();
 	}
 
 	@Data
-	public class WH
+	public static class WH
 	{
 		int w;
 		int h;
 	}
 
 	@Data
-	public class GetUsersResponse
+	public static class GetUsersResponse
 	{
 		String creator;
-		MetaUser[] users;
+		ArrayList<MetaUser> users = new ArrayList<>();
 
 	}
 
 	@Data
-	public class MetaUser
+	public static class MetaUser
 	{
 		int id;
 		String user;
@@ -520,34 +530,34 @@ public enum Protocol
 	}
 
 	@Data
-	public class ContainedClientAgent
+	public static class ContainedClientAgent
 	{
-		ClientAgent agent;
+		ClientAgent agent = new ClientAgent();
 	}
 
 	@Data
-	public class UserModObject
+	public static class UserModObject
 	{
 		int userId;
 		String permission;
-		ClientAgent agent;
+		ClientAgent agent = new ClientAgent();
 	}
 
 	@Data
-	public class UserModNoPermObject
+	public static class UserModNoPermObject
 	{
 		int userId;
-		ClientAgent agent;
+		ClientAgent agent = new ClientAgent();
 	}
 
 	@Data
-	public class BooleanResponse
+	public static class BooleanResponse
 	{
 		boolean result;
 	}
 
 	@Data
-	public class Register
+	public static class Register
 	{
 		String username;
 		String password;
@@ -555,12 +565,12 @@ public enum Protocol
 	}
 
 	@Data
-	public class Empty { }
+	public static class Empty { }
 
 	@Data
-	public class EmptyAgent
+	public static class EmptyAgent
 	{
-		Agent agent;
+		Agent agent = new Agent();
 		@Data
 		class Agent
 		{
@@ -569,55 +579,57 @@ public enum Protocol
 	}
 
 	@Data
-	public class ServerAgent
+	public static class ServerAgent
 	{
 		int id;
 		String user;
 	}
 
 	@Data
-	public class ClientAgent
+	public static class ClientAgent
 	{
 		int id;
 		String token;
 	}
 
 	@Data
-	public class Authenticate
+	public static class Authenticate
 	{
 		String token;
 		int id;
 	}
 
 	@Data
-	public class ClientLogin
+	public static class ClientLogin
 	{
 		String loginkey;
 		String password;
 	}
 
 	@Data
-	public class ServerLogin
+	public static class ServerLogin
 	{
 		String token;
-		ServerAgent agent;
+		ServerAgent agent = new ServerAgent();
 	}
 
 	@Data
-	public class ServerAuthenticate
+	public static class ServerAuthenticate
 	{
 		boolean success;
 		String error;
 		String token;
-		ServerAgent agent;
+		ServerAgent agent = new ServerAgent();
 
 	}
 
 	@Data
-	public class ClientToken
+	public static class ClientToken
 	{
 		String token;
 	}
+
+	public Object get() { return this.cClass; }
 
 	private Object cClass;
 
