@@ -7,4 +7,4 @@ title char(255),
 archived tinyint(1) DEFAULT 0,
 PRIMARY KEY (uNodeId),
 FOREIGN KEY (folder) REFERENCES Folders(folderId)
-) ENGINE=InnoDB DEFAULT CHARACTER SET=latin1
+) ENGINE=InnoDB DEFAULT CHARACTER SET=utf-8
