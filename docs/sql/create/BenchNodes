@@ -9,4 +9,4 @@ width smallint UNSIGNED NOT NULL,
 height smallint UNSIGNED NOT NULL,
 archived tinyint(1) DEFAULT 0,
 PRIMARY KEY (bNodeId)
-) ENGINE=InnoDB DEFAULT CHARACTER SET=latin1
+) ENGINE=InnoDB DEFAULT CHARACTER SET=utf-8
