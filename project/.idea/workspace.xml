@@ -179,7 +179,6 @@
         <option value="$PROJECT_DIR$/src/main/java/online/workbench/data/SQLiteDatabase.java" />
         <option value="$PROJECT_DIR$/src/main/java/online/workbench/data/DatabaseConnector.java" />
         <option value="$PROJECT_DIR$/src/main/java/online/workbench/base/API.java" />
-        <option value="$PROJECT_DIR$/src/main/java/online/workbench/model/DatabaseConnection.java" />
         <option value="$PROJECT_DIR$/src/main/java/online/workbench/data/DataSource.java" />
         <option value="$PROJECT_DIR$/src/main/java/online/workbench/data/statements/BaseStatement.java" />
         <option value="$PROJECT_DIR$/pom.xml" />
@@ -188,6 +187,7 @@
         <option value="$PROJECT_DIR$/src/main/java/online/workbench/WorkbenchWS.java" />
         <option value="$PROJECT_DIR$/src/main/java/online/workbench/jetty/handlers/api/objects/Protocol.java" />
         <option value="$PROJECT_DIR$/src/main/java/online/workbench/api/Protocol.java" />
+        <option value="$PROJECT_DIR$/src/main/java/online/workbench/model/DatabaseConnection.java" />
       </list>
     </option>
   </component>
@@ -980,7 +980,7 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="111" column="57" selection-start-line="8" selection-start-column="4" selection-end-line="111" selection-end-column="57" />
           <folding>
-            <element signature="imports" expanded="true" />
+            <element signature="imports" expanded="false" />
           </folding>
         </state>
       </provider>
