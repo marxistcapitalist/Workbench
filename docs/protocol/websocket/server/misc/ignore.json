@@ -1,7 +1,6 @@
 {
   "type": "ignore",
   "bench": "<benchId>",
-  "interval": "<hour/day/week/month/never",
   "agent": {
     "name": "<username>",
     "id": "<userId>"
