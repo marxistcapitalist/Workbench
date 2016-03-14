@@ -1,1 +1,16 @@
+POST /create HTTP/2
+Host: api.workbench.online
+Content-Type: application/json
 
+{
+  "id": "<bench id>",
+  "agent": {
+    "id": "<userId>",
+    "token": "<clientToken>"
+  }
+}
+
+RESPONSE:
+{
+  "id": "<TEH BENCH IDDDD>"
+}
