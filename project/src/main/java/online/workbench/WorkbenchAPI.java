@@ -12,9 +12,6 @@ import online.workbench.model.struct.User;
 import online.workbench.api.Protocol.*;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.regex.Pattern;
 
 import static spark.Spark.*;
 
@@ -32,7 +29,7 @@ public class WorkbenchAPI
 	public WorkbenchAPI(WorkbenchDB database)
 	{
 		this.userManager = new UserManager(database);
-		this.benchManager = new BenchManager(database)
+		this.benchManager = new BenchManager(database);
 		this.database = database;
 		this.gson = new Gson();
 		initialize();
@@ -295,8 +292,7 @@ public class WorkbenchAPI
 					}
 				}
 			}
-
-
+			return "{}";
 		});
 	}
 

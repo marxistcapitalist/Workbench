@@ -5,7 +5,7 @@ Content-Type: application/json
 {
   "agent": {
     "id": "<client id>",
-    "token": "<optinal client token, leave empty if not supplied>"
+    "token": "<optional client token, leave empty if not supplied>"
   }
 }
 
@@ -26,35 +26,25 @@ RESPONSE WITH TOKEN
       "id": "<benchId>",
       "title": "<bench title>",
       "preview": "<link/path to preview/background image>",
-      "users": [
-        "<user id>",
-        "<user id>",
-        "<user id>"
-      ]
+      "users": “<# of bench members>”
     },
     {
       "id": "<benchId>",
       "title": "<bench title>",
       "preview": "<link/path to preview/background image>",
-      "users": [
-        "<user id>",
-        "<user id>",
-        "<user id>"
-      ]
+      "users": “<# of bench members>”
     }
   ],
   "member": [
     {
       "id": "<bench id>",
       "title": "<bench title>",
-      "role": "<permission level>",
       "owner": "<owner's username>",
       "preview": "<link/path to preview/background image>"
     },
     {
       "id": "<bench id>",
       "title": "<bench title>",
-      "role": "<permission level>",
       "owner": "<owner's username>",
       "preview": "<link/path to preview/background image>"
     }
