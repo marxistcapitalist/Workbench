@@ -45,7 +45,9 @@ workbench.auth = {
       docCookies.setItem("wb_user_id", "aaaaaaaaaa", Infinity);
       docCookies.setItem("wb_user_name", user, Infinity);
       workbench.auth.status = true;
-      workbench.ui.popup.login.success();
+      workbench.ui.popup.login.success(function() {
+        workbench.bench.benchSelect();
+      });
       workbench.bench.load();
       return;
     }
@@ -75,7 +77,7 @@ workbench.auth = {
     docCookies.removeItem("wb_user_token");
     docCookies.removeItem("wb_user_id");
     docCookies.removeItem("wb_user_name");
-    location.reload(true);
+    location.replace("index.html#nointro");
   },
 
   globalLogout: function() { // Logs the user out of their GLOBAL session, by invalidating their token
@@ -179,6 +181,10 @@ workbench.auth = {
 };
 
 workbench.bench = {
+  benchSelect: function() { // Show bench selection screen
+
+  },
+
   load: function() { // TODO !! IMPLEMENTATION !!
     return;
   }
@@ -236,15 +242,25 @@ workbench.core = {
   initialize: function() {
     var wait = 3000;
     /* TODO Hash change detection. This is not a top priority, and currently used script is too old. */
-    workbench.ui.popup.intro.showTime(wait);
-    //setTimeout(workbench.auth.authenticate(true), wait);
-    setTimeout(function() { workbench.ui.popup.login.show(750) }, wait + 750);
+    if(!(location.hash == "#nointro")) {
+      workbench.ui.popup.intro.showTime(wait);
+      //setTimeout(workbench.auth.authenticate(true), wait);
+      setTimeout(function() { workbench.ui.popup.login.show(750) }, wait + 750);
+    } else {
+      workbench.ui.popup.intro.hide();
+      workbench.ui.popup.login.show(750);
+    }
     console.log("Started Successfully!");
   }
 };
 
 workbench.user = {
-
+  getName: function() {
+    if(docCookies.getItem("wb_user_name") != null)
+      return docCookies.getItem("wb_user_name");
+    else
+      return "";
+  }
 };
 
 workbench.ui = {
@@ -295,7 +311,7 @@ workbench.ui = {
       }
     },
 
-    // This is the authbox popup object. All authbox popups extend this object. Calling functions on this object will do nothing.
+    // This is the authbox popup object. All authbox popups extend this object.
     authboxbase: {
       showLoad: function(duration) {
         if(typeof duration != "undefined")
@@ -308,6 +324,17 @@ workbench.ui = {
           $(this.selector + " .formcover").fadeOut(duration);
         else
           $(this.selector + " .formcover").css("display", "none");
+      }
+    },
+
+    // This is the selection menu popup object. All selection menu popups extend this object.
+    selectmenubase: {
+      sizeAdjust: function(nothide) {
+        this.show();
+        var realheight = $(this.selector + " > .inner").height();
+        if(typeof nothide == "undefined")
+          this.hide();
+        $(this.selector).height(realheight + 50);
       }
     },
 
@@ -372,11 +399,14 @@ workbench.ui = {
 
     initialize: function() {
       // Define UI Objects
+
+      // Popup back cover object
       this.cover = $.extend({}, this.popupbase, {
         visibility: true,
         selector: "#backcover"
       });
 
+      // Intro screen object
       this.intro = $.extend({}, this.popupbase, {
         visibility: true,
         selector: "#intro",
@@ -386,6 +416,7 @@ workbench.ui = {
         }
       });
 
+      // AUTH - Login Screen Object
       this.login = $.extend({}, this.popupbase, this.authboxbase, {
         selector: "#login",
         sizeAdjust: function(nothide) {
@@ -418,19 +449,27 @@ workbench.ui = {
           $(this.selector + " .errbox").remove();
           this.sizeAdjust(true);
         },
-        success: function() {
-          this.hide(150);
+        success: function(callback) {
+          this.hide(150, callback);
         }
       });
 
+      // AUTH - Forgot Password Screen Object
       this.forgotpass = $.extend({}, this.login, {
         selector: "#forgotpass"
       });
 
+      // AUTH - Registration Screen Object
       this.register = $.extend({}, this.login, {
         selector: "#register"
       });
 
+      // BENCHSELECT - Bench Selection Menu
+      this.benchselect = $.extend({}, this.popupbase, this.selectmenubase, {
+        selector: "#bench_select"
+      });
+
+      // Attach listeners for UI updates
       this.attachListeners();
     }
   },

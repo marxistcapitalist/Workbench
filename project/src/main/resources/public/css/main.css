@@ -57,10 +57,12 @@ a:active {
 /*
 * UI
 * All the User Interface elements, including popups, menus, and message windows.
-* Does NOT include Workbench functions, including nodes
+* Does NOT include Workbench UI functions, including nodes
 */
 
-/* Back Cover - Appears during any UI functions that disable normal Workbench interaction */
+/*
+* Back Cover - Appears during any UI functions that disable normal Workbench interaction
+*/
 #backcover {
   position: absolute;
   top: 0;
@@ -72,7 +74,9 @@ a:active {
   z-index: 4199;
 }
 
-/* Intro Screen - Runs on initial load, until done + additional time to admire */
+/*
+* Intro Screen - Runs on initial load, until done + additional time to admire
+*/
 #intro {
   position: absolute;
   top: 0;
@@ -109,7 +113,9 @@ a:active {
   color: #666;
 }
 
-/* Authentication Boxes - Slimmer UI popup boxes that appear for login/logout and registration */
+/*
+* Authentication Boxes - Slimmer UI popup boxes that appear for login/logout and registration
+*/
 .authbox {
   position: absolute;
   width: 15%;
@@ -170,8 +176,7 @@ a:active {
   font-size: 14px;
 }
 
-/* Formcover Loading Box */
-
+/* Authentication Box - Loading Cover */
 .authbox .formcover {
   height: 100%;
   width: 100%;
@@ -193,7 +198,7 @@ a:active {
   margin: auto;
 }
 
-/* Error Box */
+/* Authentication Box - Error Box */
 .authbox .errbox {
   border: 1px solid;
   margin: 20px;
@@ -228,7 +233,48 @@ a:active {
   color: #D8000C;
 }
 
-/* Login Box - Obvious */
+/*
+* Select Menu - Elements of select menus common among all select menus
+*/
+.select_menu {
+  margin: auto;
+  background: #222;
+  border: 10px solid #222;
+  border-radius: 6px;
+}
+
+.select_menu th,
+.select_menu td {
+  padding: 6px 20px;
+}
+
+.select_menu th {
+  text-align: left;
+  color: #CCC;
+}
+
+.select_menu td {
+
+}
+
+/*
+* Center Select Menu - For selecting one among many options in a simple, large menu
+*/
+.center_select_menu {
+  position: absolute;
+  width: 50%;
+  min-width: 300px;
+  background: #171717;
+  z-index: 4201;
+  max-height: 95%;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+  border-radius: 6px;
+  display: none;
+}
 
 /*
 * Workbench
@@ -277,4 +323,12 @@ a:active {
 
 .clear {
   clear: both;
+}
+
+.right {
+  float: right;
+}
+
+.left {
+  float: left;
 }
