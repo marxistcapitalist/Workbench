@@ -1,0 +1,22 @@
+POST /useredit HTTP/2
+Host: api.workbench.online
+Content-Type: application/json
+
+{
+  "username": "<>",
+  "email": "<>",
+  "avatar": "<>",
+  "password": "<>",
+  "agent": {
+    "id": "<client id>",
+    "token": "<optional client token, leave empty if not supplied>"
+  }
+}
+
+RESPONSE
+{
+  "username": "<bool>",
+  "email": "<bool>",
+  "avatar": "<bool>",
+  "password": "<bool>"
+}
