@@ -4,6 +4,7 @@ Content-Type: application/json
 
 {
   "id": "<bench id>",
+  "verbose": "<true if to include all node data, false for just details>",
   "agent": {
     "id": "<userId>",
     "token": "<clientToken>"
@@ -11,6 +12,3 @@ Content-Type: application/json
 }
 
 RESPONSE:
-{
-  "id": "<TEH BENCH IDDDD>"
-}
