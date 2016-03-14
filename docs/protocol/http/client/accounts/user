@@ -3,8 +3,10 @@ Host: api.workbench.online
 Content-Type: application/json
 
 {
-  "id": "<client id>",
-  "token": "<optinal client token, leave empty if not supplied>"
+  "agent": {
+    "id": "<client id>",
+    "token": "<optinal client token, leave empty if not supplied>"
+  }
 }
 
 RESPONSE WITHOUT TOKEN
