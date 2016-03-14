@@ -1,0 +1,60 @@
+POST /authenticate HTTP/2
+Host: api.workbench.online
+Content-Type: application/json
+
+{
+  "id": "<client id>",
+  "token": "<optinal client token, leave empty if not supplied>"
+}
+
+RESPONSE WITHOUT TOKEN
+{
+  "id": "<user id>",
+  "user": "<username>"
+}
+
+RESPONSE WITH TOKEN
+{
+  "id": "<user id>",
+  "user": "<username>",
+  "email": "<email>",
+  "owner": [
+    {
+      "id": "<benchId>",
+      "title": "<bench title>",
+      "preview": "<link/path to preview/background image>",
+      "users": [
+        "<user id>",
+        "<user id>",
+        "<user id>"
+      ]
+    },
+    {
+      "id": "<benchId>",
+      "title": "<bench title>",
+      "preview": "<link/path to preview/background image>",
+      "users": [
+        "<user id>",
+        "<user id>",
+        "<user id>"
+      ]
+    }
+  ],
+  "member": [
+    {
+      "id": "<bench id>",
+      "title": "<bench title>",
+      "role": "<permission level>",
+      "owner": "<owner's username>",
+      "preview": "<link/path to preview/background image>"
+    },
+    {
+      "id": "<bench id>",
+      "title": "<bench title>",
+      "role": "<permission level>",
+      "owner": "<owner's username>",
+      "preview": "<link/path to preview/background image>"
+    }
+  ],
+  "avatar": "<link/path to avatar image>"
+}
