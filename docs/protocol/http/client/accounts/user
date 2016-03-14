@@ -12,7 +12,8 @@ Content-Type: application/json
 RESPONSE WITHOUT TOKEN
 {
   "id": "<user id>",
-  "user": "<username>"
+  "user": "<username>",
+  "avatar": "<link/path to avatar image>"
 }
 
 RESPONSE WITH TOKEN
