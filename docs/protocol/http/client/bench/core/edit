@@ -17,3 +17,10 @@ Content-Type: application/json
     "token": "<clientToken>"
   }
 }
+
+RESPONSE
+{
+  "dimensions": "<bool>",
+  "background": "<bool>",
+  "title": "<bool>"
+}
