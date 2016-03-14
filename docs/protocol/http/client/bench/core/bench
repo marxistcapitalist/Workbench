@@ -1,14 +1,174 @@
-POST /create HTTP/2
+POST /bench HTTP/2
 Host: api.workbench.online
 Content-Type: application/json
 
 {
   "id": "<bench id>",
-  "verbose": "<true if to include all node data, false for just details>",
+  "verbosity": "<low, medium, or high>",
   "agent": {
     "id": "<userId>",
     "token": "<clientToken>"
   }
 }
 
-RESPONSE:
+RESPONSE - LOW VERBOSITY
+{
+  "id": "<bench id>",
+  "title": "<bench title>",
+  "nodes": "<count of active nodes on bench>",
+  "owner": {
+    "id": "<bench owner id>",
+    "user": "<bench owner username>"
+  },
+  "preview": "<path to static preview image>",
+  "background": "<path to static background image OR #HEXCOL>",
+  "members": [
+    {
+      "id": "<user id>",
+      "user": "<username>",
+      "role": "<permission level>",
+      "avatar": "<path to static avatar image OR empty (random hex color should display)>"
+    },
+    {
+      "id": "<user id>",
+      "user": "<username>",
+      "role": "<permission level>",
+      "avatar": "<path to static avatar image OR empty (random hex color should display)>"
+    }
+  ],
+  "lastUpdate": "<time of last update, 'YYYY-MM-DD HH:MM:SS' >",
+  "created": "<time of bench creation 'YYYY-MM-DD HH:MM:SS' >"
+}
+
+RESPONSE - MEDIUM VERBOSITY
+{
+  "id": "<bench id>",
+  "title": "<bench title>",
+  "owner": {
+    "id": "<bench owner id>",
+    "user": "<bench owner username>"
+  },
+  "preview": "<path to static preview image>",
+  "background": "<path to static background image OR #HEXCOL>",
+  "members": [
+    {
+      "id": "<user id>",
+      "user": "<username>",
+      "role": "<permission level>",
+      "avatar": "<path to static avatar image OR empty (random hex color should display)>"
+    },
+    {
+      "id": "<user id>",
+      "user": "<username>",
+      "role": "<permission level>",
+      "avatar": "<path to static avatar image OR empty (random hex color should display)>"
+    }
+  ],
+  "lastUpdate": "<time of last update, 'YYYY-MM-DD HH:MM:SS' >",
+  "created": "<time of bench creation 'YYYY-MM-DD HH:MM:SS' >",
+  "nodes": [
+    {
+      "id": "<node id>",
+      "bench": "<parent bench id>",
+      "title": "<node title>",
+      "created": "<date created 'YYYY-MM-DD HH:MM:SS' >",
+      "lastUpdate": "<date last edited 'YYYY-MM-DD HH:MM:SS' >",
+      "creator": {
+        "id": "<user id>",
+        "user": "<username>"
+      },
+      "position": {
+        "x": "<x location>",
+        "y": "<y location>",
+        "w": "<node width>",
+        "h": "<node height>"
+      },
+      "contentType": "<content type specification>"
+    },
+    {
+      "id": "<node id>",
+      "bench": "<parent bench id>",
+      "title": "<node title>",
+      "created": "<date created 'YYYY-MM-DD HH:MM:SS' >",
+      "lastUpdate": "<date last edited 'YYYY-MM-DD HH:MM:SS' >",
+      "creator": {
+        "id": "<user id>",
+        "user": "<username>"
+      },
+      "position": {
+        "x": "<x location>",
+        "y": "<y location>",
+        "w": "<node width>",
+        "h": "<node height>"
+      },
+      "contentType": "<content type specification>"
+    }
+  ]
+}
+
+RESPONSE - HIGH VERBOSITY
+{
+  "id": "<bench id>",
+  "title": "<bench title>",
+  "owner": {
+    "id": "<bench owner id>",
+    "user": "<bench owner username>"
+  },
+  "preview": "<path to static preview image>",
+  "background": "<path to static background image OR #HEXCOL>",
+  "members": [
+    {
+      "id": "<user id>",
+      "user": "<username>",
+      "role": "<permission level>",
+      "avatar": "<path to static avatar image OR empty (random hex color should display)>"
+    },
+    {
+      "id": "<user id>",
+      "user": "<username>",
+      "role": "<permission level>",
+      "avatar": "<path to static avatar image OR empty (random hex color should display)>"
+    }
+  ],
+  "lastUpdate": "<time of last update, 'YYYY-MM-DD HH:MM:SS' >",
+  "created": "<time of bench creation 'YYYY-MM-DD HH:MM:SS' >",
+  "nodes": [
+    {
+      "id": "<node id>",
+      "bench": "<parent bench id>",
+      "title": "<node title>",
+      "created": "<date created 'YYYY-MM-DD HH:MM:SS' >",
+      "lastUpdate": "<date last edited 'YYYY-MM-DD HH:MM:SS' >",
+      "creator": {
+        "id": "<user id>",
+        "user": "<username>"
+      },
+      "position": {
+        "x": "<x location>",
+        "y": "<y location>",
+        "w": "<node width>",
+        "h": "<node height>"
+      },
+      "contentType": "<content type specification>"
+    },
+    {
+      "id": "<node id>",
+      "bench": "<parent bench id>",
+      "title": "<node title>",
+      "created": "<date created 'YYYY-MM-DD HH:MM:SS' >",
+      "lastUpdate": "<date last edited 'YYYY-MM-DD HH:MM:SS' >",
+      "creator": {
+        "id": "<user id>",
+        "user": "<username>"
+      },
+      "position": {
+        "x": "<x location>",
+        "y": "<y location>",
+        "w": "<node width>",
+        "h": "<node height>"
+      },
+      "contentType": "<content type specification>",
+      "content": "<bench node content>"
+    }
+  ]
+}
