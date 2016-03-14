@@ -3,6 +3,7 @@ package online.workbench;
 import com.google.gson.Gson;
 import lombok.Getter;
 import lombok.Setter;
+import online.workbench.api.BenchManager;
 import online.workbench.api.Protocol;
 
 import online.workbench.api.UserManager;
@@ -22,6 +23,7 @@ public class WorkbenchAPI
 	private WorkbenchDB database;
 	private @Setter WorkbenchWS websocket;
 	private @Getter UserManager userManager;
+	private @Getter BenchManager benchManager;
 	private Gson gson;
 
 	private final String API = "api/";
@@ -29,7 +31,8 @@ public class WorkbenchAPI
 
 	public WorkbenchAPI(WorkbenchDB database)
 	{
-		this.userManager = new UserManager();
+		this.userManager = new UserManager(database);
+		this.benchManager = new BenchManager(database)
 		this.database = database;
 		this.gson = new Gson();
 		initialize();
@@ -110,8 +113,7 @@ public class WorkbenchAPI
 
 			if (id != 0)
 			{
-				User user = this.database.loadUser(id);
-				userManager.put(user);
+				User user = this.userManager.load(id);
 
 				ServerLogin response = new ServerLogin();
 				response.getAgent().setId(user.Id);
@@ -192,8 +194,7 @@ public class WorkbenchAPI
 			int id = this.database.createUser(username, email, password);
 			String token = this.database.issueToken(id);
 
-			User user = this.database.loadUser(id);
-			this.userManager.put(user);
+			this.userManager.load(id);
 
 			response.setSuccess(true);
 			response.getAgent().setUser(username);
@@ -232,5 +233,96 @@ public class WorkbenchAPI
 		});
 	}
 
+	public void user()
+	{
+		post(API + "user", (req, res) ->
+		{
+			ClientUserData body = gson.fromJson(req.body(), ClientUserData.class);
+			int id = body.getAgent().getId();
+			User user = userManager.load(id);
+
+			if (user != null)
+			{
+				String avatar = "static/avatar/" + id + ".png";
+				String token = body.getAgent().getToken();
+
+				if (token.isEmpty())
+				{
+					ServerUserDataUnauthenticated response = new ServerUserDataUnauthenticated();
+					response.setAvatar(avatar);
+					response.setUser(user.Username);
+					response.setId(user.Id);
+					return gson.toJson(response);
+				}
+				else
+				{
+					if (this.database.checkToken(id, token))
+					{
+						ServerUserDataAuthenticated response = new ServerUserDataAuthenticated();
+						response.setId(user.Id);
+						response.setUser(user.Username);
+						response.setAvatar(avatar);
+						response.setEmail(user.Email);
+
+						ArrayList<ServerUserDataAuthenticated.MemberNode> member = new ArrayList<>();
+						ArrayList<ServerUserDataAuthenticated.OwnerNode> owner = new ArrayList<>();
+
+						for (BenchData bench : user.Benches)
+						{
+							if (bench.OwnerId == user.Id)
+							{
+								ServerUserDataAuthenticated.OwnerNode o = new ServerUserDataAuthenticated.OwnerNode();
+								o.setId(bench.Id);
+								o.setPreview(bench.PreviewImagePath);
+								o.setTitle(bench.Title);
+								o.setUsers(benchManager.countBenchUsers(bench.Id));
+								owner.add(o);
+							}
+							else
+							{
+								ServerUserDataAuthenticated.MemberNode m = new ServerUserDataAuthenticated.MemberNode();
+								m.setId(bench.Id);
+								m.setTitle(bench.Title);
+								m.setPreview(bench.PreviewImagePath);
+								m.setOwner(bench.Owner);
+								member.add(m);
+							}
+						}
+
+						response.setOwner(owner);
+						response.setMember(member);
+						return gson.toJson(response);
+					}
+				}
+			}
+
+
+		});
+	}
+
+	public void copy()
+	{
+
+	}
+
+	public void create()
+	{
+
+	}
+
+	public void delete()
+	{
+
+	}
+
+	public void edit()
+	{
+
+	}
+
+	public void move()
+	{
+		
+	}
 
 }

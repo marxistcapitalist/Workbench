@@ -1,9 +1,5 @@
 package online.workbench.model.struct;
 
-
-import online.workbench.websocket.data.struct.PermissionLevel;
-import online.workbench.websocket.data.struct.User;
-
 import java.util.Date;
 import java.util.Map;
 

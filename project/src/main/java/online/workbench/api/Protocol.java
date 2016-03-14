@@ -3,6 +3,8 @@ package online.workbench.api;
 import com.google.gson.annotations.SerializedName;
 import lombok.Data;
 
+import java.lang.reflect.Member;
+import java.security.acl.Owner;
 import java.util.ArrayList;
 
 public enum Protocol
@@ -17,6 +19,9 @@ public enum Protocol
 	@SerializedName("http|logout ->")HTTP_SERVER_LOGOUT(EmptyAgent.class),
 	@SerializedName("http|register <-")HTTP_CLIENT_REGISTER(Register.class),
 	@SerializedName("http|register ->")HTTP_SERVER_REGISTER(ServerRegister.class),
+	@SerializedName("http|user <-")HTTP_CLIENT_USER(ClientUserData.class),
+	@SerializedName("http|user ->")HTTP_SERVER_USER_UNAUTHENTICATED(ServerUserDataUnauthenticated.class),
+	@SerializedName("http|user ->")HTTP_CLIENT_USER_AUTHENTICATED(ServerUserDataAuthenticated.class),
 	@SerializedName("http|benchId/adduser <-")HTTP_CLIENT_ADDUSER(UserModObject.class),
 	@SerializedName("http|benchId/adduser ->")HTTP_SERVER_ADDUSER(BooleanResponse.class),
 	@SerializedName("http|benchId/getusers <-")HTTP_CLIENT_GETUSERS(ContainedClientAgent.class),
@@ -77,14 +82,43 @@ public enum Protocol
 	@SerializedName("ws|notify ->")WEBSOCKET_SERVER_NOTIFY(Notify.class),
 	@SerializedName("ws|textcursor ->")WEBSOCKET_SERVER_TEXTCURSOR(ServerTextCursor.class),
 	@SerializedName("ws|textmodify ->")WEBSOCKET_SERVER_TEXTMODIFY(ServerTextModify.class),
-	@SerializedName("ws|textselect ->")WEBSOCKET_SERVER_TEXTSELECT(ServerTextSelect.class),
-	@SerializedName("ws|load <-")WEBSOCKET_CLIENT_LOAD(WebsocketLoad.class);
+	@SerializedName("ws|textselect ->")WEBSOCKET_SERVER_TEXTSELECT(ServerTextSelect.class);
 
 	@Data
-	public static class WebsocketLoad
+	public static class ServerUserDataUnauthenticated
 	{
-		String type;
-		int bench;
+		int id;
+		String user;
+		String avatar;
+	}
+
+	@Data
+	public static class ServerUserDataAuthenticated extends ServerUserDataUnauthenticated
+	{
+		String email;
+		ArrayList<OwnerNode> owner = new ArrayList<>();
+		@Data
+		public static class OwnerNode
+		{
+			int id;
+			String title;
+			String preview;
+			int users;
+		}
+		ArrayList<MemberNode> member = new ArrayList<>();
+		@Data
+		public static class MemberNode
+		{
+			int id;
+			String title;
+			String owner;
+			String preview;
+		}
+	}
+
+	@Data
+	public static class ClientUserData
+	{
 		ClientAgent agent = new ClientAgent();
 	}
 

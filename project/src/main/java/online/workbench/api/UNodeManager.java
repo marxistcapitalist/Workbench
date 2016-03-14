@@ -1,31 +1,33 @@
 package online.workbench.api;
 
 import online.workbench.WorkbenchDB;
+import online.workbench.model.struct.BenchNode;
 import online.workbench.model.struct.User;
+import online.workbench.model.struct.UserNode;
 
 import java.util.ArrayList;
 
-public class UserManager
+public class UNodeManager
 {
-	private ArrayList<User> users;
+	private ArrayList<UserNode> nodes;
 	private WorkbenchDB db;
 
-	public UserManager(WorkbenchDB db)
+	public UNodeManager(WorkbenchDB db)
 	{
-		users = new ArrayList<User>();
+		nodes = new ArrayList<>();
 		this.db = db;
 	}
 
-	private User get(int id)
+	private UserNode get(int id)
 	{
-		return users.stream().filter(u -> u.Id == id).findFirst().get();
+		return nodes.stream().filter(u -> u.Id == id).findFirst().get();
 	}
 
-	public User load(int id)
+	public BenchNode load(inz)
 	{
-		if (!isLoaded(id))
+		if (!isLoadedB(id))
 		{
-			User user = this.db.loadUser(id);
+			BenchNode node = this.db.
 
 			if (user != null)
 			{
@@ -35,11 +37,6 @@ public class UserManager
 			return null;
 		}
 		return this.get(id);
-	}
-
-	public void loadAsync(int id)
-	{
-
 	}
 
 	public User refresh(int id)
@@ -57,22 +54,12 @@ public class UserManager
 		return null;
 	}
 
-	public void refreshAsync(int id)
-	{
-
-	}
-
-	public void saveAsync(int id)
-	{
-
-	}
-
-	public boolean isLoaded(int id)
+	public boolean isLoadedB(int id)
 	{
 		return true;
 	}
 
-	public boolean isLoaded(User user)
+	public boolean isLoadedU(int id)
 	{
 		return true;
 	}
@@ -81,6 +68,7 @@ public class UserManager
 	{
 
 	}
+
 
 
 

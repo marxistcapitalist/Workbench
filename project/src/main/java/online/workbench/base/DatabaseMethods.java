@@ -2,11 +2,11 @@ package online.workbench.base;
 
 import online.workbench.model.struct.*;
 
+import java.sql.Connection;
 import java.util.List;
 
 public interface DatabaseMethods
 {
-
 	/**
      * Empties the token field in the database
      * to enact a global logout of sorts
@@ -42,6 +42,7 @@ public interface DatabaseMethods
 
     /**
      * Checks if user login is valid
+     *
      * @param username supplied username
      * @param passwordHash supplied SHA256 password hash
      * @return user id; '0' if invalid
@@ -51,6 +52,7 @@ public interface DatabaseMethods
     /**
      * Checks if user login is valid
      * This method should always produce a login failure if email is not confirmed
+     *
      * @param email supplied email
      * @param passwordHash supplied SHA256 password hash
      * @return user id; '0' if invalid
@@ -59,6 +61,7 @@ public interface DatabaseMethods
 
     /**
      * Loads a user and all associated data from the database
+     *
      * @param userId - authenticated user's ID
      * @return the user; a user with an ID of '0' if user does not exist
      */
@@ -66,10 +69,19 @@ public interface DatabaseMethods
 
     /**
      * Loads a workbench and all associated data from the database
+     *
      * @param benchId - the ID of the requested bench
      * @return the Bench; a bench with an ID of '0' if bench does not exist
      */
     Bench loadBench(int benchId);
+
+	/**
+	 * Returns the number of members in a bench if that bench exists
+	 *
+	 * @param benchId ID of the bench
+	 * @return Number of users or zero if nonexistant
+	 */
+	int countBenchMembers(int benchId);
 
 	/**
      * Creates a new user in the database
@@ -83,50 +95,84 @@ public interface DatabaseMethods
 
     /**
      * Creates a bench in the database
+     *
      * @param bench - Bench object with an ID of '0'
      * @return Valid Bench object
      */
     Bench createBench(Bench bench);
 
-    /**
-     * Submits content edit of node batch to database
-     * @param nodes - valid Nodes of any type
+	/**
+     * Submits edit of node content to database asynchronously
+     *
+     * @param type Type of node
+     * @param id Node id in the database
+     * @param content New content
      */
-    void submitNodeEdit(List<Node> nodes);
+    void submitNodeContentEditAsync(NodeType type, int id, String content);
 
-    /**
-     * Submits content type edit of node batch to database
-     * @param nodes - valid Nodes of any type
-     */
-    void submitNodeContent(List<Node> nodes);
 
-    /**
-     * Submits location edit of node batch to database
-     * @param nodes - valid BenchNodes
+	/**
+	 * Submits edit of node content type to database asynchronously
+     *
+     * @param type Type of node
+     * @param id Node id in the database
+     * @param cType New content type
      */
-    void submitNodeMove(List<BenchNode> nodes);
+    void submitNodeContentTypeEditAsync(NodeType type, int id, ContentType cType);
 
-    /**
-     * Submits width or height edit of node batch to database
-     * @param nodes - valid BenchNodes
+	/**
+     * Submits new final node location to database asynchronously
+     *
+     * @param type Type of node
+     * @param id Node id in the database
+     * @param x New x location
+     * @param y new y location
      */
-    void submitNodeResize(List<BenchNode> nodes);
+    void submitNodeMoveAsync(NodeType type, int id, int x, int y);
 
-    /**
-     * Submits archive action of node batch to database
-     * @param nodes - valid Nodes to be archived
+	/**
+     * Submits new final width and height of node to database asynchronously
+     *
+     * @param type Type of node
+     * @param id Node id in the database
+     * @param w New width of node
+     * @param h New height of node
      */
-    void submitNodeArchive(List<Node> nodes);
+    void submitNodeResizeAsync(NodeType type, int id, int w, int h);
+
+	/**
+     * Submits archival of node to database asynchronously
+     *
+     * @param type Type of Node
+     * @param id Node id in the database
+     */
+    void submitNodeArchiveAsync(NodeType type, int id);
 
     /**
      * Adds a single UserNode to database
+     *
      * @param node - created UserNode with id of '0'
      * @return valid UserNode
      */
     UserNode submitNodeCreate(UserNode node);
 
     /**
+     * Adds a single UserNode to database asynchronously
+     *
+     * @param node - created UserNode with id of '0'
+     */
+    void submitNodeCreateAsync(UserNode node);
+
+    /**
+     * Adds a single BenchNode to database asynchronously
+     *
+     * @param node - created BenchNode with id of '0'
+     */
+    void submitNodeCreateAsync(BenchNode node);
+
+    /**
      * Adds a single BenchNode to database
+     *
      * @param node - created BenchNode with id of '0'
      * @return valid BenchNode
      */
@@ -134,14 +180,16 @@ public interface DatabaseMethods
 
     /**
      * Transfers a BenchNode to a User's cabinet
+     *
      * @param node - valid BenchNode
      * @param user - the User the node is being copied to
      * @return the created, valid UserNode
      */
-    UserNode submitNodeCopy(BenchNode node, User user);
+    UserNode submitNodeCopyAsync(BenchNode node, User user);
 
     /**
      * Transfers a UserNode to a Bench
+     *
      * @param node - valid UserNode
      * @param bench - the Bench the node is being copied to
      * @return the created, valid BenchNode

@@ -1,8 +1,0 @@
-{
-  "type": "load",
-  "bench": "<benchId>",
-  "agent": {
-    "id": "<userId>",
-    "token": "<clientToken>"
-  }
-}
