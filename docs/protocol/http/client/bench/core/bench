@@ -149,7 +149,8 @@ RESPONSE - HIGH VERBOSITY
         "w": "<node width>",
         "h": "<node height>"
       },
-      "contentType": "<content type specification>"
+      "contentType": "<content type specification>",
+      "content": "<bench node content>"
     },
     {
       "id": "<node id>",
