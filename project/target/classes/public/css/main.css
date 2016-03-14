@@ -1,0 +1,334 @@
+/* Workbench (c) 2016 J Teissler and Ethan Crowder, ALl Rights Reserved */
+
+/*
+* Z-Index Reference
+*
+* NEGATIVE - 0 :: BACKGROUND range, goes behind everything. Used for Workbench "backgrounds" and the like.
+* 1    - 49    :: RESERVED range, for anything that goes in front of background but behind nodes
+* 50   - 4099  :: NODE range, for current node usage (Assuming 4096 possible nodes, plus 3 to make things even)
+* 4100 - 4198  :: TOOL range, for toolbars, bench tool buttons, tool panels, and the like
+* 4199         :: COVER, goes between nodes/tools and popups to prevent interaction
+* 4200 - 4249  :: POPUP range, for popups that do not allow bench interaction during use
+* 4250 -  ??   :: NOT ASSIGNED
+*/
+
+/* Imports */
+@import url(https://fonts.googleapis.com/css?family=Raleway:400,700);
+@import url(https://fonts.googleapis.com/css?family=Open+Sans:400,400italic,700,700italic,300);
+
+/*
+* Global Elements
+* These properties are applied to global elements, such as body, html, etc.
+* ONLY element definitions, and NOT IDs or classes, are defined in this section.
+*/
+html {
+  height: 100%;
+}
+
+body {
+  background: #222;
+  color: #FFF;
+  font-family: 'Open Sans', sans-serif;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+a,
+a:visited {
+  color: #22C0FF;
+  text-decoration: none;
+}
+
+a:hover,
+a:active {
+  text-decoration: underline;
+}
+
+/*
+* Main
+* These classes/IDs constitute the "main" functionality of Workbench. These may
+* eventually need to be separated into their own stylesheets.
+*/
+
+/* There's nothing here! */
+
+/*
+* UI
+* All the User Interface elements, including popups, menus, and message windows.
+* Does NOT include Workbench UI functions, including nodes
+*/
+
+/*
+* Back Cover - Appears during any UI functions that disable normal Workbench interaction
+*/
+#backcover {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4096px;
+  height: 2160px;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.8);
+  z-index: 4199;
+}
+
+/*
+* Intro Screen - Runs on initial load, until done + additional time to admire
+*/
+#intro {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 4200;
+  font-family: 'Raleway', sans-serif;
+}
+
+#intro .centertext {
+  text-align: center;
+}
+
+#intro .centertext .headertext {
+  font-size: 3em;
+  position: absolute;
+  top: 50px;
+  left: 0;
+  right: 0;
+  width: 600px;
+  margin: 0 auto;
+}
+
+#intro .subtext {
+  position: absolute;
+  bottom: 50px;
+  left: 50%;
+  width: 450px;
+  margin-left: -225px;
+}
+
+#intro .centertext .copyright {
+  color: #666;
+}
+
+/*
+* Authentication Boxes - Slimmer UI popup boxes that appear for login/logout and registration
+*/
+.authbox {
+  position: absolute;
+  width: 15%;
+  min-width: 300px;
+  background: #171717;
+  z-index: 4201;
+  max-height: 95%;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+  border-radius: 6px;
+  display: none;
+}
+
+.authbox .inner {
+  box-sizing: border-box;
+}
+
+.authbox h1,
+.authbox h2,
+.authbox h3,
+.authbox h4,
+.authbox h5,
+.authbox h6,
+.authbox p,
+.authbox a,
+.authbox input {
+  margin-left: 20px;
+}
+
+.authbox form {
+  position: relative;
+  display: block;
+}
+
+.authbox input[type="text"],
+.authbox input[type="password"] {
+  background: #000;
+  color: #FFF;
+  padding: 10px;
+  border: 2px solid #333;
+  margin-bottom: 6px;
+  border-radius: 6px;
+}
+
+.authbox input[type="submit"] {
+  background: #000;
+  color: #FFF;
+  padding: 12px;
+  border: 2px solid #333;
+  border-radius: 6px;
+  font-weight: bold;
+}
+
+.authbox a {
+  font-size: 14px;
+}
+
+/* Authentication Box - Loading Cover */
+.authbox .formcover {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 4205;
+  background: rgba(0,0,0,0.8);
+  display: none;
+  text-align: center;
+  color: #666;
+}
+
+.authbox .formcover i {
+  margin: 16px 0;
+}
+
+.authbox .formcover p {
+  margin: auto;
+}
+
+/* Authentication Box - Error Box */
+.authbox .errbox {
+  border: 1px solid;
+  margin: 20px;
+}
+
+.authbox .errbox i {
+  float: left;
+  width: 25%;
+  text-align: center;
+  margin: 18px 0;
+}
+
+.authbox .errbox p {
+  float: right;
+  margin: 12px 5% 12px 0;
+  width: 70%;
+}
+
+.authbox .errbox ul {
+  margin: 0;
+  float: left;
+  padding-left: 35px;
+}
+
+.authbox .errbox ul li {
+  margin-right: 10px;
+  font-size: 14px;
+}
+
+.authbox .errbox.error {
+  background: #FFBABA;
+  color: #D8000C;
+}
+
+/*
+* Select Menu - Elements of select menus common among all select menus
+*/
+.select_menu {
+  margin: auto;
+  background: #222;
+  border: 10px solid #222;
+  border-radius: 6px;
+}
+
+.select_menu th,
+.select_menu td {
+  padding: 6px 20px;
+}
+
+.select_menu th {
+  text-align: left;
+  color: #CCC;
+}
+
+.select_menu td {
+
+}
+
+/*
+* Center Select Menu - For selecting one among many options in a simple, large menu
+*/
+.center_select_menu {
+  position: absolute;
+  width: 50%;
+  min-width: 300px;
+  background: #171717;
+  z-index: 4201;
+  max-height: 95%;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+  border-radius: 6px;
+  display: none;
+}
+
+/*
+* Workbench
+* Contains classes/IDs for the actual Workbench, including nodes
+* Does NOT include toolbars, message windows, and other UI functions
+*/
+
+#workbench {
+  width: 4096px;
+  height: 2160px;
+  background: #222;
+  z-index: -1;
+  overflow: auto;
+}
+
+#workbench .window {
+  width: 300px;
+  height: 200px;
+  background: #666;
+  position: absolute;
+  left: 100px;
+  top: 100px;
+  z-index: 100;
+}
+
+#workbench .window .title {
+  background: #000;
+  color: #FFF;
+  height: 30px;
+  padding-top: 12px;
+}
+
+#workbench .window .title span {
+  margin-left: 5px;
+}
+
+#workbench .content {
+  padding: 0 10px;
+}
+
+/*
+* Miscellaneous
+* Contains universal, yet miscellaneous utility classes
+* E.g. Float clears
+*/
+
+.clear {
+  clear: both;
+}
+
+.right {
+  float: right;
+}
+
+.left {
+  float: left;
+}

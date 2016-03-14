@@ -82,6 +82,26 @@ public class UserManager
 
 	}
 
+	public boolean updatePassword(String password)
+	{
+		return true;
+	}
+
+	public boolean updateUsername(String username)
+	{
+		return true;
+	}
+
+	public boolean updateEmail(String email)
+	{
+		return true;
+	}
+
+	public boolean updateAvatar(String avatar)
+	{
+		return true;
+	}
+
 
 
 }

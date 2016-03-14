@@ -11,6 +11,7 @@ import online.workbench.model.struct.BenchData;
 import online.workbench.model.struct.User;
 import online.workbench.api.Protocol.*;
 
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 
 import static spark.Spark.*;
@@ -82,12 +83,14 @@ public class WorkbenchAPI
 
 	}
 
-	////////////// ENDPOINTS //////////////
+	///////////// GENERAL ////////////////
 
 	private void ping()
 	{
 		post(API + "ping", (req, res) -> "{}");
 	}
+
+	//////////// ACCOUNTS ///////////////
 
 	private void login()
 	{
@@ -295,6 +298,18 @@ public class WorkbenchAPI
 			return "{}";
 		});
 	}
+
+	public void useredit()
+	{
+		post(API + "useredit", (req, res) ->
+		{
+			UserEditRequest body = gson.fromJson(req.body(), UserEditRequest.class);
+			return "";
+
+		});
+	}
+
+	///////////////
 
 	public void copy()
 	{

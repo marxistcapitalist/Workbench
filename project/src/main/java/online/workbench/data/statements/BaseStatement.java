@@ -26,7 +26,7 @@ public abstract class BaseStatement<T> implements Callable<T>
 	{
 		try
 		{
-			_connection = _db.getConnection();
+			_connection = _database.getConnection();
 
 			if (_connection != null)
 			{

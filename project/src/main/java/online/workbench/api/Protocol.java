@@ -22,6 +22,8 @@ public enum Protocol
 	@SerializedName("http|user <-")HTTP_CLIENT_USER(ClientUserData.class),
 	@SerializedName("http|user ->")HTTP_SERVER_USER_UNAUTHENTICATED(ServerUserDataUnauthenticated.class),
 	@SerializedName("http|user ->")HTTP_CLIENT_USER_AUTHENTICATED(ServerUserDataAuthenticated.class),
+	@SerializedName("http|user <-")HTTP_CLIENT_USEREDIT(UserEditRequest.class),
+	@SerializedName("http|user ->")HTTP_SERVER_USEREDIT(UserEditResponse.class),
 	@SerializedName("http|benchId/adduser <-")HTTP_CLIENT_ADDUSER(UserModObject.class),
 	@SerializedName("http|benchId/adduser ->")HTTP_SERVER_ADDUSER(BooleanResponse.class),
 	@SerializedName("http|benchId/getusers <-")HTTP_CLIENT_GETUSERS(ContainedClientAgent.class),
@@ -35,7 +37,11 @@ public enum Protocol
 	@SerializedName("http|delete <-")HTTP_CLIENT_DELETE(BenchDelete.class),
 	@SerializedName("http|delete ->")HTTP_SERVER_DELETE(BooleanResponse.class),
 	@SerializedName("http|edit <-")HTTP_CLIENT_EDIT(BenchEdit.class),
-	@SerializedName("http|edit ->")HTTP_SERVER_EDIT(BooleanResponse.class),
+	@SerializedName("http|edit ->")HTTP_SERVER_EDIT(BenchEditResponse.class),
+	@SerializedName("http|bench <-")HTTP_CLIENT_BENCH(BenchInfoRequest.class),
+	@SerializedName("http|bench ->")HTTP_SERVER_BENCH_LOW(BenchInfoResponseLow.class),
+	@SerializedName("http|bench ->")HTTP_SERVER_BENCH_MEDIUM(BenchInfoResponseMedium.class),
+	@SerializedName("http|bench ->")HTTP_SERVER_BENCH_HIGH(BenchInfoResponseHigh.class),
 	@SerializedName("http|benchId/copy <-")HTTP_CLIENT_BENCHNODE_COPY(BenchNodeCopy.class),
 	@SerializedName("http|benchId/copy ->")HTTP_SERVER_BENCHNODE_COPY(IdResponse.class),
 	@SerializedName("http|benchId/create <-")HTTP_CLIENT_BENCHNODE_CREATE(BenchNodeCreate.class),
@@ -83,6 +89,102 @@ public enum Protocol
 	@SerializedName("ws|textcursor ->")WEBSOCKET_SERVER_TEXTCURSOR(ServerTextCursor.class),
 	@SerializedName("ws|textmodify ->")WEBSOCKET_SERVER_TEXTMODIFY(ServerTextModify.class),
 	@SerializedName("ws|textselect ->")WEBSOCKET_SERVER_TEXTSELECT(ServerTextSelect.class);
+
+	@Data
+	public static class UserEditRequest
+	{
+		String username;
+		String email;
+		String avatar;
+		String password;
+		ClientAgent agent = new ClientAgent();
+	}
+
+	@Data
+	public static class UserEditResponse
+	{
+		boolean username;
+		boolean email;
+		boolean avatar;
+		boolean password;
+	}
+
+	@Data
+	public static class BenchInfoRequest
+	{
+		int id;
+		String verbosity;
+		ClientAgent agent = new ClientAgent();
+	}
+
+	@Data
+	public static class BenchInfoResponseBase
+	{
+		int id;
+		String title;
+		Owner owner = new Owner();
+		@Data
+		class Owner
+		{
+			int id;
+			String user;
+		}
+		String preview;
+		String background;
+		ArrayList<Member> members = new ArrayList<>();
+		@Data
+		public static class Member
+		{
+			int id;
+			String user;
+			String role;
+			String avatar;
+		}
+		String lastUpdate;
+		String created;
+	}
+
+	@Data
+	public static class BenchInfoResponseLow extends BenchInfoResponseBase
+	{
+		int nodes;
+	}
+
+	@Data
+	public static class BenchInfoResponseMedium extends BenchInfoResponseBase
+	{
+		ArrayList<BenchInfoResponseNodeObject> nodes = new ArrayList<>();
+	}
+
+	@Data
+	public static class BenchInfoResponseNodeObject
+	{
+		int id;
+		int bench;
+		String title;
+		String created;
+		String lastUpdate;
+		Creator creator = new Creator();
+		@Data
+		class Creator
+		{
+			int id;
+			String user;
+		}
+		FullDimensions position = new FullDimensions();
+		String contentType;
+	}
+
+	@Data
+	public static class BenchInfoResponseHigh extends BenchInfoResponseBase
+	{
+		ArrayList<BenchInfoResponseNodeObjectVerbose> nodes = new ArrayList<>();
+		@Data
+		public static class BenchInfoResponseNodeObjectVerbose extends BenchInfoResponseNodeObject
+		{
+			String content;
+		}
+	}
 
 	@Data
 	public static class ServerUserDataUnauthenticated
@@ -525,6 +627,14 @@ public enum Protocol
 			String title;
 			String background;
 		}
+	}
+
+	@Data
+	public static class BenchEditResponse
+	{
+		boolean dimensions;
+		boolean background;
+		boolean title;
 	}
 
 	@Data

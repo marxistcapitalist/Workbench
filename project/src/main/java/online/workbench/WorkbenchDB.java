@@ -3,10 +3,32 @@ package online.workbench;
 import online.workbench.base.DatabaseMethods;
 import online.workbench.model.struct.*;
 
-import java.util.List;
-
 public class WorkbenchDB implements DatabaseMethods
 {
+
+	@Override
+	public void updateUserEmailAsync(User user, String email)
+	{
+
+	}
+
+	@Override
+	public void updateUserNameAsync(User user, String name)
+	{
+
+	}
+
+	@Override
+	public void updateUserAvatarAsync(User user, String avatar)
+	{
+
+	}
+
+	@Override
+	public void updateUserPasswordAsync(User user, String password)
+	{
+
+	}
 
 	@Override
 	public void invalidateToken(String token)
@@ -57,27 +79,51 @@ public class WorkbenchDB implements DatabaseMethods
 	}
 
 	@Override
+	public int countBenchMembers(int benchId)
+	{
+		return 0;
+	}
+
+	@Override
 	public int createUser(String username, String email, String password)
 	{
 		return 0;
 	}
 
 	@Override
-	public BenchNode submitNodeCopy(UserNode node, Bench bench)
+	public Bench createBench(Bench bench)
 	{
 		return null;
 	}
 
 	@Override
-	public UserNode submitNodeCopy(BenchNode node, User user)
+	public void submitNodeContentEditAsync(NodeType type, int id, String content)
 	{
-		return null;
+
 	}
 
 	@Override
-	public BenchNode submitNodeCreate(BenchNode node)
+	public void submitNodeContentTypeEditAsync(NodeType type, int id, ContentType cType)
 	{
-		return null;
+
+	}
+
+	@Override
+	public void submitNodeMoveAsync(NodeType type, int id, int x, int y)
+	{
+
+	}
+
+	@Override
+	public void submitNodeResizeAsync(NodeType type, int id, int w, int h)
+	{
+
+	}
+
+	@Override
+	public void submitNodeArchiveAsync(NodeType type, int id)
+	{
+
 	}
 
 	@Override
@@ -87,37 +133,31 @@ public class WorkbenchDB implements DatabaseMethods
 	}
 
 	@Override
-	public void submitNodeArchive(List<Node> nodes)
+	public void submitNodeCreateAsync(UserNode node)
 	{
 
 	}
 
 	@Override
-	public void submitNodeResize(List<BenchNode> nodes)
+	public void submitNodeCreateAsync(BenchNode node)
 	{
 
 	}
 
 	@Override
-	public void submitNodeMove(List<BenchNode> nodes)
+	public BenchNode submitNodeCreate(BenchNode node)
 	{
-
+		return null;
 	}
 
 	@Override
-	public void submitNodeContent(List<Node> nodes)
+	public UserNode submitNodeCopyAsync(BenchNode node, User user)
 	{
-
+		return null;
 	}
 
 	@Override
-	public void submitNodeEdit(List<Node> nodes)
-	{
-
-	}
-
-	@Override
-	public Bench createBench(Bench bench)
+	public BenchNode submitNodeCopy(UserNode node, Bench bench)
 	{
 		return null;
 	}

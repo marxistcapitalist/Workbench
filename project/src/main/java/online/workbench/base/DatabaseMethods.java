@@ -8,6 +8,53 @@ import java.util.List;
 public interface DatabaseMethods
 {
 	/**
+	 * Changes email field in the database for a user
+	 * Does not update information locally
+	 * Does not do any data validation
+	 * <p>
+	 * For now, the emails will auto confirm as emailing
+	 * hasn't been implemented in the software
+	 *
+	 * @param user User whose email is being updated
+	 * @param email The new email
+	 */
+	void updateUserEmailAsync(User user, String email);
+
+	/**
+	 * Changes username field in the database for a user
+	 * Does not do any data validation
+	 * Does not update information locally
+	 *
+	 * @param user User whose username is being changed
+	 * @param name The new username
+	 */
+	void updateUserNameAsync(User user, String name);
+
+	/**
+	 * Updates the user avatar in the database
+	 * Does not update information locally
+	 * <p>
+	 * In the future this will not be needed as the profile images will be served
+	 * statically and will just need to be refreshed client side without
+	 * any database involvement
+	 * <p>
+	 *
+	 * @param user User whose avatar is being updated
+	 * @param avatar For now a hexcode for the avatar color
+	 */
+	void updateUserAvatarAsync(User user, String avatar);
+
+	/**
+	 * Updates the user's password in the database
+	 * Does not update information locally
+	 * DOES HASH INTERNALLY
+	 *
+	 * @param user User whose password is being changed
+	 * @param password The new password
+	 */
+	void updateUserPasswordAsync(User user, String password);
+
+	/**
      * Empties the token field in the database
      * to enact a global logout of sorts
      *
@@ -42,22 +89,24 @@ public interface DatabaseMethods
 
     /**
      * Checks if user login is valid
+	 * DOES HASH INTERNALLY
      *
      * @param username supplied username
-     * @param passwordHash supplied SHA256 password hash
+     * @param password User's password
      * @return user id; '0' if invalid
      */
-    int validateUserName(String username, String passwordHash);
+    int validateUserName(String username, String password);
 
     /**
      * Checks if user login is valid
      * This method should always produce a login failure if email is not confirmed
+	 * DOES HASH INTERNALLY
      *
      * @param email supplied email
-     * @param passwordHash supplied SHA256 password hash
+     * @param password User's password
      * @return user id; '0' if invalid
      */
-    int validateUserEmail(String email, String passwordHash);
+    int validateUserEmail(String email, String password);
 
     /**
      * Loads a user and all associated data from the database
@@ -85,6 +134,7 @@ public interface DatabaseMethods
 
 	/**
      * Creates a new user in the database
+	 * DOES HASH INTERNALLY
      *
      * @param username supplied unique username
      * @param email supplied email

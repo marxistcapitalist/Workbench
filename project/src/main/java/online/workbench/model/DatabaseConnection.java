@@ -1,15 +1,12 @@
 package online.workbench.model;
 
-
-import online.workbench.websocket.util.Logger;
-
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
 public class DatabaseConnection
-{
+{/*
 	public DatabaseConnection(String databaseName)
 	{
 		try
@@ -53,5 +50,5 @@ public class DatabaseConnection
 			Logger.warn("SQLite database did not close correctly");
 			e.printStackTrace();
 		}
-	}
+	}*/
 }
