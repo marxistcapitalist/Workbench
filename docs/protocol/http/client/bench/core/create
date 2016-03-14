@@ -16,5 +16,5 @@ Content-Type: application/json
 
 RESPONSE:
 {
-  "id": "<TEH BENCH IDDDD>"
+  "id": "<bench id>"
 }
