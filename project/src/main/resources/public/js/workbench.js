@@ -398,22 +398,25 @@ workbench.ui = {
         showError: function(message) {
           if($(this.selector + " .errbox").length == 0) {
             $(this.selector + " h1").after('<div class="errbox error"><i class="erricon fa fa-times-circle fa-2x"></i><p>' + message + '</p><div class="clear"></div></div>');
-            $(this.selector + " .errbox").click(function() {
-              workbench.ui.popup.login.hideError();
-            });
           } else {
             if(!($(this.selector + " .errbox").hasClass("error")))
               $(this.selector + " .errbox").attr("class", "errbox error");
             $(this.selector + " .errbox").html('<i class="erricon fa fa-times-circle fa-2x"></i><p>' + message + '</p><div class="clear"></div>');
-            $(this.selector + " .errbox").click(function() {
-              workbench.ui.popup.login.hideError();
-            });
           }
+          $(this.selector + " .errbox").click(function(event) {
+            var cur = $(event.delegateTarget).parent().parent().attr("id");
+            if(cur == "login")
+              workbench.ui.popup.login.hideError();
+            else if(cur == "register")
+              workbench.ui.popup.register.hideError();
+            else
+              return;
+          });
           this.sizeAdjust(true);
         },
         hideError: function() {
           $(this.selector + " .errbox").remove();
-          workbench.ui.popup.login.sizeAdjust(true);
+          this.sizeAdjust(true);
         },
         success: function() {
           this.hide(150);
