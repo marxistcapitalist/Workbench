@@ -36,7 +36,6 @@ RESPONSE - LOW VERBOSITY
       "avatar": "<path to static avatar image OR empty (random hex color should display)>"
     }
   ],
-  "lastUpdate": "<time of last update, 'YYYY-MM-DD HH:MM:SS' >",
   "created": "<time of bench creation 'YYYY-MM-DD HH:MM:SS' >"
 }
 
@@ -64,7 +63,6 @@ RESPONSE - MEDIUM VERBOSITY
       "avatar": "<path to static avatar image OR empty (random hex color should display)>"
     }
   ],
-  "lastUpdate": "<time of last update, 'YYYY-MM-DD HH:MM:SS' >",
   "created": "<time of bench creation 'YYYY-MM-DD HH:MM:SS' >",
   "nodes": [
     {
@@ -130,7 +128,6 @@ RESPONSE - HIGH VERBOSITY
       "avatar": "<path to static avatar image OR empty (random hex color should display)>"
     }
   ],
-  "lastUpdate": "<time of last update, 'YYYY-MM-DD HH:MM:SS' >",
   "created": "<time of bench creation 'YYYY-MM-DD HH:MM:SS' >",
   "nodes": [
     {
