@@ -18,6 +18,11 @@
     <div id="intro">
       <div class="centertext">
         <div class="headertext"><h1>Workbench</h1></div>
+      </div>
+      <div class="buttons">
+
+      </div>
+      <div class="centertext">
         <div class="subtext">
           <p>Pre-Alpha</p>
           <p class="copyright">&copy; 2016 Jeremy Teissler, Ethan Crowder, All Rights Reserved</p>
@@ -29,7 +34,7 @@
     <div id="login" class="authbox"><div class="inner">
       <h1>Login</h1>
       <form id="loginform">
-        <input type="text" name="username" id="login_user" placeholder="Username" /><br />
+        <input type="text" name="username" id="login_user" placeholder="Username/Email" /><br />
         <input type="password" name="password" id="login_pass" placeholder="Password" /><br /><br />
         <input type="submit" value="Login" id="login_submit" /><br /><br />
         <div class="formcover"><i class="fa fa-cog fa-spin fa-5x"></i><p>Loading</p></div>
@@ -42,7 +47,7 @@
     <div id="forgotpass" class="authbox"><div class="inner">
       <h1>Forgot<br /> Password</h1>
       <form id="forgotpassform">
-        <input type="text" name="username" id="forgotpass_user" placeholder="Username" /><br /><br />
+        <input type="text" name="email" id="forgotpass_email" placeholder="Email" /><br /><br />
         <input type="submit" value="Submit" id="forgotpass_submit" /><br /><br />
         <div class="formcover"></div>
       </form>
@@ -56,18 +61,18 @@
         <input type="text" name="username" id="register_user" placeholder="Username" /><br />
         <input type="password" name="password" id="register_pass" placeholder="Password" /><br />
         <input type="password" name="password2" id="register_pass2" placeholder="Password (again)" /><br />
-        <input type="text" name="email" id="register_email" placeholder="EMail" /><br /><br />
+        <input type="text" name="email" id="register_email" placeholder="Email" /><br /><br />
         <input type="submit" value="Submit" id="register_submit" /><br /><br />
         <div class="formcover"><i class="fa fa-cog fa-spin fa-5x"></i><p>Loading</p></div>
       </form>
       <a href="#login" id="register_backlink">&larr; Back to Login</a>
     </div></div>
 
-    <!-- Bench Selection Menu -->
-    <div class="center_select_menu" id="bench_select"><div class="inner">
+    <!-- Bench Selection Menu (Select Menu Version) -->
+    <!--<div class="center_select_menu" id="bench_select"><div class="inner">
       <div class="menu_header">
         <div class="left">
-          <h1>Workbench Select</h1>
+          <h1>Bench Select</h1>
           <p>Select a bench below, or <a href="#">create a new bench</a></p>
         </div>
         <div class="right">
@@ -85,14 +90,64 @@
           <div class="select_menu_item">
             <div>John Cena&apos;s Amazing Bench</div>
             <div>JohnCena69420</div>
-            <div>Member</div>
+            <div>Editor</div>
           </div>
           <div class="select_menu_item">
             <div>Your Awesome Bench</div>
             <div>YourUsername</div>
             <div>Owner</div>
           </div>
+          <div class="select_menu_item">
+            <div>My Astounding Bench</div>
+            <div>MarxistCapitalist</div>
+            <div>Viewer</div>
+          </div>
         </div>
+      </div>
+      <div class="menu_footer">
+      </div>
+    </div></div>-->
+
+    <!-- Bench Selection Menu (Block Verison) --><!-- TODO WARNING: More than ~3 benches will currently break the row formatting. Fix ASAP. -->
+    <div class="block_menu" id="bench_select"><div class="inner">
+      <div class="menu_header">
+        <div class="left">
+          <h1>Bench Select</h1>
+          <p>Select a bench below, or <a href="#">create a new bench</a></p>
+        </div>
+        <div class="right">
+          <div class="profile_info_small"></div>
+        </div>
+        <div class="clear"></div>
+      </div>
+      <div class="menu_content">
+        <div class="item_row">
+          <div class="item left">
+            <div class="image"><div class="color" style="background: LightSkyBlue;"></div><div class="cover"></div></div>
+            <div class="subtext">
+              <div class="left">
+                <p class="description">Amazing Bench!</p>
+              </div>
+              <div class="right">
+                <div class="profile_image"><div class="color" style="background: #420420"></div></div>
+              </div>
+              <div class="clear"></div>
+            </div>
+          </div>
+          <div class="item left">
+            <div class="image"><div class="color" style="background: LightSkyBlue;"></div><div class="cover"></div></div>
+            <div class="subtext">
+              <div class="left">
+                <p class="description">Amazing Bench!</p>
+              </div>
+              <div class="right">
+                <div class="profile_image"><div class="color" style="background: #420420"></div></div>
+              </div>
+              <div class="clear"></div>
+            </div>
+          </div>
+        </div>
+        <div class="clear"></div>
       </div>
       <div class="menu_footer">
       </div>

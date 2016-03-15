@@ -22,6 +22,7 @@ public class WorkbenchWS implements WebsocketMethodsOutgoing
 	private void initialize()
 	{
 		webSocket(api.API + "websocket", WebsocketProtocolHandler.class);
+		init();
 	}
 
 	private void chat()
