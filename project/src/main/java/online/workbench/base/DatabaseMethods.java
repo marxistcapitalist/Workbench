@@ -1,10 +1,7 @@
 package online.workbench.base;
 
-import online.workbench.api.TokenManager;
+import online.workbench.managers.TokenManager;
 import online.workbench.model.struct.*;
-
-import java.sql.Connection;
-import java.util.List;
 
 public interface DatabaseMethods
 {

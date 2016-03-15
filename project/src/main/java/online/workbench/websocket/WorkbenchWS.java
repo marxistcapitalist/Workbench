@@ -1,7 +1,8 @@
-package online.workbench;
+package online.workbench.websocket;
 
 import com.google.gson.Gson;
 import lombok.Getter;
+import online.workbench.WorkbenchAPI;
 import online.workbench.base.Protocol;
 import online.workbench.base.WebsocketMethodsOutgoing;
 import online.workbench.model.struct.*;
@@ -16,7 +17,8 @@ import static spark.Spark.*;
 
 public class WorkbenchWS implements WebsocketMethodsOutgoing
 {
-	private @Getter WorkbenchAPI api;
+	private @Getter
+	WorkbenchAPI api;
 	private @Getter Map<Bench, HashMap<Session, User>> sessions;
 	private Gson gson;
 

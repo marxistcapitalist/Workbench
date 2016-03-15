@@ -1,6 +1,6 @@
-package online.workbench.api;
+package online.workbench.managers;
 
-import online.workbench.WorkbenchDB;
+import online.workbench.data.WorkbenchDB;
 import online.workbench.model.struct.User;
 import online.workbench.security.Encrypt;
 

@@ -1,6 +1,6 @@
-package online.workbench;
+package online.workbench.data;
 
-import online.workbench.api.TokenManager;
+import online.workbench.managers.TokenManager;
 import online.workbench.base.DatabaseMethods;
 import online.workbench.model.struct.*;
 

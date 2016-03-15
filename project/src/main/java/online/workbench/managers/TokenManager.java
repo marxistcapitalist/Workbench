@@ -1,8 +1,6 @@
-package online.workbench.api;
+package online.workbench.managers;
 
-import lombok.Data;
-import online.workbench.WorkbenchDB;
-import online.workbench.model.struct.User;
+import online.workbench.data.WorkbenchDB;
 
 import java.util.HashMap;
 import java.util.Map;

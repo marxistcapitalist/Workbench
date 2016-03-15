@@ -1,8 +1,8 @@
-package online.workbench.api;
+package online.workbench.managers;
 
 import lombok.Setter;
-import online.workbench.WorkbenchDB;
-import online.workbench.WorkbenchWS;
+import online.workbench.data.WorkbenchDB;
+import online.workbench.websocket.WorkbenchWS;
 import online.workbench.model.struct.*;
 
 import java.util.ArrayList;

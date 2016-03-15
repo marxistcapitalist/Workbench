@@ -7,7 +7,7 @@ public class Token
 {
 	private static SecureRandom random = new SecureRandom();
 
-	public static String generate()
+	public static String gen()
 	{
 		String token = new BigInteger(640, random).toString(32);
 

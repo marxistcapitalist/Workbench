@@ -2,10 +2,11 @@ package online.workbench;
 
 import com.google.gson.Gson;
 import lombok.Getter;
-import online.workbench.api.BenchManager;
+import online.workbench.managers.BenchManager;
 
-import online.workbench.api.TokenManager;
-import online.workbench.api.UserManager;
+import online.workbench.managers.TokenManager;
+import online.workbench.managers.UserManager;
+import online.workbench.data.WorkbenchDB;
 import online.workbench.model.struct.*;
 import online.workbench.utils.TimeConverter;
 import static online.workbench.base.Protocol.*;
