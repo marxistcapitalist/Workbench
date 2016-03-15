@@ -1,0 +1,8 @@
+{
+  "type": "usermod",
+  "bench": "<benchId>",
+  "action": "<add, remove, modify>",
+  "user": "<user's username>",
+  "id": "<user's id",
+  "level": "<user perm level, empty if action==modify>"
+}

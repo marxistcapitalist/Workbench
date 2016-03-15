@@ -12,10 +12,12 @@ public class BenchManager
 	private ArrayList<Bench> benches;
 	private WorkbenchDB database;
 	private @Setter WorkbenchWS websocket;
+	private UserManager userManager;
 
-	public BenchManager(WorkbenchDB database)
+	public BenchManager(WorkbenchDB database, UserManager userManager)
 	{
 		this.benches = new ArrayList<>();
+		this.userManager = userManager;
 		this.database = database;
 	}
 
@@ -26,17 +28,54 @@ public class BenchManager
 
 	public void addUser(Bench bench, int userId, PermissionLevel level)
 	{
+		User user = userManager.load(userId);
 
+		if (user != null && !level.equals(PermissionLevel.ADMIN))
+		{
+			user.Benches.add(BenchData.metafy(bench));
+			bench.Users.put(user.Id, level);
+			database.addUserToBench(bench, userId, level);
+			websocket.sendUserAdd(bench, user, level);
+			websocket.sendNotifyBench(bench, user.Username + " has been added", "added as: " + level.toString(), "", 5000);
+		}
 	}
 
 	public void modUser(Bench bench, int userId, PermissionLevel level)
 	{
+		User user = userManager.load(userId);
 
+		if (user != null)
+		{
+			if (bench.Owner.Id != user.Id && bench.Users.containsKey(user.Id))
+			{
+				if (!bench.Users.get(user.Id).equals(level) && level.equals(PermissionLevel.ADMIN))
+				{
+					bench.Users.put(user.Id, level);
+					database.modifyUserInBench(bench, user.Id, level);
+					websocket.sendUserModify(bench, user, level);
+
+					String happened = level.val() < bench.Users.get(user.Id).val() ? "demoted" : "promoted";
+					websocket.sendNotifyBench(bench, user.Username + " has been " + happened, "user is now: " + level.toString(), "", 3000);
+				}
+			}
+		}
 	}
 
 	public void removeUser(Bench bench, int userId)
 	{
+		User user = userManager.load(userId);
 
+		if (user != null)
+		{
+			if (bench.Owner.Id != user.Id && bench.Users.containsKey(user.Id))
+			{
+				bench.Users.remove(user.Id);
+				database.removeUserFromBench(bench, user.Id);
+				websocket.sendUserRemove(bench, user);
+
+				websocket.sendNotifyBench(bench, user.Username + " has been removed", "", "", 3000);
+			}
+		}
 	}
 
 	public Bench createBench(User user, String title, int w, int h)
@@ -239,17 +278,23 @@ public class BenchManager
 		bench.Dimensions.Height = h;
 		bench.Dimensions.Width = w;
 		database.submitBenchResize(bench, w, h);
+
+		websocket.sendNotifyBench(bench, "Dimensions Updated", "(" + w + "x" + h + ")", "/bench/" + bench.Id, 10000);
 	}
 
 	public void updateTitle(Bench bench, String title)
 	{
 		bench.Title = title;
 		database.submitBenchTitleEdit(bench, title);
+
+		websocket.sendNotifyBench(bench, "Title Updated", "(" + title + ")", "/bench/" + bench.Id, 10000);
 	}
 
 	public void updateBackground(Bench bench, String background)
 	{
 		bench.Background = background;
 		database.submitBenchBackgroundEdit(bench, background);
+
+		websocket.sendNotifyBench(bench, "Background Updated", "(" + background + ")", "/bench/" + bench.Id, 10000);
 	}
 }

@@ -86,7 +86,19 @@ public enum Protocol
 	@SerializedName("ws|notify ->")WEBSOCKET_SERVER_NOTIFY(Notify.class),
 	@SerializedName("ws|textcursor ->")WEBSOCKET_SERVER_TEXTCURSOR(ServerTextCursor.class),
 	@SerializedName("ws|textmodify ->")WEBSOCKET_SERVER_TEXTMODIFY(ServerTextModify.class),
-	@SerializedName("ws|textselect ->")WEBSOCKET_SERVER_TEXTSELECT(ServerTextSelect.class);
+	@SerializedName("ws|textselect ->")WEBSOCKET_SERVER_TEXTSELECT(ServerTextSelect.class),
+	@SerializedName("ws|mod ->")WEBSOCKET_SERVER_MOD(UserModifyOutgoing.class);
+
+	@Data
+	public static class UserModifyOutgoing
+	{
+		String type;
+		int bench;
+		String action;
+		String user;
+		int id;
+		String level;
+	}
 
 	@Data
 	public static class UserEditRequest

@@ -1,9 +1,6 @@
 package online.workbench.base;
 
-import online.workbench.model.struct.Bench;
-import online.workbench.model.struct.ContentType;
-import online.workbench.model.struct.Node;
-import online.workbench.model.struct.User;
+import online.workbench.model.struct.*;
 
 public interface WebsocketMethodsOutgoing
 {
@@ -35,4 +32,9 @@ public interface WebsocketMethodsOutgoing
 
 	void sendTextSelect(Bench bench, User user, Node node, int begin, int end);
 
+	void sendUserAdd(Bench bench, User user, PermissionLevel level);
+
+	void sendUserModify(Bench bench, User user, PermissionLevel level);
+
+	void sendUserRemove(Bench bench, User user);
 }

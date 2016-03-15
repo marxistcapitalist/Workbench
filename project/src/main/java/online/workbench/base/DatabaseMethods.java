@@ -329,4 +329,33 @@ public interface DatabaseMethods
 	 * @param h The new bench height
 	 */
 	void submitBenchResize(Bench bench, int w, int h);
+
+	/**
+	 * Adds user to list of bench's members and adds bench to
+	 * User's benches that they are a member of
+	 *
+	 * @param bench The bench the user is being added to
+	 * @param user The user who is being added to the bench
+	 * @param role The starting role at which to add the user
+	 */
+	void addUserToBench(Bench bench, int user, PermissionLevel role);
+
+	/**
+	 * Removes the specified user from the bench's user list and
+	 * removes the bench from the user's list of joined benches
+	 *
+	 * @param bench The bench from which the user is being removed
+	 * @param user The user who is being removed from the bench
+	 */
+	void removeUserFromBench(Bench bench, int user);
+
+	/**
+	 * Modifies a user role in a bench
+	 * Modifies the user role in the bench list of the user object
+	 *
+	 * @param bench The bench whose user is being modified
+	 * @param user The user whose permission level is being modified
+	 * @param role the new permission level
+	 */
+	void modifyUserInBench(Bench bench, int user, PermissionLevel role);
 }

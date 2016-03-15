@@ -30,7 +30,7 @@ public class WorkbenchAPI
 	public WorkbenchAPI(WorkbenchDB database)
 	{
 		this.userManager = new UserManager(database);
-		this.benchManager = new BenchManager(database);
+		this.benchManager = new BenchManager(database, userManager);
 		this.tokenManager = new TokenManager(database);
 		this.database = database;
 		this.gson = new Gson();
