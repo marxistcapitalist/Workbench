@@ -103,9 +103,13 @@ workbench.auth = {
       token: usertoken,
       id: userid
     };
-    workbench.comm.http.post(authobj, "http://api.workbench.online/apiendpointhere", function(resp) {
+    workbench.comm.http.post(authobj, "http://localhost:80/authenticate", function(resp) {
       if(resp.result) {
-        // TODO Functionality
+        if(!(resp.data.hasOwnProperty("id")) || !(resp.data.hasOwnProperty("token"))) {
+          if(autologin)
+            workbench.ui.popup.login.show(150);
+          return;
+        } // TODO Further implementation? ?? ?
       } else {
         if(typeof autoLogin == "boolean" && autoLogin) {
           // TODO Delete current login cookies, logout, show login pane, authentication error
@@ -182,7 +186,42 @@ workbench.auth = {
 
 workbench.bench = {
   benchSelect: function() { // Show bench selection screen
-
+    var userid = docCookies.getItem("wb_user_id");
+    var usertoken = docCookies.getItem("wb_user_token");
+    if(userid == null || usertoken == null) {
+      workbench.auth.authenticate(true);
+      console.log("Failed to retrieve userid and usertoken for loading available benches");
+      return;
+    }
+    var reqobj = {
+      agent: {
+        id: userid,
+        token: usertoken
+      }
+    };
+    workbench.comm.http.post(reqobj, "http://localhost:80/user", function(resp) {
+      if(resp.result) {
+        if(!(resp.data.hasOwnProperty("email"))) {
+          workbench.auth.authenticate(true);
+          return;
+        }
+        if(!(resp.data.hasOwnProperty("owner")) || !(resp.data.hasOwnProperty("member")) || (resp.data.owner.length < 1 && resp.data.member.length < 1)) {
+          workbench.ui.popup.benchselect.showNoBenches();
+          return;
+        }
+        var benches = [];
+        for(var i=0;i<resp.data.owner.length;i++) {
+          benches.push(resp.data.owner[i]);
+        }
+        for(var i=0;i<resp.data.member.length; i++) {
+          benches.push(resp.data.member[i]);
+        }
+        workbench.ui.popup.benchselect.showBenches(benches);
+      } else {
+        workbench.ui.popup.errorbox.showError("Unable to contact server to retrieve available user benches. Check your connection and try reloading the page.", "HTTP Error")
+        return;
+      }
+    });
   },
 
   load: function() { // TODO !! IMPLEMENTATION !!
@@ -477,8 +516,70 @@ workbench.ui = {
 
       // BENCHSELECT - Bench Selection Menu
       this.benchselect = $.extend({}, this.popupbase, this.selectmenubase, {
-        selector: "#bench_select"
+        selector: "#bench_select",
+        showNoBenches: function() {
+          $(this.selector + " .nobenches").css("display", "block");
+        },
+        hideNoBenches: function() {
+          $(this.selector + " .nobenches").css("display", "none");
+        },
+        showBenches: function(benches) {
+          if(benches.length < 1) {
+            console.error("No benches supplied to bench show function");
+            return;
+          }
+          var benchItems;
+          for(var i=0; i<benches.length; i++) { // Generate HTML for each bench
+            if(!benches[i].hasOwnProperty("id"))
+              continue;
+            var itemStr;
+            itemstr = '<div class="item left" id="' + benches[i].id + '">';
+            if(benches[i].hasOwnProperty("preview"))
+              itemstr = itemstr + '<div class="image"><div class="color" style="background: ' + benches[i].preview + ';"></div><div class="cover"></div></div>';
+            else
+              itemstr = itemstr + '<div class="image"><div class="color" style="background: LightSkyBlue;"></div><div class="cover"></div></div>';
+            itemstr = itemstr + '<div class="subtext">';
+            if(benches[i].hasOwnProperty("title") && benches[i].title.length > 0)
+              itemstr = itemstr + '<div class="left"><p class="description">' + benches[i].title + '</p></div>';
+            else
+              itemstr = itemstr + '<div class="left"><p class="description">Untitled Bench</p></div>';
+            itemstr = itemstr + '<div class="right"><div class="profile_image"><div class="color" style="background: #420420"></div></div></div><div class="clear"></div></div>'; // TODO: Get user image? With user?
+          }
+          console.log(benchItems);
+        }
       });
+
+      // ERRORBOX - Error box
+      this.errorbox = $.extend({}, this.popupbase, {
+        selector: ".error_box",
+        sizeAdjust: function(nothide) {
+          this.show();
+          var realheight = $(this.selector + " > .inner").height();
+          if(typeof nothide == "undefined")
+            this.hide();
+          $(this.selector).height(realheight + 50);
+        },
+        showError: function(error, title) {
+          if(typeof error == "undefined")
+            error = "An unspecified error occured.";
+          if(typeof title == "undefined")
+            title = "Error";
+          if($(this.selector).length == 0) {
+            $("body").append('<div class="error_box error"><div class="inner"><div class="left"><div class="icon"><i class="fa fa-times-circle fa-4x"></i></div></div><div class="left"><div class="error_title"><h1>' + title + '</h1></div></div><div class="clear"></div><div class="error_desc"><p>' + error + '</p></div><button type="button" class="closewindow">Close</button><div class="clear"></div></div></div>');
+          } else {
+            if(!($(this.selector).hasClass("error")))
+              $(this.selector).attr("class", "error_box error");
+            $(this.selector).html('<div class="inner"><div class="left"><div class="icon"><i class="fa fa-times-circle fa-4x"></i></div></div><div class="left"><div class="error_title"><h1>' + title + '</h1></div></div><div class="clear"></div><div class="error_desc"><p>' + error + '</p></div><button type="button" class="closewindow">Close</button><div class="clear"></div></div>');
+          }
+          this.sizeAdjust(true);
+          $(this.selector + " button").click(function(event) {
+            workbench.ui.popup.errorbox.closeError();
+          });
+        },
+        closeError: function() {
+          $(this.selector).remove()
+        }
+      })
 
       // Attach listeners for UI updates
       this.attachListeners();
