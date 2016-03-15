@@ -2,18 +2,19 @@ package online.workbench.api;
 
 import online.workbench.WorkbenchDB;
 import online.workbench.model.struct.User;
+import online.workbench.security.Encrypt;
 
 import java.util.ArrayList;
 
 public class UserManager
 {
 	private ArrayList<User> users;
-	private WorkbenchDB db;
+	private WorkbenchDB database;
 
-	public UserManager(WorkbenchDB db)
+	public UserManager(WorkbenchDB database)
 	{
-		users = new ArrayList<User>();
-		this.db = db;
+		users = new ArrayList<>();
+		this.database = database;
 	}
 
 	private User get(int id)
@@ -21,11 +22,23 @@ public class UserManager
 		return users.stream().filter(u -> u.Id == id).findFirst().get();
 	}
 
+	private User get(String loginKey)
+	{
+		if (loginKey.contains("@"))
+		{
+			return users.stream().filter(u -> u.Email.equalsIgnoreCase(loginKey)).findFirst().get();
+		}
+		else
+		{
+			return users.stream().filter(u -> u.Username.equalsIgnoreCase(loginKey)).findFirst().get();
+		}
+	}
+
 	public User load(int id)
 	{
 		if (!isLoaded(id))
 		{
-			User user = this.db.loadUser(id);
+			User user = this.database.loadUser(id);
 
 			if (user != null)
 			{
@@ -37,34 +50,16 @@ public class UserManager
 		return this.get(id);
 	}
 
-	public void loadAsync(int id)
+	public User refresh(User user)
 	{
+		User u = this.database.loadUser(user.Id);
 
-	}
-
-	public User refresh(int id)
-	{
-		if (this.get(id) != null)
+		if (u != null && u.Id != 0)
 		{
-			User user = this.db.loadUser(id);
-
-			if (user != null)
-			{
-				this.users.add(user);
-			}
-			return user;
+			this.users.add(u);
+			return u;
 		}
 		return null;
-	}
-
-	public void refreshAsync(int id)
-	{
-
-	}
-
-	public void saveAsync(int id)
-	{
-
 	}
 
 	public boolean isLoaded(int id)
@@ -82,26 +77,69 @@ public class UserManager
 
 	}
 
-	public boolean updatePassword(String password)
+	public boolean updatePassword(User user, String password)
 	{
 		return true;
 	}
 
-	public boolean updateUsername(String username)
+	public boolean updateUsername(User user, String username)
 	{
 		return true;
 	}
 
-	public boolean updateEmail(String email)
+	public boolean updateEmail(User user, String email)
 	{
 		return true;
 	}
 
-	public boolean updateAvatar(String avatar)
+	public boolean updateAvatar(User user, String avatar)
 	{
 		return true;
 	}
 
+	public int validateUser(String loginKey, String password)
+	{
+		String hash = null;
+		int id = this.database.grabId(loginKey.toLowerCase());
+		if (loginKey.contains("@"))
+		{
+			String username = this.database.grabUser(loginKey.toLowerCase());
+			if (username != null && id != 0)
+			{
+				hash = Encrypt.hash(username, password, loginKey, id);
+			}
+		}
+		else
+		{
+			String email = this.database.grabEmail(loginKey.toLowerCase());
+			if (email != null && id != 0)
+			{
+				hash = Encrypt.hash(loginKey, password, email, id);
+			}
+		}
 
+		if (hash != null)
+		{
+			boolean result = this.database.validateUserLogin(id, hash);
+			if (result)
+			{
+				load(id);
+				return id;
+			}
+			return 0;
+		}
+		return 0;
+	}
 
+	/**
+	 * Does not do any duplicate checking
+	 * (this is currently done in the endpoint def)
+	 */
+	public User createUser(String username, String password, String email)
+	{
+		int id = this.database.createNewUser(username.toLowerCase(), email.toLowerCase());
+		String hash = Encrypt.hash(username.toLowerCase(), password, email.toLowerCase(), id);
+		this.database.setPassword(id, hash);
+		return load(id);
+	}
 }

@@ -11,8 +11,9 @@ public class User
 	public boolean Confirmed;
 	public Map<Integer, UserNode> Nodes;
 	public List<BenchData> Benches;
+	public String Avatar;
 
-	public User(int id, String username, String email, boolean confirmed, Map<Integer, UserNode> nodes, List<BenchData> benches)
+	public User(int id, String username, String email, boolean confirmed, Map<Integer, UserNode> nodes, List<BenchData> benches, String avatar)
 	{
 		Id = id;
 		Username = username;
@@ -20,5 +21,6 @@ public class User
 		Confirmed = confirmed;
 		Nodes = nodes;
 		Benches = benches;
+		Avatar = avatar;
 	}
 }

@@ -1,5 +1,7 @@
 package online.workbench.model.struct;
 
+import com.sun.tools.javac.util.Pair;
+
 import java.util.Date;
 import java.util.Map;
 
@@ -8,13 +10,15 @@ public class Bench
 	public int Id;
 	public User Owner;
 	public String Title;
-	public Date Created;
-	public Map<User, PermissionLevel> Users;
+	public long Created;
+	public Map<Integer, PermissionLevel> Users;
 	public Map<Integer, BenchNode> Nodes;
 	public Dimensions Dimensions;
 	public boolean Archived;
+	public String Background;
+	public String Preview;
 
-	public Bench(int id, User owner, String title, Date created, Map<User, PermissionLevel> users, Map<Integer, BenchNode> nodes, int width, int height, boolean archived)
+	public Bench(int id, User owner, String title, long created, Map<Integer, PermissionLevel> users, Map<Integer, BenchNode> nodes, int width, int height, boolean archived, String background, String preview)
 	{
 		Id = id;
 		Owner = owner;
@@ -24,5 +28,7 @@ public class Bench
 		Nodes = nodes;
 		Dimensions = new Dimensions(width, height);
 		Archived = archived;
+		Background = background;
+		Preview = preview;
 	}
 }

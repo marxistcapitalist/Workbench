@@ -2,26 +2,26 @@ package online.workbench;
 
 import com.google.gson.Gson;
 import lombok.Getter;
-import lombok.Setter;
 import online.workbench.api.BenchManager;
 import online.workbench.api.Protocol;
 
+import online.workbench.api.TokenManager;
 import online.workbench.api.UserManager;
-import online.workbench.model.struct.BenchData;
-import online.workbench.model.struct.User;
+import online.workbench.model.struct.*;
 import online.workbench.api.Protocol.*;
+import online.workbench.utils.TimeConverter;
 
-import java.lang.reflect.Constructor;
 import java.util.ArrayList;
+import java.util.Map;
 
 import static spark.Spark.*;
 
 public class WorkbenchAPI
 {
 	private WorkbenchDB database;
-	private @Setter WorkbenchWS websocket;
 	private @Getter UserManager userManager;
 	private @Getter BenchManager benchManager;
+	private @Getter TokenManager tokenManager;
 	private Gson gson;
 
 	private final String API = "api/";
@@ -31,57 +31,58 @@ public class WorkbenchAPI
 	{
 		this.userManager = new UserManager(database);
 		this.benchManager = new BenchManager(database);
+		this.tokenManager = new TokenManager(database);
 		this.database = database;
 		this.gson = new Gson();
+
 		initialize();
 	}
 
 	private void initialize()
 	{
-		//GENERAL
+		////////// GENERAL ////////////
 		ping();
 
-		//ACCOUNTS
+		////////// ACCOUNTS ////////////
 		login();
 		register();
 		authenticate();
 		logout();
+		useredit();
 
-		//BENCH - CORE
+		///////// BENCH - CORE ////////////
+		bench();
+		create();
+		delete();
+		edit();
 
+		///////// BENCH - USERS ///////////////
+		adduser();
+		moduser();
+		removeuser();
 
-		//BENCH - MISC
+		////////// BENCHNODE - CORE ////////////
+		//copyBenchNode();
+		createBenchNode();
+		deleteBenchNode();
+		editBenchNode();
+		moveBenchNode();
+		renameBenchNode();
+		resizeBenchNode();
+		//spawnBenchNode();
 
+		/////////// BENCHNODE - MISC ///////////
+		//ignoreBenchNode();
+		//watchBenchNode();
 
-		//BENCHNODE - CORE
-
-
-		//BENCHNODE - MISC
-
-
-		//USERNODE
-
+		////////// USERNODE /////////////
+		//createUserNode();
+		//deleteUserNode();
+		//editUserNode();
+		//renameUserNode();
 	}
 
-	public void createUserEndpoint(User user)
-	{
 
-	}
-
-	public void deleteUserEndpoint(int userId)
-	{
-
-	}
-
-	public void createBenchEndpoint(BenchData bench)
-	{
-
-	}
-
-	public void deleteBenchEndpoint(int benchId)
-	{
-
-	}
 
 	///////////// GENERAL ////////////////
 
@@ -101,15 +102,7 @@ public class WorkbenchAPI
 			String login = obj.getLoginkey();
 			String password = obj.getPassword();
 
-			int id;
-			if (login.contains("@"))
-			{
-				id = this.database.validateUserEmail(login, password);
-			}
-			else
-			{
-				id = this.database.validateUserName(login, password);
-			}
+			int id = this.userManager.validateUser(login, password);
 
 			if (id != 0)
 			{
@@ -118,7 +111,7 @@ public class WorkbenchAPI
 				ServerLogin response = new ServerLogin();
 				response.getAgent().setId(user.Id);
 				response.getAgent().setUser(user.Username);
-				String token = database.issueToken(user.Id);
+				String token = tokenManager.issue(id);
 				response.setToken(token);
 
 				return gson.toJson(response);
@@ -132,8 +125,8 @@ public class WorkbenchAPI
 		post(API + "register", (req, res) ->
 		{
 			Register body = gson.fromJson(req.body(), Register.class);
-			String email = body.getEmail();
-			String username = body.getUsername();
+			String email = body.getEmail().toLowerCase();
+			String username = body.getUsername().toLowerCase();
 			String password = body.getPassword();
 
 			ServerRegister response = new ServerRegister();
@@ -191,14 +184,19 @@ public class WorkbenchAPI
 				return gson.toJson(response);
 			}
 
-			int id = this.database.createUser(username, email, password);
-			String token = this.database.issueToken(id);
+			if(!this.database.checkEmailAvailability(email))
+			{
+				response.setSuccess(false);
+				response.setError("Email is not available :(");
+				return gson.toJson(response);
+			}
 
-			this.userManager.load(id);
+			User user = userManager.createUser(username, password, email);
+			String token = tokenManager.issue(user.Id);
 
 			response.setSuccess(true);
-			response.getAgent().setUser(username);
-			response.getAgent().setId(id);
+			response.getAgent().setUser(user.Username);
+			response.getAgent().setId(user.Id);
 			response.setToken(token);
 			return gson.toJson(response);
 		});
@@ -210,25 +208,26 @@ public class WorkbenchAPI
 		{
 			Authenticate body = gson.fromJson(req.body(), Authenticate.class);
 
-			if (!this.database.checkToken(body.getId(), body.getToken()))
+			if (!tokenManager.check(body.getId(), body.getToken()))
 			{
 				return "{}";
 			}
 
 			Authenticate response = new Authenticate();
-			response.setToken(body.getToken());
+			response.setToken(body.getToken().toUpperCase());
 			response.setId(body.getId());
 
 			return gson.toJson(response);
 		});
 	}
 
-	public void logout()
+	public void logout() //paused here
 	{
 		post(API + "logout", (req, res) ->
 		{
 			ClientToken body = gson.fromJson(req.body(), ClientToken.class);
 			this.database.invalidateToken(body.getToken());
+			tokenManager.invalidate(body.getToken());
 			return "{}";
 		});
 	}
@@ -243,7 +242,7 @@ public class WorkbenchAPI
 
 			if (user != null)
 			{
-				String avatar = "static/avatar/" + id + ".png";
+				String avatar = user.Avatar;
 				String token = body.getAgent().getToken();
 
 				if (token.isEmpty())
@@ -256,7 +255,7 @@ public class WorkbenchAPI
 				}
 				else
 				{
-					if (this.database.checkToken(id, token))
+					if (tokenManager.check(id, token))
 					{
 						ServerUserDataAuthenticated response = new ServerUserDataAuthenticated();
 						response.setId(user.Id);
@@ -304,36 +303,636 @@ public class WorkbenchAPI
 		post(API + "useredit", (req, res) ->
 		{
 			UserEditRequest body = gson.fromJson(req.body(), UserEditRequest.class);
-			return "";
 
+			if (tokenManager.check(body.getAgent().getId(), body.getAgent().getToken()))
+			{
+				User user = userManager.load(body.getAgent().getId());
+
+				String username = body.getUsername();
+				String email = body.getEmail();
+				String avatar = body.getAvatar();
+				String password = body.getPassword();
+
+				UserEditResponse response = new UserEditResponse();
+
+				if (!avatar.isEmpty()) response.setAvatar(userManager.updateAvatar(user, avatar));
+
+				if (!email.isEmpty()) response.setEmail(userManager.updateEmail(user, email.toLowerCase()));
+
+				if (!username.isEmpty()) response.setUsername(userManager.updateUsername(user, username.toLowerCase()));
+
+				if (!password.isEmpty()) response.setPassword(userManager.updatePassword(userManager.load(user.Id), password));
+
+				return gson.toJson(response);
+			}
+			return "{}";
 		});
 	}
 
-	///////////////
+	/////////////// BENCH - CORE //////////////////
 
-	public void copy()
+	public void bench()
 	{
+		post(API + "bench", (req, res) ->
+		{
+			BenchInfoRequest request = new BenchInfoRequest();
 
+			if (tokenManager.check(request.getAgent().getId(), request.getAgent().getToken()))
+			{
+				Bench bench = benchManager.load(request.getId());
+
+				if (bench.Users.containsKey(request.getAgent().getId()))
+				{
+					switch (request.getVerbosity().toLowerCase())
+					{
+						case "high":
+						{
+							BenchInfoResponseHigh response = new BenchInfoResponseHigh();
+							response.setId(bench.Id);
+							response.setBackground(bench.Background);
+							response.setCreated(TimeConverter.get(bench.Created));
+							response.getOwner().setId(bench.Owner.Id);
+							response.getOwner().setUser(bench.Owner.Username);
+							response.setPreview(bench.Preview);
+							response.setTitle(bench.Title);
+
+							ArrayList<BenchInfoResponseHigh.BenchInfoResponseNodeObjectVerbose> nodes = new ArrayList<>();
+							for (BenchNode node : bench.Nodes.values())
+							{
+								BenchInfoResponseHigh.BenchInfoResponseNodeObjectVerbose object = new BenchInfoResponseHigh.BenchInfoResponseNodeObjectVerbose();
+								object.setId(node.Id);
+								object.setTitle(node.Title);
+								object.setLastUpdate(TimeConverter.get(node.LastEdit));
+								object.setContent(node.Content);
+								object.setBench(bench.Id);
+								object.setContentType(node.ContentType.toString());
+								object.setCreated(TimeConverter.get(node.Created));
+								object.getPosition().setH(node.Position.Height);
+								object.getPosition().setW(node.Position.Width);
+								object.getPosition().setX(node.Position.X);
+								object.getPosition().setY(node.Position.Y);
+
+								nodes.add(object);
+							}
+							response.setNodes(nodes);
+
+							ArrayList<BenchInfoResponseBase.Member> members = new ArrayList<>();
+							for (Map.Entry<Integer, PermissionLevel> member : bench.Users.entrySet())
+							{
+								User user = userManager.load(member.getKey());
+								BenchInfoResponseBase.Member object = new BenchInfoResponseBase.Member();
+								object.setId(user.Id);
+								object.setUser(user.Username);
+								object.setAvatar(user.Avatar);
+								object.setRole(member.getValue().toString());
+								members.add(object);
+							}
+							response.setMembers(members);
+
+							return gson.toJson(response);
+						}
+						case "medium":
+						{
+							BenchInfoResponseMedium response = new BenchInfoResponseMedium();
+							response.setId(bench.Id);
+							response.setBackground(bench.Background);
+							response.setCreated(TimeConverter.get(bench.Created));
+							response.getOwner().setId(bench.Owner.Id);
+							response.getOwner().setUser(bench.Owner.Username);
+							response.setPreview(bench.Preview);
+							response.setTitle(bench.Title);
+
+							ArrayList<BenchInfoResponseNodeObject> nodes = new ArrayList<>();
+							for (BenchNode node : bench.Nodes.values())
+							{
+								BenchInfoResponseNodeObject object = new BenchInfoResponseNodeObject();
+								object.setId(node.Id);
+								object.setTitle(node.Title);
+								object.setLastUpdate(TimeConverter.get(node.LastEdit));
+								object.setBench(bench.Id);
+								object.setContentType(node.ContentType.toString());
+								object.setCreated(TimeConverter.get(node.Created));
+								object.getPosition().setH(node.Position.Height);
+								object.getPosition().setW(node.Position.Width);
+								object.getPosition().setX(node.Position.X);
+								object.getPosition().setY(node.Position.Y);
+
+								nodes.add(object);
+							}
+							response.setNodes(nodes);
+
+							ArrayList<BenchInfoResponseBase.Member> members = new ArrayList<>();
+							for (Map.Entry<Integer, PermissionLevel> member : bench.Users.entrySet())
+							{
+								User user = userManager.load(member.getKey());
+								BenchInfoResponseBase.Member object = new BenchInfoResponseBase.Member();
+								object.setId(user.Id);
+								object.setUser(user.Username);
+								object.setAvatar(user.Avatar);
+								object.setRole(member.getValue().toString());
+								members.add(object);
+							}
+							response.setMembers(members);
+
+							return gson.toJson(response);
+
+						}
+						case "low":
+						default:
+						{
+							BenchInfoResponseLow response = new BenchInfoResponseLow();
+							response.setId(bench.Id);
+							response.setBackground(bench.Background);
+							response.setCreated(TimeConverter.get(bench.Created));
+							response.getOwner().setId(bench.Owner.Id);
+							response.getOwner().setUser(bench.Owner.Username);
+							response.setPreview(bench.Preview);
+							response.setTitle(bench.Title);
+							response.setNodes(bench.Nodes.size());
+
+							ArrayList<BenchInfoResponseBase.Member> members = new ArrayList<>();
+							for (Map.Entry<Integer, PermissionLevel> member : bench.Users.entrySet())
+							{
+								User user = userManager.load(member.getKey());
+								BenchInfoResponseBase.Member object = new BenchInfoResponseBase.Member();
+								object.setId(user.Id);
+								object.setUser(user.Username);
+								object.setAvatar(user.Avatar);
+								object.setRole(member.getValue().toString());
+								members.add(object);
+							}
+							response.setMembers(members);
+
+							return gson.toJson(response);
+						}
+					}
+				}
+
+			}
+			return "{}";
+		});
 	}
 
 	public void create()
 	{
+		post(API + "create", (req, res) ->
+		{
+			BenchCreate request = gson.fromJson(req.body(), BenchCreate.class);
 
+			if (tokenManager.check(request.getAgent().getId(), request.getAgent().getToken()))
+			{
+				IdResponse response = new IdResponse();
+
+				int id = benchManager.createBench(userManager.load(request.getAgent().getId()),
+						request.getTitle(), request.getDimensions().getW(), request.getDimensions().getH()).Id;
+
+				response.setId(id);
+				return gson.toJson(response);
+			}
+			return "{}";
+		});
 	}
 
 	public void delete()
 	{
+		post(API + "delete", (req, res) ->
+		{
+			BenchDelete request = gson.fromJson(req.body(), BenchDelete.class);
 
+			if (tokenManager.check(request.getAgent().getId(), request.getAgent().getToken()))
+			{
+				Bench bench = benchManager.load(request.getId());
+				BooleanResponse response = new BooleanResponse();
+
+				if (bench != null && bench.Owner.Id == request.getId())
+				{
+					benchManager.deleteBench(bench);
+					response.setResult(true);
+				}
+				else
+				{
+					response.setResult(false);
+				}
+				return gson.toJson(response);
+			}
+			return "{}";
+		});
 	}
 
 	public void edit()
 	{
+		post(API + "edit", (req, res) ->
+		{
+			BenchEdit request = gson.fromJson(req.body(), BenchEdit.class);
+
+			if (tokenManager.check(request.getAgent().getId(), request.getAgent().getToken()))
+			{
+				Bench bench = benchManager.load(request.getId());
+
+				if (bench != null && bench.Id != 0)
+				{
+					BenchEditResponse response = new BenchEditResponse();
+
+					String background = request.getContent().getBackground();
+					String title = request.getContent().getTitle();
+					int height = request.getDimensions().getH();
+					int width = request.getDimensions().getW();
+
+					if (width >= 512 && height >= 500)
+					{
+						benchManager.updateDimensions(bench, width, height);
+						response.setDimensions(true);
+					}
+					else if (width + height >= 0)
+					{
+						response.setDimensions(false);
+					}
+
+					if (!background.isEmpty())
+					{
+						benchManager.updateBackground(bench, background);
+						response.setBackground(true);
+					}
+
+					if (!title.isEmpty() && title.length() <= 256)
+					{
+						benchManager.updateTitle(bench, title);
+						response.setTitle(true);
+					}
+					else if (!title.isEmpty())
+					{
+						response.setTitle(false);
+					}
+				}
+			}
+			return "{}";
+		});
+	}
+
+	public void adduser()
+	{
+		post(API + ":benchId/adduser", (req, res) ->
+		{
+			Bench bench = benchManager.load(Integer.valueOf(req.params(":benchId")));
+			UserModObject request = gson.fromJson(req.body(), UserModObject.class);
+			BooleanResponse response = new BooleanResponse();
+
+			if (tokenManager.check(request.getAgent().getId(), request.getAgent().getToken()))
+			{
+				if (bench.Owner.Id == request.getAgent().getId())
+				{
+					PermissionLevel level = PermissionLevel.get(request.getPermission());
+					if (!level.equals(PermissionLevel.NONE))
+					{
+						benchManager.addUser(bench, request.getUserId(), level);
+
+						response.setResult(true);
+						return gson.toJson(response);
+					}
+				}
+				response.setResult(false);
+				return gson.toJson(response);
+			}
+			return "{}";
+		});
+	}
+
+	public void moduser()
+	{
+		post(API + ":benchId/moduser", (req, res) ->
+		{
+			Bench bench = benchManager.load(Integer.valueOf(req.params(":benchId")));
+			UserModObject request = gson.fromJson(req.body(), UserModObject.class);
+			BooleanResponse response = new BooleanResponse();
+
+			if (tokenManager.check(request.getAgent().getId(), request.getAgent().getToken()))
+			{
+				if (bench.Owner.Id == request.getAgent().getId())
+				{
+					PermissionLevel level = PermissionLevel.get(request.getPermission());
+					if (!level.equals(PermissionLevel.NONE))
+					{
+						benchManager.modUser(bench, request.getUserId(), level);
+
+						response.setResult(true);
+						return gson.toJson(response);
+					}
+				}
+				response.setResult(false);
+				return gson.toJson(response);
+			}
+			return "{}";
+		});
+	}
+
+	public void removeuser()
+	{
+		post(API + ":benchId/removeuser", (req, res) ->
+		{
+			Bench bench = benchManager.load(Integer.valueOf(req.params(":benchId")));
+			UserModNoPermObject request = gson.fromJson(req.body(), UserModNoPermObject.class);
+			BooleanResponse response = new BooleanResponse();
+
+			if (tokenManager.check(request.getAgent().getId(), request.getAgent().getToken()))
+			{
+				if (bench.Owner.Id == request.getAgent().getId())
+				{
+					benchManager.removeUser(bench, request.getUserId());
+
+					response.setResult(true);
+					return gson.toJson(response);
+
+				}
+				response.setResult(false);
+				return gson.toJson(response);
+			}
+			return "{}";
+		});
+	}
+
+	//////////////// BENCHNODE - CORE ////////////////
+
+	public void copyBenchNode()
+	{
 
 	}
 
-	public void move()
+	public void createBenchNode()
+	{
+		post(API + ":benchId/create", (req, res) ->
+		{
+			Bench bench = benchManager.load(Integer.valueOf(req.params(":benchId")));
+			BenchNodeCreate request = gson.fromJson(req.body(), BenchNodeCreate.class);
+			int id = request.getAgent().getId();
+			BooleanResponse response = new BooleanResponse();
+
+			if (tokenManager.check(id, request.getAgent().getToken()))
+			{
+				if (bench.Users.containsKey(id)
+						&& !bench.Users.get(id).equals(PermissionLevel.VIEWER)
+						&& !bench.Users.get(id).equals(PermissionLevel.NONE))
+				{
+					User user = userManager.load(id);
+
+					int x = request.getDimensions().getX();
+					int y = request.getDimensions().getY();
+					int w = request.getDimensions().getW();
+					int h = request.getDimensions().getH();
+					String title = request.getContent().getTitle();
+					ContentType contentType = ContentType.get(request.getContent().getType());
+					String content = request.getContent().getData();
+					long time = System.currentTimeMillis();
+
+					if (w >= 32 && h >= 32
+						&& x >= 0 && y >= 0
+						&& x <= bench.Dimensions.Width && y <= bench.Dimensions.Height
+						&& title.length() <= 256)
+					{
+						BenchNode node = new BenchNode(0, bench, user, x, y, w, h, title, contentType, content, time, time, false);
+						benchManager.createNode(user, bench, node);
+						response.setResult(true);
+						return gson.toJson(response);
+					}
+				}
+				response.setResult(false);
+				return gson.toJson(response);
+			}
+			return "{}";
+		});
+	}
+
+	public void deleteBenchNode()
+	{
+		post(API + ":benchId/delete", (req, res) ->
+		{
+			Bench bench = benchManager.load(Integer.valueOf(req.params(":benchId")));
+			BenchNodeDelete request = gson.fromJson(req.body(), BenchNodeDelete.class);
+			int id = request.getAgent().getId();
+			User user = userManager.load(id);
+			BooleanResponse response = new BooleanResponse();
+
+			if (tokenManager.check(id, request.getAgent().getToken()))
+			{
+				if (bench.Users.containsKey(id)
+						&& !bench.Users.get(id).equals(PermissionLevel.VIEWER)
+						&& !bench.Users.get(id).equals(PermissionLevel.NONE))
+				{
+					BenchNode node = benchManager.getNode(bench, request.getNode());
+
+					if (node != null)
+					{
+						benchManager.deleteNode(user, bench, node);
+						response.setResult(true);
+						return gson.toJson(response);
+					}
+				}
+				response.setResult(false);
+				return gson.toJson(response);
+			}
+			return "{}";
+		});
+	}
+
+	public void editBenchNode()
+	{
+		post(API + ":benchId/edit", (req, res) ->
+		{
+			Bench bench = benchManager.load(Integer.valueOf(req.params(":benchId")));
+			BenchNodeEdit request = gson.fromJson(req.body(), BenchNodeEdit.class);
+			int id = request.getAgent().getId();
+			User user = userManager.load(id);
+			BooleanResponse response = new BooleanResponse();
+
+			if (tokenManager.check(id, request.getAgent().getToken()))
+			{
+				if (bench.Users.containsKey(id)
+						&& !bench.Users.get(id).equals(PermissionLevel.VIEWER)
+						&& !bench.Users.get(id).equals(PermissionLevel.NONE))
+				{
+					BenchNode node = benchManager.getNode(bench, request.getNode());
+
+					if (node != null && node.Id != 0)
+					{
+						String content = request.getContent().getData();
+						ContentType type = ContentType.get(request.getContent().getType());
+
+						if (!type.equals(ContentType.NONE))
+						{
+							benchManager.typeNode(user, bench, node, type);
+						}
+
+						if (!content.isEmpty())
+						{
+							benchManager.editNode(user, bench, node, content);
+						}
+
+						response.setResult(true);
+						return gson.toJson(response);
+					}
+				}
+				response.setResult(false);
+				return gson.toJson(response);
+			}
+			return "{}";
+		});
+	}
+
+	public void moveBenchNode()
+	{
+		post(API + ":benchId/move", (req, res) ->
+		{
+			Bench bench = benchManager.load(Integer.valueOf(req.params(":benchId")));
+			BenchNodeMove request = gson.fromJson(req.body(), BenchNodeMove.class);
+			int id = request.getAgent().getId();
+			User user = userManager.load(id);
+			BooleanResponse response = new BooleanResponse();
+
+			if (tokenManager.check(id, request.getAgent().getToken()))
+			{
+				if (bench.Users.containsKey(id)
+						&& !bench.Users.get(id).equals(PermissionLevel.VIEWER)
+						&& !bench.Users.get(id).equals(PermissionLevel.NONE))
+				{
+					BenchNode node = benchManager.getNode(bench, request.getNode());
+
+					if (node != null && node.Id != 0)
+					{
+						int x = request.getDimensions().getX();
+						int y = request.getDimensions().getY();
+
+						if (x >= 0 && y >= 0 && x <= bench.Dimensions.Width && y <= bench.Dimensions.Height)
+						{
+							node.Position.X = x;
+							node.Position.Y = y;
+							benchManager.moveNode(user, bench, node, x, y);
+
+							response.setResult(true);
+							return gson.toJson(response);
+						}
+					}
+				}
+				response.setResult(false);
+				return gson.toJson(response);
+			}
+			return "{}";
+		});
+	}
+
+	public void renameBenchNode()
+	{
+		post(API + ":benchId/rename", (req, res) ->
+		{
+			Bench bench = benchManager.load(Integer.valueOf(req.params(":benchId")));
+			BenchNodeRename request = gson.fromJson(req.body(), BenchNodeRename.class);
+			int id = request.getAgent().getId();
+			User user = userManager.load(id);
+			BooleanResponse response = new BooleanResponse();
+
+			if (tokenManager.check(id, request.getAgent().getToken()))
+			{
+				if (bench.Users.containsKey(id)
+						&& !bench.Users.get(id).equals(PermissionLevel.VIEWER)
+						&& !bench.Users.get(id).equals(PermissionLevel.NONE))
+				{
+					String title = request.getContent().getTitle();
+
+					if (title.length() <= 256)
+					{
+						BenchNode node = benchManager.getNode(bench, request.getNode());
+
+						if (node != null && bench.Id != 0)
+						{
+							benchManager.renameNode(user, bench, node, title);
+
+							response.setResult(true);
+							return gson.toJson(response);
+						}
+					}
+				}
+				response.setResult(false);
+				return gson.toJson(response);
+			}
+			return "{}";
+		});
+	}
+
+	public void resizeBenchNode()
+	{
+		post(API + ":benchId/resize", (req, res) ->
+		{
+			Bench bench = benchManager.load(Integer.valueOf(req.params(":benchId")));
+			BenchNodeResize request = gson.fromJson(req.body(), BenchNodeResize.class);
+			int id = request.getAgent().getId();
+			User user = userManager.load(id);
+			BooleanResponse response = new BooleanResponse();
+
+			if (tokenManager.check(id, request.getAgent().getToken()))
+			{
+				if (bench.Users.containsKey(id)
+						&& !bench.Users.get(id).equals(PermissionLevel.VIEWER)
+						&& !bench.Users.get(id).equals(PermissionLevel.NONE))
+				{
+					int w = request.getDimensions().getW();
+					int h = request.getDimensions().getH();
+
+					if (w >= 32 && h >= 32
+							&& w <= bench.Dimensions.Width
+							&& h <= bench.Dimensions.Height)
+					{
+						BenchNode node = benchManager.getNode(bench, request.getNode());
+
+						if (node != null && node.Id != 0)
+						{
+							benchManager.resizeNode(user, bench, node, w, h);
+
+							response.setResult(true);
+							return gson.toJson(response);
+						}
+					}
+				}
+				response.setResult(false);
+				return gson.toJson(response);
+			}
+			return "{}";
+		});
+	}
+
+	public void spawnBenchNode()
+	{
+
+	}
+
+	//////////////// BENCHNODE - MISC ////////////////
+
+	public void ignoreBenchNode()
 	{
 		
 	}
 
+	public void watchBenchNode()
+	{
+
+	}
+
+	//////////////// USERNODE ////////////////
+
+	public void createUserNode()
+	{
+
+	}
+
+	public void deleteUserNode()
+	{
+
+	}
+
+	public void editUserNode()
+	{
+
+	}
+
+	public void renameUserNode()
+	{
+
+	}
 }

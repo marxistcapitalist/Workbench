@@ -9,22 +9,11 @@ public abstract class Node
 	public String Title;
 	public ContentType ContentType;
 	public String Content;
-	public Date Created;
-	public Date LastEdit;
+	public long Created;
+	public long LastEdit;
 	public boolean Archived;
 
-	protected Node(int id, String title, ContentType contentType, String content, Date created, Date lastEdit)
-	{
-		Id = id;
-		Title = title;
-		ContentType = contentType;
-		Content = content;
-		Created = created;
-		LastEdit = lastEdit;
-		Archived = false;
-	}
-
-	protected Node(int id, String title, ContentType contentType, String content, Date created, Date lastEdit, boolean archived)
+	protected Node(int id, String title, ContentType contentType, String content, long created, long lastEdit, boolean archived)
 	{
 		Id = id;
 		Title = title;

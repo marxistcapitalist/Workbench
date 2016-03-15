@@ -8,7 +8,7 @@ public class BenchNode extends Node
 	public User Creator;
 	public Position Position;
 
-	public BenchNode(int id, Bench bench, User creator, int x, int y, int width, int height, String title, ContentType contentType, String content, Date created, Date lastEdit, boolean archived)
+	public BenchNode(int id, Bench bench, User creator, int x, int y, int width, int height, String title, ContentType contentType, String content, long created, long lastEdit, boolean archived)
 	{
 		super(id, title, contentType, content, created, lastEdit, archived);
 		Bench = bench;

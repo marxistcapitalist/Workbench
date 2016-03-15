@@ -1,5 +1,6 @@
 package online.workbench.base;
 
+import online.workbench.api.TokenManager;
 import online.workbench.model.struct.*;
 
 import java.sql.Connection;
@@ -14,21 +15,25 @@ public interface DatabaseMethods
 	 * <p>
 	 * For now, the emails will auto confirm as emailing
 	 * hasn't been implemented in the software
+	 * <p>
+	 * Should rehash and store the password
 	 *
-	 * @param user User whose email is being updated
+	 * @param id Whose email is being updated
 	 * @param email The new email
 	 */
-	void updateUserEmailAsync(User user, String email);
+	void updateUserEmailAsync(int id, String email);
 
 	/**
 	 * Changes username field in the database for a user
 	 * Does not do any data validation
 	 * Does not update information locally
+	 * <p>
+	 * Should rehash and store the password
 	 *
-	 * @param user User whose username is being changed
+	 * @param id Whose username is being changed
 	 * @param name The new username
 	 */
-	void updateUserNameAsync(User user, String name);
+	void updateUserNameAsync(int id, String name);
 
 	/**
 	 * Updates the user avatar in the database
@@ -37,22 +42,21 @@ public interface DatabaseMethods
 	 * In the future this will not be needed as the profile images will be served
 	 * statically and will just need to be refreshed client side without
 	 * any database involvement
-	 * <p>
 	 *
-	 * @param user User whose avatar is being updated
+	 * @param id Whose avatar is being updated
 	 * @param avatar For now a hexcode for the avatar color
 	 */
-	void updateUserAvatarAsync(User user, String avatar);
+	void updateUserAvatarAsync(int id, String avatar);
 
 	/**
 	 * Updates the user's password in the database
 	 * Does not update information locally
-	 * DOES HASH INTERNALLY
+	 * DOES NOT HASH INTERNALLY
 	 *
-	 * @param user User whose password is being changed
-	 * @param password The new password
+	 * @param id Whose password is being changed
+	 * @param passwordHash The new password hash
 	 */
-	void updateUserPasswordAsync(User user, String password);
+	void updateUserPasswordAsync(int id, String passwordHash);
 
 	/**
      * Empties the token field in the database
@@ -63,6 +67,15 @@ public interface DatabaseMethods
     void invalidateToken(String token);
 
 	/**
+	 * Empties the token field in the database
+	 * to enact a global logout of sorts
+	 *
+	 * @param id user id for which to invalidate token
+	 */
+	void invalidateToken(int id);
+
+
+	/**
      * Determines whether or not a username has already been used
      *
      * @param username Supplied username to check
@@ -71,13 +84,20 @@ public interface DatabaseMethods
     boolean checkUsernameAvailability(String username);
 
 	/**
-     * Determines whether client token is valid and matches id
-     *
-     * @param id client id
-     * @param token client token
-     * @return true if valid, false otherwise
-     */
-    boolean checkToken(int id, String token);
+	 * Determines whether or not an email has already been used
+	 *
+	 * @param email Supplied email to check
+	 * @return true if the email is available
+	 */
+	boolean checkEmailAvailability(String email);
+
+	/**
+	 * Loads a token object from the database for cache
+	 *
+	 * @param id User id for which token is being retrieved
+	 * @return token object with empty token if not issued
+	 */
+    TokenManager.Token loadToken(int id);
 
 	/**
      * Issues a new token to an account
@@ -85,28 +105,17 @@ public interface DatabaseMethods
      * @param id account id the token is being issued to
      * @return the new token
      */
-    String issueToken(int id);
+    String generateToken(int id);
 
     /**
      * Checks if user login is valid
-	 * DOES HASH INTERNALLY
+	 * DOES NOT HASH INTERNALLY
      *
-     * @param username supplied username
-     * @param password User's password
-     * @return user id; '0' if invalid
+     * @param id User's account ID
+     * @param passwordHash User's password hash
+     * @return true if valid, false otherwise
      */
-    int validateUserName(String username, String password);
-
-    /**
-     * Checks if user login is valid
-     * This method should always produce a login failure if email is not confirmed
-	 * DOES HASH INTERNALLY
-     *
-     * @param email supplied email
-     * @param password User's password
-     * @return user id; '0' if invalid
-     */
-    int validateUserEmail(String email, String password);
+    boolean validateUserLogin(int id, String passwordHash);
 
     /**
      * Loads a user and all associated data from the database
@@ -134,22 +143,40 @@ public interface DatabaseMethods
 
 	/**
      * Creates a new user in the database
-	 * DOES HASH INTERNALLY
+	 * DOES NOT HASH INTERNALLY
      *
      * @param username supplied unique username
      * @param email supplied email
-     * @param password supplied password, unhashed
      * @return the created user's user ID
      */
-    int createUser(String username, String email, String password);
+    int createNewUser(String username, String email);
 
-    /**
-     * Creates a bench in the database
-     *
-     * @param bench - Bench object with an ID of '0'
-     * @return Valid Bench object
-     */
-    Bench createBench(Bench bench);
+	/**
+	 * Sets a user's initial password once a user ID is obtained
+	 * is blocking
+	 *
+	 * @param id User's new ID
+	 * @param passwordHash hashed password
+	 */
+	void setPassword(int id, String passwordHash);
+
+	/**
+	 * Creates a new bench in the database
+	 *
+	 * @param user Creator of the bench
+	 * @param title Title of the bench
+	 * @param w Initial bench width
+	 * @param h Initial bench height
+	 * @return Constructed bench, now with valid ID
+	 */
+    Bench createBench(User user, String title, int w, int h);
+
+	/**
+	 * Archives a bench object by setting archive to true
+	 *
+	 * @param id ID of bench to archive
+	 */
+	void archiveBench(int id);
 
 	/**
      * Submits edit of node content to database asynchronously
@@ -189,6 +216,15 @@ public interface DatabaseMethods
      * @param h New height of node
      */
     void submitNodeResizeAsync(NodeType type, int id, int w, int h);
+
+	/**
+	 * Submits the retitling of a node to the database asynchronously
+	 *
+	 * @param type Type of node
+	 * @param id Node id in the database
+	 * @param title New node title
+	 */
+	void submitNodeRenameAsync(NodeType type, int id, String title);
 
 	/**
      * Submits archival of node to database asynchronously
@@ -245,4 +281,52 @@ public interface DatabaseMethods
      * @return the created, valid BenchNode
      */
     BenchNode submitNodeCopy(UserNode node, Bench bench);
+
+	/**
+	 * Retrieves the email paired with a username in the database
+	 *
+	 * @param username the username to search for
+	 * @return the found email if any, null otherwise
+	 */
+	String grabEmail(String username);
+
+	/**
+	 * Retrieves the username paired with an email in the database
+	 *
+	 * @param email the email to search for
+	 * @return the found username if any, null otherwise
+	 */
+	String grabUser(String email);
+
+	/**
+	 * Retrieves the user id associated with an email OR username in the database
+	 * @param loginKey Email or Username provided
+	 * @return found id, 0 otherwise
+	 */
+	int grabId(String loginKey);
+
+	/**
+	 * Submits the change of background color or image to database
+	 *
+	 * @param bench The bench that is being changed
+	 * @param background The new image path or hex color
+	 */
+	void submitBenchBackgroundEdit(Bench bench, String background);
+
+	/**
+	 * Submits a new bench title to the database
+	 *
+	 * @param bench The bench that is being changed
+	 * @param title The new title of the bench
+	 */
+	void submitBenchTitleEdit(Bench bench, String title);
+
+	/**
+	 * Submits a resize of a workbench to the database
+	 *
+	 * @param bench The bench that is being resized
+	 * @param w The new bench width
+	 * @param h The new bench height
+	 */
+	void submitBenchResize(Bench bench, int w, int h);
 }

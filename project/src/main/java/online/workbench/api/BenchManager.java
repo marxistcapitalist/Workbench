@@ -24,6 +24,33 @@ public class BenchManager
 		return this.benches.stream().filter(b -> b.Nodes.containsKey(id)).findFirst().get().Nodes.get(id);
 	}
 
+	public void addUser(Bench bench, int userId, PermissionLevel level)
+	{
+
+	}
+
+	public void modUser(Bench bench, int userId, PermissionLevel level)
+	{
+
+	}
+
+	public void removeUser(Bench bench, int userId)
+	{
+
+	}
+
+	public Bench createBench(User user, String title, int w, int h)
+	{
+		Bench bench = database.createBench(user, title, w, h);
+		return bench.Id != 0 ? bench : null;
+	}
+
+	public void deleteBench(Bench bench)
+	{
+		benches.remove(bench);
+		database.archiveBench(bench.Id);
+	}
+
 	public BenchNode getNode(Bench bench, int id)
 	{
 		return bench.Nodes.containsKey(id) ? bench.Nodes.get(id) : null;
@@ -34,13 +61,12 @@ public class BenchManager
 		return database.countBenchMembers(id);
 	}
 
-
 	private Bench get(int id)
 	{
 		return this.benches.stream().filter(b -> b.Id == id).findFirst().get();
 	}
 
-	public Bench loadBench(int id)
+	public Bench load(int id)
 	{
 		Bench bench = this.database.loadBench(id);
 
@@ -55,6 +81,7 @@ public class BenchManager
 	{
 		if (this.contentEditAsync(bench, node.Id, content))
 		{
+			bench.Nodes.get(node.Id).Content = content;
 			websocket.sendEdit(bench, user, node, content);
 		}
 	}
@@ -63,6 +90,8 @@ public class BenchManager
 	{
 		if (this.moveAsync(bench, node.Id, x, y))
 		{
+			bench.Nodes.get(node.Id).Position.X = x;
+			bench.Nodes.get(node.Id).Position.Y = y;
 			websocket.sendMove(bench, user, node, x, y);
 		}
 	}
@@ -71,6 +100,8 @@ public class BenchManager
 	{
 		if (this.resizeAsync(bench, node.Id, w, h))
 		{
+			bench.Nodes.get(node.Id).Position.Width = w;
+			bench.Nodes.get(node.Id).Position.Height = h;
 			websocket.sendResize(bench, user, node, w, h);
 		}
 	}
@@ -79,6 +110,7 @@ public class BenchManager
 	{
 		if (this.contentTypeEditAsync(bench, node.Id, type))
 		{
+			bench.Nodes.get(node.Id).ContentType = type;
 			websocket.sendTypeEdit(bench, user, node, type);
 		}
 	}
@@ -87,37 +119,52 @@ public class BenchManager
 	{
 		if (this.archiveAsync(bench, node.Id))
 		{
+			bench.Nodes.remove(node.Id);
 			websocket.sendDelete(bench, user, node);
 		}
 	}
 
+
+	public void renameNode(User user, Bench bench, BenchNode node, String title)
+	{
+		if (this.renameAsync(bench, node, title))
+		{
+			bench.Nodes.get(node.Id).Title = title;
+			websocket.sendRename(bench, user, node, title);
+		}
+	}
+
+
 	public void createNode(User user, Bench bench, BenchNode node)
 	{
-		BenchNode newNode = this.createBlocking(bench, node);
+		BenchNode newNode = database.submitNodeCreate(node);
 
-		if (newNode != null)
+		if (newNode != null && newNode.Id != 0)
 		{
+			bench.Nodes.put(node.Id, node);
 			websocket.sendCreate(bench, user, node);
 		}
 	}
 
-
-	private BenchNode createBlocking(Bench bench, BenchNode node)
+	public void watchNode(User user, Bench bench, BenchNode node)
 	{
-		if (node.Id == 0)
-		{
-			BenchNode newNode = this.database.submitNodeCreate(node);
-			return newNode;
-		}
-		return null;
+
 	}
 
-	private boolean createAsync(Bench bench, BenchNode node)
+	public void ignoreNode(User user, Bench bench, BenchNode node)
 	{
-		if (node.Id == 0)
+
+	}
+
+	private boolean renameAsync(Bench bench, BenchNode node, String title)
+	{
+		if (bench.Nodes.containsKey(node.Id))
 		{
-			this.database.submitNodeCreateAsync(node);
-			return true;
+			if (title.length() <= 256)
+			{
+				this.database.submitNodeRenameAsync(NodeType.BENCH, node.Id, title);
+				return true;
+			}
 		}
 		return false;
 	}
@@ -141,7 +188,6 @@ public class BenchManager
 		{
 			if (content.length() < Integer.MAX_VALUE) //ARBITRARY
 			{
-				bench.Nodes.get(id).Content = content;
 				this.database.submitNodeContentEditAsync(NodeType.BENCH, id, content);
 				return true;
 			}
@@ -155,8 +201,6 @@ public class BenchManager
 		{
 			if (x <= bench.Dimensions.Width && y <= bench.Dimensions.Height)
 			{
-				bench.Nodes.get(id).Position.X = x;
-				bench.Nodes.get(id).Position.Y = y;
 				this.database.submitNodeMoveAsync(NodeType.BENCH, id, x, y);
 				return true;
 			}
@@ -170,8 +214,6 @@ public class BenchManager
 		{
 			if (w < bench.Dimensions.Width && h < bench.Dimensions.Height)
 			{
-				bench.Nodes.get(id).Position.Height = h;
-				bench.Nodes.get(id).Position.Width = w;
 				this.database.submitNodeResizeAsync(NodeType.BENCH, id, w, h);
 				return true;
 			}
@@ -192,5 +234,22 @@ public class BenchManager
 		return false;
 	}
 
+	public void updateDimensions(Bench bench, int w, int h)
+	{
+		bench.Dimensions.Height = h;
+		bench.Dimensions.Width = w;
+		database.submitBenchResize(bench, w, h);
+	}
 
+	public void updateTitle(Bench bench, String title)
+	{
+		bench.Title = title;
+		database.submitBenchTitleEdit(bench, title);
+	}
+
+	public void updateBackground(Bench bench, String background)
+	{
+		bench.Background = background;
+		database.submitBenchBackgroundEdit(bench, background);
+	}
 }

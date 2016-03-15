@@ -26,8 +26,6 @@ public enum Protocol
 	@SerializedName("http|user ->")HTTP_SERVER_USEREDIT(UserEditResponse.class),
 	@SerializedName("http|benchId/adduser <-")HTTP_CLIENT_ADDUSER(UserModObject.class),
 	@SerializedName("http|benchId/adduser ->")HTTP_SERVER_ADDUSER(BooleanResponse.class),
-	@SerializedName("http|benchId/getusers <-")HTTP_CLIENT_GETUSERS(ContainedClientAgent.class),
-	@SerializedName("http|benchId/getusers ->")HTTP_SERVER_GETUSERS(GetUsersResponse.class),
 	@SerializedName("http|benchId/moduser <-")HTTP_CLIENT_MODUSER(UserModObject.class),
 	@SerializedName("http|benchId/moduser ->")HTTP_SERVER_MODUSER(BooleanResponse.class),
 	@SerializedName("http|benchId/removeuser <-")HTTP_CLIENT_REMOVEUSER(UserModNoPermObject.class),
@@ -45,7 +43,7 @@ public enum Protocol
 	@SerializedName("http|benchId/copy <-")HTTP_CLIENT_BENCHNODE_COPY(BenchNodeCopy.class),
 	@SerializedName("http|benchId/copy ->")HTTP_SERVER_BENCHNODE_COPY(IdResponse.class),
 	@SerializedName("http|benchId/create <-")HTTP_CLIENT_BENCHNODE_CREATE(BenchNodeCreate.class),
-	@SerializedName("http|benchId/create ->")HTTP_SERVER_BENCHNODE_CREATE(IdResponse.class),
+	@SerializedName("http|benchId/create ->")HTTP_SERVER_BENCHNODE_CREATE(BooleanResponse.class),
 	@SerializedName("http|benchId/delete <-")HTTP_CLIENT_BENCHNODE_DELETE(BenchNodeDelete.class),
 	@SerializedName("http|benchId/delete ->")HTTP_SERVER_BENCHNODE_DELETE(BooleanResponse.class),
 	@SerializedName("http|benchId/edit <-")HTTP_CLIENT_BENCHNODE_EDIT(BenchNodeEdit.class),
@@ -124,7 +122,7 @@ public enum Protocol
 		String title;
 		Owner owner = new Owner();
 		@Data
-		class Owner
+		public class Owner
 		{
 			int id;
 			String user;
@@ -140,9 +138,9 @@ public enum Protocol
 			String role;
 			String avatar;
 		}
-		String lastUpdate;
 		String created;
 	}
+
 
 	@Data
 	public static class BenchInfoResponseLow extends BenchInfoResponseBase
@@ -550,7 +548,7 @@ public enum Protocol
 		Content content = new Content();
 		ClientAgent agent = new ClientAgent();
 		@Data
-		class Content
+		public static class Content
 		{
 			String title;
 		}
@@ -571,7 +569,7 @@ public enum Protocol
 		Content content = new Content();
 		ClientAgent agent = new ClientAgent();
 		@Data
-		class Content
+		public static class Content
 		{
 			String type;
 			String data;
@@ -581,7 +579,7 @@ public enum Protocol
 	@Data
 	public static class BenchNodeDelete
 	{
-		String node;
+		int node;
 		ClientAgent agent = new ClientAgent();
 	}
 
@@ -592,7 +590,7 @@ public enum Protocol
 		Content content = new Content();
 		ClientAgent agent = new ClientAgent();
 		@Data
-		class Content
+		public static class Content
 		{
 			String title;
 			String type;
@@ -606,7 +604,7 @@ public enum Protocol
 		Content content = new Content();
 		ClientAgent agent = new ClientAgent();
 		@Data
-		class Content
+		public static class Content
 		{
 			String retitle;
 			int node;
@@ -622,7 +620,7 @@ public enum Protocol
 		ClientAgent agent = new ClientAgent();
 
 		@Data
-		class Content
+		public static class Content
 		{
 			String title;
 			String background;

@@ -8,11 +8,11 @@ public class BenchData
 	public int OwnerId;
 	public String Owner;
 	public String Title;
-	public Date Created;
+	public long Created;
 	public boolean Archived;
 	public String PreviewImagePath;
 
-	public BenchData(int id, String owner, int ownerId, String title, Date created, boolean archived, String previewImagePath)
+	public BenchData(int id, String owner, int ownerId, String title, long created, boolean archived, String previewImagePath)
 	{
 		Id = id;
 		Title = title;

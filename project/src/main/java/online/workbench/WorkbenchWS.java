@@ -12,7 +12,6 @@ public class WorkbenchWS implements WebsocketMethodsOutgoing
 
 	public WorkbenchWS(WorkbenchAPI api)
 	{
-		api.setWebsocket(this);
 		api.getBenchManager().setWebsocket(this);
 		this.api = api;
 	}
