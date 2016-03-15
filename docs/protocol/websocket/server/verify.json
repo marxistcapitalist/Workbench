@@ -1,4 +1,5 @@
 {
   "type": "verify",
-  "bench": "<bench id>"
+  "bench": "<bench id>",
+  "role": "<user's permission level>"
 }
