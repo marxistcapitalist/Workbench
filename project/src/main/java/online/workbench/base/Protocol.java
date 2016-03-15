@@ -1,10 +1,8 @@
-package online.workbench.api;
+package online.workbench.base;
 
 import com.google.gson.annotations.SerializedName;
 import lombok.Data;
 
-import java.lang.reflect.Member;
-import java.security.acl.Owner;
 import java.util.ArrayList;
 
 public enum Protocol

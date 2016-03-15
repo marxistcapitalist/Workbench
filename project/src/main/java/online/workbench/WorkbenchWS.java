@@ -2,6 +2,7 @@ package online.workbench;
 
 import online.workbench.base.WebsocketMethodsOutgoing;
 import online.workbench.model.struct.*;
+import online.workbench.websocket.WebsocketProtocolHandler;
 
 import static spark.Spark.*;
 
@@ -15,12 +16,17 @@ public class WorkbenchWS implements WebsocketMethodsOutgoing
 		this.api = api;
 
 		initialize();
+		chat();
 	}
 
 	private void initialize()
 	{
 		webSocket(api.API + "websocket", WebsocketProtocolHandler.class);
-		init();
+	}
+
+	private void chat()
+	{
+
 	}
 
 	@Override

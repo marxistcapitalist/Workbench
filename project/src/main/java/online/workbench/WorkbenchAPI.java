@@ -3,13 +3,12 @@ package online.workbench;
 import com.google.gson.Gson;
 import lombok.Getter;
 import online.workbench.api.BenchManager;
-import online.workbench.api.Protocol;
 
 import online.workbench.api.TokenManager;
 import online.workbench.api.UserManager;
 import online.workbench.model.struct.*;
-import online.workbench.api.Protocol.*;
 import online.workbench.utils.TimeConverter;
+import static online.workbench.base.Protocol.*;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -98,7 +97,7 @@ public class WorkbenchAPI
 		post(API + "login", (req, res) ->
 		{
 			String body = req.body();
-			Protocol.ClientLogin obj = gson.fromJson(body, Protocol.ClientLogin.class);
+			ClientLogin obj = gson.fromJson(body, ClientLogin.class);
 			String login = obj.getLoginkey();
 			String password = obj.getPassword();
 

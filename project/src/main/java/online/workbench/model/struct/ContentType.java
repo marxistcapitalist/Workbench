@@ -1,7 +1,5 @@
 package online.workbench.model.struct;
 
-import online.workbench.api.Protocol;
-
 public enum ContentType
 {
 	NONE(""),
