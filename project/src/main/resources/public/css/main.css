@@ -87,11 +87,23 @@ a:active {
   font-family: 'Raleway', sans-serif;
 }
 
+#intro .buttons {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  min-width: 300px;
+  z-index: 4201;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+}
+
 #intro .centertext {
   text-align: center;
 }
 
-#intro .centertext .headertext {
+#intro .headertext {
   font-size: 3em;
   position: absolute;
   top: 50px;
@@ -99,6 +111,16 @@ a:active {
   right: 0;
   width: 600px;
   margin: 0 auto;
+}
+
+#intro .headertext h1,
+#intro .headertext p {
+  margin: 0 auto;
+}
+
+#intro .subtext h1,
+#intro .subtext p {
+  margin: 6px auto;
 }
 
 #intro .subtext {
@@ -237,24 +259,39 @@ a:active {
 * Select Menu - Elements of select menus common among all select menus
 */
 .select_menu {
-  margin: auto;
-  background: #222;
-  border: 10px solid #222;
+  margin: 25px auto;
   border-radius: 6px;
+  display: table;
+  width: 90%;
+  background: #333;
 }
 
-.select_menu th,
-.select_menu td {
-  padding: 6px 20px;
+.select_menu_header,
+.select_menu_item {
+  display: table-row;
 }
 
-.select_menu th {
-  text-align: left;
-  color: #CCC;
+.select_menu_header div,
+.select_menu_item div {
+  display: table-cell;
+  padding: 10px;
 }
 
-.select_menu td {
+.select_menu_header div:first-child {
+  border-top-left-radius: 6px;
+}
 
+.select_menu_header div:last-child {
+  border-top-right-radius: 6px;
+}
+
+.select_menu_header {
+  background: #000;
+  border: 6px #000;
+  border-style: solid solid none solid;
+  border-radius: 6px 6px 0 0;
+  color: #666;
+  font-size: 14px;
 }
 
 /*
@@ -276,14 +313,137 @@ a:active {
   display: none;
 }
 
+.center_select_menu .menu_header {
+  margin: 0 30px;
+}
+
+.center_select_menu .menu_header h1 {
+  margin-bottom: 0;
+}
+
+.center_select_menu .menu_header p {
+  margin-top: 0;
+}
+
+.center_select_menu .menu_content {
+  width: 100%;
+  margin: 0 auto;
+}
+
+/*
+* Block Menu - For selecting things among many block-image menu options
+*/
+.block_menu {
+  position: absolute;
+  width: 70%;
+  min-width: 500px;
+  background: #171717;
+  z-index: 4201;
+  max-height: 95%;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  margin: auto;
+  border-radius: 6px;
+  display: none;
+}
+
+.block_menu .menu_header {
+  margin: 0 30px;
+}
+
+.block_menu .menu_header h1 {
+  margin-bottom: 0;
+}
+
+.block_menu .menu_header p {
+  margin-top: 0;
+}
+
+.block_menu .menu_content {
+  width: 90%;
+  margin: 20px auto;
+}
+
+.block_menu .menu_content .item_row {
+  
+
+}
+
+.block_menu .menu_content .item_row .item {
+  position: relative;
+  margin: 0 16px;
+  box-sizing: border-box;
+}
+
+.block_menu .menu_content .item_row .item:first-child {
+  margin: 0 16px 0 0;
+}
+
+.block_menu .menu_content .item_row .item:last-child {
+  margin: 0 0 0 16px;
+}
+
+.block_menu .menu_content .item_row .item .image {
+  position: relative;
+}
+
+.block_menu .menu_content .item_row .item .image .cover {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  background: rgba(0,0,0,0.2);
+  width: 100%;
+  height: 100%;
+}
+
+.block_menu .menu_content .item_row .item .subtext {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: rgba(0,0,0,0.9);
+}
+
+/*
+* Bench Select Mneu - A subset of block menu for selecting benches
+*/
+#bench_select .menu_content .item { /* TODO: Testing Code */
+  width: 240px;
+  height: 135px;
+  font-size: 12px;
+}
+
+#bench_select .menu_content .item .image .color {
+  width: 240px;
+  height: 135px;
+}
+
+#bench_select .menu_content .item .subtext .description {
+  margin: 13px;
+}
+
+#bench_select .menu_content .item .subtext .profile_image {
+  height: 32px;
+  width: 32px;
+  margin: 6px;
+}
+
+#bench_select .menu_content .item .subtext .profile_image .color {
+  width: 32px;
+  height: 32px;
+}
+
 /*
 * Workbench
 * Contains classes/IDs for the actual Workbench, including nodes
 * Does NOT include toolbars, message windows, and other UI functions
 */
 
+/* Preview Image: 240 135 */
 #workbench {
-  width: 4096px;
+  width: 3840px;
   height: 2160px;
   background: #222;
   z-index: -1;

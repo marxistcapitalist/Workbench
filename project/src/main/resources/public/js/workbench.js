@@ -59,7 +59,7 @@ workbench.auth = {
           docCookies.setItem("wb_user_name", resp.data.agent.user, Infinity);
           workbench.auth.status = true;
           workbench.ui.popup.login.success();
-          workbench.bench.load();
+          workbench.bench.benchSelect();
         } else {
           workbench.ui.popup.login.hideLoad();
           workbench.ui.popup.login.showError("Incorrect username or password");
@@ -136,7 +136,7 @@ workbench.auth = {
     if(pass.length > 256 || pass.length < 7)
       errors.push("Password must be between 7 and 256 characters long");
     if(mail.length < 6 || mail.length > 254)
-      errors.push("EMail must be between 6 and 254 characters long");
+      errors.push("Email must be between 6 and 254 characters long");
     if(showUI)
       workbench.ui.popup.register.showLoad(150);
     if(errors.length > 0) {
@@ -413,6 +413,17 @@ workbench.ui = {
         showTime: function(time) {
           this.timer = setTimeout(function() { workbench.ui.popup.intro.hide(750); }, time);
           return this;
+        },
+        showButtons: function() {
+          $(this.selector + " .buttons").height($(this.selector).height()-100-($(this.selector + " .subtext").height() + $(this.selector + " .headertext").height()));
+          $(this.selector + " .buttons").css({
+            "margin":"50px auto",
+            "display":"block",
+            "top":"50px"
+          });
+        },
+        hideButtons: function() {
+          $(this.selector + " .buttons").css("display", "none");
         }
       });
 
