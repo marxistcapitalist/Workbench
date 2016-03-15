@@ -1,0 +1,8 @@
+{
+  "type": "verify",
+  "bench": "<bench id>",
+  "agent": {
+    "id": "<userId>",
+    "token": "<clientToken>"
+  }
+}
