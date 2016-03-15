@@ -37,12 +37,12 @@ public interface WebsocketMethodsOutgoing
 	/**
 	 * Sends a chat message to all online users of a workbench
 	 */
-	void sendChat(Bench bench, User user, String message);
+	//void sendChat(Bench bench, User user, String message);
 
 	/**
 	 * Notifies a single user
 	 */
-	void sendNotifyUser(User user, String header, String text, String link, int time);
+	//void sendNotifyUser(User user, String header, String text, String link, int time);
 
 	/**
 	 * Notifies all online users of a bench
@@ -52,7 +52,7 @@ public interface WebsocketMethodsOutgoing
 	/**
 	 * Notifies all online users of workbench
 	 */
-	void sendNotifyGlobal(String header, String text, String link, int time);
+	//void sendNotifyGlobal(String header, String text, String link, int time);
 
 	/**
 	 * Notifies all online users of a bench of cursor movement within a benchnode
@@ -95,9 +95,9 @@ public interface WebsocketMethodsOutgoing
 	void sendBenchNodeDelete(Bench bench, User user, int node);
 
 	/**
-	 * Notifies all online users of a bench that the content of a benchnode has been edited
+	 * Notifies all online users of a bench that the content or type of a benchnode has been edited
 	 */
-	void sendBenchNodeEdit(Bench bench, User user, int node, String content);
+	void sendBenchNodeEdit(Bench bench, User user, int node, String content, ContentType type);
 
 	/**
 	 * Notifies all online users of a bench that the position of a benchnode has changed
@@ -113,9 +113,4 @@ public interface WebsocketMethodsOutgoing
 	 * Notifies all online users that the width or height of a benchnode has changed
 	 */
 	void sendBenchNodeResize(Bench bench, User user, int node, int w, int h);
-
-	/**
-	 * Notifies all online users that the content type of a benchnode has been changed
-	 */
-	void sendBenchNodeTypeEdit(Bench bench, User user, int node, ContentType type);
 }

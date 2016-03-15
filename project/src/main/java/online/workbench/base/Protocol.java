@@ -2,6 +2,7 @@ package online.workbench.base;
 
 import com.google.gson.annotations.SerializedName;
 import lombok.Data;
+import online.workbench.model.struct.User;
 
 import java.util.ArrayList;
 
@@ -85,7 +86,25 @@ public enum Protocol
 	@SerializedName("ws|textcursor ->")WEBSOCKET_SERVER_TEXTCURSOR(ServerTextCursor.class),
 	@SerializedName("ws|textmodify ->")WEBSOCKET_SERVER_TEXTMODIFY(ServerTextModify.class),
 	@SerializedName("ws|textselect ->")WEBSOCKET_SERVER_TEXTSELECT(ServerTextSelect.class),
-	@SerializedName("ws|mod ->")WEBSOCKET_SERVER_MOD(UserModifyOutgoing.class);
+	@SerializedName("ws|mod ->")WEBSOCKET_SERVER_MOD(UserModifyOutgoing.class),
+	@SerializedName("ws|verify <-")WEBSOCKET_CLIENT_VERIFY(VerifyIncoming.class),
+	@SerializedName("ws|verify ->")WEBSOCKET_SERVER_VERIFY(VerifyOutgoing.class);
+
+	@Data
+	public static class VerifyIncoming
+	{
+		String type;
+		int bench;
+		ClientAgent agent = new ClientAgent();
+	}
+
+	@Data
+	public static class VerifyOutgoing
+	{
+		String type;
+		int bench;
+		String role;
+	}
 
 	@Data
 	public static class UserModifyOutgoing
@@ -303,7 +322,7 @@ public enum Protocol
 		String type;
 		Data data = new Data();
 		@lombok.Data
-		class Data
+		public static class Data
 		{
 			String header;
 			String text;
@@ -344,7 +363,7 @@ public enum Protocol
 	{
 		Content content = new Content();
 		@Data
-		class Content
+		public static class Content
 		{
 			String title;
 		}
@@ -361,7 +380,7 @@ public enum Protocol
 	{
 		Content content = new Content();
 		@Data
-		class Content
+		public static class Content
 		{
 			String type;
 			String data;
@@ -374,7 +393,7 @@ public enum Protocol
 		FullDimensions dimensions = new FullDimensions();
 		Content content = new Content();
 		@Data
-		class Content
+		public static class Content
 		{
 			String title;
 			String type;
@@ -404,6 +423,14 @@ public enum Protocol
 	@Data
 	public static class WSServerAgent
 	{
+		public WSServerAgent() { }
+
+		public WSServerAgent(User user)
+		{
+			name = user.Username;
+			id = user.Id;
+		}
+
 		String name;
 		int id;
 	}
@@ -789,5 +816,23 @@ public enum Protocol
 		cClass = object;
 	}
 
+	public static class Out
+	{
+		public static final String VERIFY = "verify";
+		public static final String CREATE = "create";
+		public static final String DELETE = "delete";
+		public static final String EDIT = "edit";
+		public static final String MOVE = "move";
+		public static final String RENAME = "rename";
+		public static final String RESIZE = "resize";
+		public static final String CHAT = "chat";
+		public static final String IGNORE = "ignore";
+		public static final String MOD = "mod";
+		public static final String NOTIFY = "notify";
+		public static final String WATCH = "watch";
+		public static final String TEXTCURSOR = "textcursor";
+		public static final String TEXTMODIFY = "textmodify";
+		public static final String TEXTSELECT = "textselect";
+	}
 }
 

@@ -74,7 +74,6 @@ public interface DatabaseMethods
 	 */
 	void invalidateToken(int id);
 
-
 	/**
      * Determines whether or not a username has already been used
      *

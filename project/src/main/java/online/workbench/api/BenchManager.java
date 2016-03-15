@@ -88,6 +88,7 @@ public class BenchManager
 	{
 		benches.remove(bench);
 		database.archiveBench(bench.Id);
+		websocket.removeBenchFromSessions(bench);
 	}
 
 	public BenchNode getNode(Bench bench, int id)
@@ -107,13 +108,18 @@ public class BenchManager
 
 	public Bench load(int id)
 	{
-		Bench bench = this.database.loadBench(id);
-
-		if (bench != null)
+		if (id != 0)
 		{
-			this.benches.add(bench);
+			Bench bench = this.database.loadBench(id);
+
+			if (bench != null)
+			{
+				this.benches.add(bench);
+				this.websocket.addBenchToSessions(bench);
+			}
+			return bench;
 		}
-		return bench;
+		return null;
 	}
 
 	public void editNode(User user, Bench bench, BenchNode node, String content)
@@ -121,7 +127,7 @@ public class BenchManager
 		if (this.contentEditAsync(bench, node.Id, content))
 		{
 			bench.Nodes.get(node.Id).Content = content;
-			websocket.sendBenchNodeEdit(bench, user, node.Id, content);
+			websocket.sendBenchNodeEdit(bench, user, node.Id, content, node.ContentType);
 		}
 	}
 
@@ -150,7 +156,7 @@ public class BenchManager
 		if (this.contentTypeEditAsync(bench, node.Id, type))
 		{
 			bench.Nodes.get(node.Id).ContentType = type;
-			websocket.sendBenchNodeTypeEdit(bench, user, node.Id, type);
+			websocket.sendBenchNodeEdit(bench, user, node.Id, node.Content, type);
 		}
 	}
 

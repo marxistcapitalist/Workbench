@@ -314,6 +314,25 @@ public class WorkbenchAPI
 
 				UserEditResponse response = new UserEditResponse();
 
+				int count = 0;
+				char[] emailArray = email.toCharArray();
+				for (int i = 0; i < email.length(); i++) if (emailArray[i] == '@') count++;
+				if (!email.contains(".") || count != 1)
+				{
+					response.setEmail(false);
+				}
+
+				if (username.length() > 32 || username.length() < 1)
+				{
+					response.setUsername(false);
+				}
+
+				if (password.length() > 256 || password.length() < 7)
+				{
+					response.setPassword(false);
+					return gson.toJson(response);
+				}
+
 				if (!avatar.isEmpty()) response.setAvatar(userManager.updateAvatar(user, avatar));
 
 				if (!email.isEmpty()) response.setEmail(userManager.updateEmail(user, email.toLowerCase()));
@@ -528,7 +547,8 @@ public class WorkbenchAPI
 			{
 				Bench bench = benchManager.load(request.getId());
 
-				if (bench != null && bench.Id != 0)
+				if (bench != null && bench.Id != 0
+						&& bench.Users.get(request.getAgent().getId()).val() >= PermissionLevel.MANAGER.val())
 				{
 					BenchEditResponse response = new BenchEditResponse();
 

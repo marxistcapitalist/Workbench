@@ -36,18 +36,22 @@ public class UserManager
 
 	public User load(int id)
 	{
-		if (!isLoaded(id))
+		if (id != 0)
 		{
-			User user = this.database.loadUser(id);
-
-			if (user != null)
+			if (!isLoaded(id))
 			{
-				this.users.add(user);
-				return user;
+				User user = this.database.loadUser(id);
+
+				if (user != null)
+				{
+					this.users.add(user);
+					return user;
+				}
+				return null;
 			}
-			return null;
+			return this.get(id);
 		}
-		return this.get(id);
+		return null;
 	}
 
 	public User refresh(User user)
@@ -64,14 +68,19 @@ public class UserManager
 
 	public boolean isLoaded(int id)
 	{
-		return true;
+		for (User user: this.users)
+		{
+			if (user.Id == id)
+			{
+				return true;
+			}
+		}
+		return false;
 	}
 
-	public boolean isLoaded(User user)
-	{
-		return true;
-	}
-
+	/**
+	 * Necessary to be implemented in production, but with the single machine setup is not
+	 */
 	public void clean()
 	{
 
@@ -79,22 +88,51 @@ public class UserManager
 
 	public boolean updatePassword(User user, String password)
 	{
-		return true;
+		String hash = Encrypt.hash(user.Username, password, user.Email, user.Id);
+
+		if (!hash.isEmpty())
+		{
+			this.database.updateUserPasswordAsync(user.Id, hash);
+			return true;
+		}
+		return false;
 	}
 
 	public boolean updateUsername(User user, String username)
 	{
-		return true;
+		if (!username.isEmpty())
+		{
+			user.Username = username;
+			this.database.updateUserNameAsync(user.Id, username);
+			return true;
+		}
+		return false;
 	}
 
 	public boolean updateEmail(User user, String email)
 	{
-		return true;
+		if (!email.isEmpty() && email.length() <= 254)
+		{
+			user.Email = email;
+			this.database.updateUserEmailAsync(user.Id, email);
+			return true;
+		}
+		return false;
 	}
 
 	public boolean updateAvatar(User user, String avatar)
 	{
-		return true;
+		if (!avatar.isEmpty())
+		{
+			if (avatar.startsWith("#") && avatar.length() != 7)
+			{
+				return false;
+			}
+			user.Avatar = avatar;
+			this.database.updateUserAvatarAsync(user.Id, avatar);
+			return true;
+		}
+		return false;
 	}
 
 	public int validateUser(String loginKey, String password)

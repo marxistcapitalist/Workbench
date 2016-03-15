@@ -5,11 +5,10 @@ public enum PermissionLevel
 {
 	NONE("", 0),
 	VIEWER("Viewer", 1),
-	//CONTRIBUTOR("Contributor", 2),
-	EDITOR("Editor", 3),
-	//DIRECTOR("Director", 4),
-	OWNER("Owner", 5),
-	ADMIN("Admin", 6);
+	EDITOR("Editor", 2),
+	MANAGER("Manager", 3),
+	OWNER("Owner", 4),
+	ADMIN("Admin", 5);
 
 	private String level;
 	private int perm;

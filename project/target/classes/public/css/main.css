@@ -136,15 +136,15 @@ a:active {
 }
 
 /*
-* Authentication Boxes - Slimmer UI popup boxes that appear for login/logout and registration
+* Popup Overlay - All popups begin with this for absolute positioning
 */
-.authbox {
+.authbox,
+.select_menu,
+.block_menu,
+.error_box {
   position: absolute;
-  width: 15%;
   min-width: 300px;
-  background: #171717;
   z-index: 4201;
-  max-height: 95%;
   top: 0;
   bottom: 0;
   left: 0;
@@ -152,6 +152,15 @@ a:active {
   margin: auto;
   border-radius: 6px;
   display: none;
+  max-height: 95%;
+}
+
+/*
+* Authentication Boxes - Slimmer UI popup boxes that appear for login/logout and registration
+*/
+.authbox {
+  width: 15%;
+  background: #171717;
 }
 
 .authbox .inner {
@@ -298,19 +307,9 @@ a:active {
 * Center Select Menu - For selecting one among many options in a simple, large menu
 */
 .center_select_menu {
-  position: absolute;
   width: 50%;
   min-width: 300px;
   background: #171717;
-  z-index: 4201;
-  max-height: 95%;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  margin: auto;
-  border-radius: 6px;
-  display: none;
 }
 
 .center_select_menu .menu_header {
@@ -334,19 +333,9 @@ a:active {
 * Block Menu - For selecting things among many block-image menu options
 */
 .block_menu {
-  position: absolute;
   width: 70%;
   min-width: 500px;
   background: #171717;
-  z-index: 4201;
-  max-height: 95%;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
-  margin: auto;
-  border-radius: 6px;
-  display: none;
 }
 
 .block_menu .menu_header {
@@ -367,7 +356,7 @@ a:active {
 }
 
 .block_menu .menu_content .item_row {
-  
+
 
 }
 
@@ -407,7 +396,7 @@ a:active {
 }
 
 /*
-* Bench Select Mneu - A subset of block menu for selecting benches
+* Bench Select Menu - A subset of block menu for selecting benches
 */
 #bench_select .menu_content .item { /* TODO: Testing Code */
   width: 240px;
@@ -433,6 +422,44 @@ a:active {
 #bench_select .menu_content .item .subtext .profile_image .color {
   width: 32px;
   height: 32px;
+}
+
+#bench_select .menu_content .nobenches {
+  text-align: center;
+  line-height: 30px;
+  display: none;
+}
+
+/*
+* Error Box - An independent error box that goes over all popups, in theory
+*/
+.error_box {
+  min-width: 500px;
+  width: 50%;
+  background: #171717;
+  z-index: 4230;
+}
+
+.error_box .inner {
+  margin: 20px;
+}
+
+.error_box h1 {
+  margin: 10px 0 0 16px;
+}
+
+.error_box button {
+  float: right;
+  margin-right: 10px;
+  background: #FFF;
+  border: 2px solid #CCC;
+  border-radius: 6px;
+  padding: 6px 10px;
+}
+
+.error_box.error {
+  background: #FFBABA;
+  color: #D8000C;
 }
 
 /*
