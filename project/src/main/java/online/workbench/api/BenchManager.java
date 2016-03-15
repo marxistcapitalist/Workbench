@@ -121,7 +121,7 @@ public class BenchManager
 		if (this.contentEditAsync(bench, node.Id, content))
 		{
 			bench.Nodes.get(node.Id).Content = content;
-			websocket.sendEdit(bench, user, node, content);
+			websocket.sendBenchNodeEdit(bench, user, node.Id, content);
 		}
 	}
 
@@ -131,7 +131,7 @@ public class BenchManager
 		{
 			bench.Nodes.get(node.Id).Position.X = x;
 			bench.Nodes.get(node.Id).Position.Y = y;
-			websocket.sendMove(bench, user, node, x, y);
+			websocket.sendBenchNodeMove(bench, user, node.Id, x, y);
 		}
 	}
 
@@ -141,7 +141,7 @@ public class BenchManager
 		{
 			bench.Nodes.get(node.Id).Position.Width = w;
 			bench.Nodes.get(node.Id).Position.Height = h;
-			websocket.sendResize(bench, user, node, w, h);
+			websocket.sendBenchNodeResize(bench, user, node.Id, w, h);
 		}
 	}
 
@@ -150,7 +150,7 @@ public class BenchManager
 		if (this.contentTypeEditAsync(bench, node.Id, type))
 		{
 			bench.Nodes.get(node.Id).ContentType = type;
-			websocket.sendTypeEdit(bench, user, node, type);
+			websocket.sendBenchNodeTypeEdit(bench, user, node.Id, type);
 		}
 	}
 
@@ -159,7 +159,7 @@ public class BenchManager
 		if (this.archiveAsync(bench, node.Id))
 		{
 			bench.Nodes.remove(node.Id);
-			websocket.sendDelete(bench, user, node);
+			websocket.sendBenchNodeDelete(bench, user, node.Id);
 		}
 	}
 
@@ -169,7 +169,7 @@ public class BenchManager
 		if (this.renameAsync(bench, node, title))
 		{
 			bench.Nodes.get(node.Id).Title = title;
-			websocket.sendRename(bench, user, node, title);
+			websocket.sendBenchNodeRename(bench, user, node.Id, title);
 		}
 	}
 
@@ -181,7 +181,7 @@ public class BenchManager
 		if (newNode != null && newNode.Id != 0)
 		{
 			bench.Nodes.put(node.Id, node);
-			websocket.sendCreate(bench, user, node);
+			websocket.sendBenchNodeCreate(bench, user, node);
 		}
 	}
 

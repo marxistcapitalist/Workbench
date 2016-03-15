@@ -4,19 +4,19 @@ import online.workbench.model.struct.*;
 
 public interface WebsocketMethodsOutgoing
 {
-	void sendCreate(Bench bench, User user, Node node);
+	void sendUserNodeCreate(Bench bench, User user, UserNode node);
 
-	void sendDelete(Bench bench, User user, Node node);
+	void sendUserNodeDelete(Bench bench, User user, UserNode node);
 
-	void sendEdit(Bench bench, User user, Node node, String content);
+	void sendUserNodeEdit(Bench bench, User user, UserNode node, String content);
 
-	void sendMove(Bench bench, User user, Node node, int x, int y);
+	void sendUserNodeMove(Bench bench, User user, UserNode node, int x, int y);
 
-	void sendRename(Bench bench, User user, Node node, String name);
+	void sendUserNodeRename(Bench bench, User user, UserNode node, String name);
 
-	void sendResize(Bench bench, User user, Node node, int w, int h);
+	void sendUserNodeResize(Bench bench, User user, UserNode node, int w, int h);
 
-	void sendTypeEdit(Bench bench, User user, Node node, ContentType type);
+	void sendUserNodeTypeEdit(Bench bench, User user, UserNode node, ContentType type);
 
 	void sendChat(Bench bench, User user, String message);
 
@@ -37,4 +37,18 @@ public interface WebsocketMethodsOutgoing
 	void sendUserModify(Bench bench, User user, PermissionLevel level);
 
 	void sendUserRemove(Bench bench, User user);
+
+	void sendBenchNodeCreate(Bench bench, User user, BenchNode node);
+
+	void sendBenchNodeDelete(Bench bench, User user, int node);
+
+	void sendBenchNodeEdit(Bench bench, User user, int node, String content);
+
+	void sendBenchNodeMove(Bench bench, User user, int node, int x, int y);
+
+	void sendBenchNodeRename(Bench bench, User user, int node, String name);
+
+	void sendBenchNodeResize(Bench bench, User user, int node, int w, int h);
+
+	void sendBenchNodeTypeEdit(Bench bench, User user, int node, ContentType type);
 }
