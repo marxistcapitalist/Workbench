@@ -1,4 +1,4 @@
 1 = viewer
-3 = editor
-5 = owner
-6 = admin
+2 = editor
+4 = owner
+5 = admin
