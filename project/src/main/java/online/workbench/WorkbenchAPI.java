@@ -24,7 +24,7 @@ public class WorkbenchAPI
 	private @Getter TokenManager tokenManager;
 	private Gson gson;
 
-	private final String API = "api/";
+	public final String API = "api/";
 	private static final char[] disallowed = {'\\', '\'', '\"', ';', '&', '@', '#', '/', '$', ':', '%', '^', '*', '<', '>', '{', '}', '[', ']', '(', ')'};
 
 	public WorkbenchAPI(WorkbenchDB database)
