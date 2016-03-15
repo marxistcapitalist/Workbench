@@ -1,5 +1,5 @@
 {
-  "type": "usermod",
+  "type": "mod",
   "bench": "<benchId>",
   "action": "<add, remove, modify>",
   "user": "<user's username>",
