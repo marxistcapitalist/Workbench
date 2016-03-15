@@ -4,9 +4,20 @@ import online.workbench.api.TokenManager;
 import online.workbench.base.DatabaseMethods;
 import online.workbench.model.struct.*;
 
-public class WorkbenchDB  implements DatabaseMethods
+public class WorkbenchDB implements DatabaseMethods
 {
+	public static String name;
 
+	public WorkbenchDB(String name)
+	{
+		WorkbenchDB.name = "jdbc:sqlite:" + name + ".db";
+		initialize();
+	}
+
+	private void initialize()
+	{
+
+	}
 
 	@Override
 	public void updateUserEmailAsync(int id, String email)
@@ -34,12 +45,6 @@ public class WorkbenchDB  implements DatabaseMethods
 
 	@Override
 	public void invalidateToken(String token)
-	{
-
-	}
-
-	@Override
-	public void invalidateToken(int id)
 	{
 
 	}
@@ -153,37 +158,7 @@ public class WorkbenchDB  implements DatabaseMethods
 	}
 
 	@Override
-	public UserNode submitNodeCreate(UserNode node)
-	{
-		return null;
-	}
-
-	@Override
-	public void submitNodeCreateAsync(UserNode node)
-	{
-
-	}
-
-	@Override
-	public void submitNodeCreateAsync(BenchNode node)
-	{
-
-	}
-
-	@Override
 	public BenchNode submitNodeCreate(BenchNode node)
-	{
-		return null;
-	}
-
-	@Override
-	public UserNode submitNodeCopyAsync(BenchNode node, User user)
-	{
-		return null;
-	}
-
-	@Override
-	public BenchNode submitNodeCopy(UserNode node, Bench bench)
 	{
 		return null;
 	}

@@ -72,7 +72,7 @@ public interface DatabaseMethods
 	 *
 	 * @param id user id for which to invalidate token
 	 */
-	void invalidateToken(int id);
+	//void invalidateToken(int id);
 
 	/**
      * Determines whether or not a username has already been used
@@ -100,6 +100,7 @@ public interface DatabaseMethods
 
 	/**
      * Issues a new token to an account
+	 * Does the actual generation of the token
      *
      * @param id account id the token is being issued to
      * @return the new token
@@ -239,21 +240,21 @@ public interface DatabaseMethods
      * @param node - created UserNode with id of '0'
      * @return valid UserNode
      */
-    UserNode submitNodeCreate(UserNode node);
+    //UserNode submitNodeCreate(UserNode node);
 
     /**
      * Adds a single UserNode to database asynchronously
      *
      * @param node - created UserNode with id of '0'
      */
-    void submitNodeCreateAsync(UserNode node);
+    //void submitNodeCreateAsync(UserNode node);
 
     /**
      * Adds a single BenchNode to database asynchronously
      *
      * @param node - created BenchNode with id of '0'
      */
-    void submitNodeCreateAsync(BenchNode node);
+    //void submitNodeCreateAsync(BenchNode node);
 
     /**
      * Adds a single BenchNode to database
@@ -270,7 +271,7 @@ public interface DatabaseMethods
      * @param user - the User the node is being copied to
      * @return the created, valid UserNode
      */
-    UserNode submitNodeCopyAsync(BenchNode node, User user);
+    //UserNode submitNodeCopyAsync(BenchNode node, User user);
 
     /**
      * Transfers a UserNode to a Bench
@@ -279,7 +280,7 @@ public interface DatabaseMethods
      * @param bench - the Bench the node is being copied to
      * @return the created, valid BenchNode
      */
-    BenchNode submitNodeCopy(UserNode node, Bench bench);
+    //BenchNode submitNodeCopy(UserNode node, Bench bench);
 
 	/**
 	 * Retrieves the email paired with a username in the database
