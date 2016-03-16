@@ -9,6 +9,7 @@ public class Table
 					"password char(64) NOT NULL, " +
 					"username varchar(32) NOT NULL, " +
 					"email varchar(254) NOT NULL, " +
+					"avatar varchar(256), " +
 					"confirmed tinyint(1) DEFAULT 1, " +
 					"PRIMARY KEY (userId) " +
 					") DEFAULT CHARACTER SET=utf-8";
@@ -20,6 +21,7 @@ public class Table
 					"lastEditor int UNSIGNED, " +
 					"lastEdit bigint UNSIGNED, " +
 					"content text, " +
+					"type VARCHAR(32) NOT NULL, " +
 					"PRIMARY KEY (bNodeId) " +
 					") DEFAULT CHARACTER SET=utf-8";
 
@@ -33,6 +35,7 @@ public class Table
 					"y smallint NOT NULL, " +
 					"width smallint UNSIGNED NOT NULL, " +
 					"height smallint UNSIGNED NOT NULL, " +
+					"title text, " +
 					"archived tinyint(1) DEFAULT 0, " +
 					"PRIMARY KEY (bNodeId) " +
 					") DEFAULT CHARACTER SET=utf-8";
@@ -42,8 +45,9 @@ public class Table
 					"( " +
 					"benchId int UNSIGNED NOT NULL AUTO_INCREMENT, " +
 					"owner int UNSIGNED NOT NULL, " +
-					"created int UNSIGNED, " +
-					"background varchar(255),  " +
+					"created bigint UNSIGNED, " +
+					"title varchar(256), " +
+					"background varchar(256),  " +
 					"archived tinyint(1) DEFAULT 0, " +
 					"PRIMARY KEY (benchId) " +
 					") DEFAULT CHARACTER SET=utf-8";
@@ -73,7 +77,7 @@ public class Table
 					"( " +
 					"userId int UNSIGNED NOT NULL, " +
 					"token char(128), " +
-					"time int UNSIGNED, " +
+					"time bigint UNSIGNED, " +
 					"PRIMARY KEY (userId) " +
 					") DEFAULT CHARACTER SET=utf-8";
 
@@ -82,7 +86,7 @@ public class Table
 					"( " +
 					"uNodeId bigint UNSIGNED NOT NULL, " +
 					"lastEditor int UNSIGNED, " +
-					"lastEdit int UNSIGNED, " +
+					"lastEdit bigint UNSIGNED, " +
 					"content text, " +
 					"PRIMARY KEY (uNodeId) " +
 					") DEFAULT CHARACTER SET=utf-8";

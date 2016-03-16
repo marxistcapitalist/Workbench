@@ -221,7 +221,7 @@ public class WorkbenchAPI
 		});
 	}
 
-	public void logout() //paused here
+	public void logout()
 	{
 		post(API + "logout", (req, res) ->
 		{
