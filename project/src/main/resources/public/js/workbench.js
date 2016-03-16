@@ -187,7 +187,6 @@ workbench.auth = {
           workbench.ui.popup.register.hideLoad();
           workbench.ui.popup.register.showError("Malformed response; try again");
         }
-        console.log(resp.data);
       } else {
         workbench.ui.popup.register.hideLoad();
         workbench.ui.popup.register.showError("HTTP Error, check your connection");
@@ -218,7 +217,8 @@ workbench.bench = {
     var usertoken = docCookies.getItem("wb_user_token");
     if(userid === null || usertoken === null) {
      workbench.auth.authenticate(function() { workbench.bench.benchSelect(); }, function() { workbench.ui.popup.login.show(); });
-     console.log("Failed to retrieve userid and usertoken for loading available benches");
+     if(workbench.core.debug)
+      console.log("Failed to retrieve userid and usertoken for loading available benches");
      return;
    }
     var reqobj = {
@@ -300,7 +300,8 @@ workbench.comm = {
       this.ajaxProgress = true;
       try {
         var jsonstring = JSON.stringify(data);
-        console.log(jsonstring);
+        if(workbench.core.debug)
+          console.log("Request: " + jsonstring);
         $.ajax({
           type: "POST",
           url: target,
@@ -310,6 +311,9 @@ workbench.comm = {
         })
         .done(function(data, status, xhr) { // Success
           data = JSON.parse(data);
+          if(workbench.core.debug)
+            console.log("Response: ");
+            console.log(data);
           callback({
             result: true,
             response: status,
@@ -409,7 +413,8 @@ workbench.comm = {
 };
 
 workbench.core = {
-  version: "0.0.3",
+  version: "Build 10",
+  debug: true,
   initialize: function() {
     var wait = 3000;
     /* TODO Hash change detection. This is not a top priority, and currently used script is too old. */
