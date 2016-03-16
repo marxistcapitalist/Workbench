@@ -52,7 +52,7 @@ public class Workbench
 			public void run()
 			{
 				String input = "";
-				while (input.equalsIgnoreCase("stop"))
+				while (!input.equalsIgnoreCase("stop"))
 				{
 					input = System.console().readLine().trim();
 				}

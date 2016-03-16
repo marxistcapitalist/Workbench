@@ -33,7 +33,7 @@ public class WorkbenchDB implements DatabaseMethods
 		try
 		{
 			Class.forName("org.sqlite.JDBC");
-			return DriverManager.getConnection("jdbc:sqlite:" + name + ".db");
+			return DriverManager.getConnection(name);
 		}
 		catch (ClassNotFoundException | SQLException e)
 		{
