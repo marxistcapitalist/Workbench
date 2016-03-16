@@ -205,7 +205,7 @@ workbench.bench = {
   preview: "",
   background: "#CCC",
   members: [],
-  created: "";
+  created: "",
 
 
   benchSelect: function() { // Show bench selection screen
