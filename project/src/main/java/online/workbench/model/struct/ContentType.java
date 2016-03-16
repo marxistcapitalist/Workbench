@@ -25,6 +25,8 @@ public enum ContentType
 
 	public static ContentType get(String type)
 	{
+		if (type == null) return ContentType.NONE;
+
 		switch (type.toLowerCase())
 		{
 			case "text":

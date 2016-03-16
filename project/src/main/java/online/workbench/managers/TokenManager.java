@@ -35,7 +35,7 @@ public class TokenManager
 		{
 			Token token = this.database.loadToken(id);
 
-			if (token.isIssued())
+			if (token != null && token.isIssued())
 			{
 				this.tokens.put(id, token);
 			}

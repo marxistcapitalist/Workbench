@@ -11,6 +11,7 @@ import online.workbench.model.struct.*;
 import online.workbench.utils.TimeConverter;
 import static online.workbench.base.Protocol.*;
 
+import java.io.Console;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -376,9 +377,7 @@ public class WorkbenchAPI
 	{
 		post(API + "bench", (req, res) ->
 		{
-
-
-			BenchInfoRequest request = new BenchInfoRequest();
+			BenchInfoRequest request = gson.fromJson(req.body(), BenchInfoRequest.class);
 
 			if (tokenManager.check(request.getAgent().getId(), request.getAgent().getToken()))
 			{
@@ -571,16 +570,22 @@ public class WorkbenchAPI
 		post(API + "edit", (req, res) ->
 		{
 
-
 			BenchEdit request = gson.fromJson(req.body(), BenchEdit.class);
-
+			//System.console().writer().println("»» 1 ««");
 			if (tokenManager.check(request.getAgent().getId(), request.getAgent().getToken()))
 			{
+				//System.console().writer().println("»» 2 ««");
 				Bench bench = benchManager.load(request.getId());
+
+				//System.console().writer().println("»»»» " + bench != null + " ««««");
+				//System.console().writer().println("»»»» " + bench.Id != 0 + " ««««");
+				//System.console().writer().println("»»»» " + (bench.Users.get(request.getAgent().getId()).val() >= PermissionLevel.MANAGER.val()) + " ««««");
 
 				if (bench != null && bench.Id != 0
 						&& bench.Users.get(request.getAgent().getId()).val() >= PermissionLevel.MANAGER.val())
 				{
+
+					//System.console().writer().println("»» 3 ««");
 					BenchEditResponse response = new BenchEditResponse();
 
 					String background = request.getContent().getBackground();
@@ -613,6 +618,7 @@ public class WorkbenchAPI
 					{
 						response.setTitle(false);
 					}
+					return gson.toJson(response);
 				}
 			}
 			return "{}";

@@ -436,21 +436,23 @@ public class WorkbenchDB implements DatabaseMethods
 
 		try
 		{
-			statement = connection.prepareStatement(Statement.LOAD_USER__BENCH_DATA);
 
 			for (Integer bench_id_item : tempBenches)
 			{
-				statement.clearParameters();
+				statement = connection.prepareStatement(Statement.LOAD_USER__BENCH_DATA);
 				statement.setInt(1, bench_id_item);
 				ResultSet result = statement.executeQuery();
 
-				int b_owner = result.getInt(1);
-				long b_created = result.getLong(2);
-				String b_title = result.getString(3);
-				String b_background = result.getString(4);
-				boolean b_archived = result.getBoolean(5);
+				if (result.next())
+				{
+					int b_owner = result.getInt(1);
+					long b_created = result.getLong(2);
+					String b_title = result.getString(3);
+					String b_background = result.getString(4);
+					boolean b_archived = result.getBoolean(5);
 
-				benches.add(new BenchData(bench_id_item, "", b_owner, b_title, b_created, b_archived, b_background));
+					benches.add(new BenchData(bench_id_item, "", b_owner, b_title, b_created, b_archived, b_background));
+				}
 			}
 		}
 		catch (SQLException e)
@@ -471,15 +473,16 @@ public class WorkbenchDB implements DatabaseMethods
 
 		try
 		{
-			statement = connection.prepareStatement(Statement.LOAD_USER__BENCH_DATA_OWNER_USERNAME);
-
 			for (BenchData bench_mod : benches)
 			{
-				statement.clearParameters();
+				statement = connection.prepareStatement(Statement.LOAD_USER__BENCH_DATA_OWNER_USERNAME);
 				statement.setInt(1, bench_mod.Id);
 				ResultSet result = statement.executeQuery();
-				String bench_username = result.getString(1);
-				bench_mod.Owner = bench_username;
+
+				if (result.next())
+				{
+					bench_mod.Owner = result.getString(1);
+				}
 			}
 		}
 		catch (SQLException e)
@@ -525,7 +528,6 @@ public class WorkbenchDB implements DatabaseMethods
 			{
 				int bNodeId = result.getInt(1);
 				int userId = result.getInt(2);
-				long created = result.getLong(3);
 				String title = result.getString(4);
 				int x = result.getInt(5);
 				int y = result.getInt(6);
@@ -533,7 +535,7 @@ public class WorkbenchDB implements DatabaseMethods
 				int height = result.getInt(8);
 				boolean archived = result.getBoolean(9);
 
-				tempNodes.put(bNodeId, new BenchNode(bNodeId, null, loadUser(userId), x, y, width, height, title, null, null, created, 0, archived));
+				tempNodes.put(bNodeId, new BenchNode(bNodeId, null, loadUser(userId), x, y, width, height, title, null, null, 0, 0, archived));
 			}
 		}
 		catch (SQLException e)
@@ -544,7 +546,10 @@ public class WorkbenchDB implements DatabaseMethods
 		{
 			try
 			{
-				statement.close();
+				if (statement != null)
+				{
+					statement.close();
+				}
 			}
 			catch (SQLException e)
 			{
@@ -554,27 +559,27 @@ public class WorkbenchDB implements DatabaseMethods
 
 		try
 		{
-			statement = connection.prepareStatement(Statement.LOAD_BENCH__GET_BENCH_NODE_CONTENT);
-			statement.setInt(1, benchId);
-			ResultSet result = statement.executeQuery();
 
-			while (result.next())
+			for (Map.Entry<Integer, BenchNode> b_t_node : tempNodes.entrySet())
 			{
-				int bNodeId = result.getInt(1);
-				long lastEdit = result.getLong(2);
-				ContentType type = ContentType.get(result.getString(3));
-				String content = result.getString(4);
+				statement = connection.prepareStatement(Statement.LOAD_BENCH__GET_BENCH_NODE_CONTENT);
+				statement.setInt(1, b_t_node.getKey());
+				ResultSet result = statement.executeQuery();
 
-				if (tempNodes.containsKey(bNodeId))
+				if (result.next())
 				{
-					BenchNode f_node = tempNodes.get(bNodeId);
-					f_node.LastEdit = lastEdit;
-					f_node.ContentType = type;
-					f_node.Content = content;
+					long lastEdit = result.getLong(2);
+					ContentType type = ContentType.get(result.getString(3));
+					String content = result.getString(4);
 
-					finalNodes.put(f_node.Id, f_node);
+					b_t_node.getValue().LastEdit = lastEdit;
+					b_t_node.getValue().Content = content;
+					b_t_node.getValue().ContentType = type;
+
+					finalNodes.put(b_t_node.getKey(), b_t_node.getValue());
 				}
 			}
+
 		}
 		catch (SQLException e)
 		{
@@ -584,7 +589,10 @@ public class WorkbenchDB implements DatabaseMethods
 		{
 			try
 			{
-				statement.close();
+				if (statement != null)
+				{
+					statement.close();
+				}
 			}
 			catch (SQLException e)
 			{
@@ -626,7 +634,6 @@ public class WorkbenchDB implements DatabaseMethods
 				created = result.getLong(2);
 				title = result.getString(3);
 				background = preview = result.getString(4);
-				archived = result.getBoolean(5);
 			}
 		}
 		catch (SQLException e)
@@ -637,7 +644,10 @@ public class WorkbenchDB implements DatabaseMethods
 		{
 			try
 			{
-				statement.close();
+				if (statement != null)
+				{
+					statement.close();
+				}
 			}
 			catch (SQLException e)
 			{
@@ -668,7 +678,10 @@ public class WorkbenchDB implements DatabaseMethods
 		{
 			try
 			{
-				statement.close();
+				if (statement != null)
+				{
+					statement.close();
+				}
 			}
 			catch (SQLException e)
 			{
@@ -712,8 +725,15 @@ public class WorkbenchDB implements DatabaseMethods
 		{
 			try
 			{
-				statement.close();
-				connection.close();
+				if (statement != null)
+				{
+					statement.close();
+				}
+
+				if (connection != null)
+				{
+					connection.close();
+				}
 			}
 			catch (SQLException e)
 			{
@@ -747,7 +767,10 @@ public class WorkbenchDB implements DatabaseMethods
 		{
 			try
 			{
-				statement.close();
+				if (statement != null)
+				{
+					statement.close();
+				}
 			}
 			catch (SQLException e)
 			{
@@ -775,7 +798,10 @@ public class WorkbenchDB implements DatabaseMethods
 		{
 			try
 			{
-				statement.close();
+				if (statement != null)
+				{
+					statement.close();
+				}
 				connection.close();
 			}
 			catch (SQLException e)
@@ -807,7 +833,10 @@ public class WorkbenchDB implements DatabaseMethods
 		{
 			try
 			{
-				statement.close();
+				if (statement != null)
+				{
+					statement.close();
+				}
 			}
 			catch (SQLException e)
 			{
@@ -821,6 +850,7 @@ public class WorkbenchDB implements DatabaseMethods
 	{
 		String color = HexSelector.sel();
 		int benchId = 0;
+		long created = System.currentTimeMillis();
 
 		Connection connection = null;
 		PreparedStatement statement = null;
@@ -829,7 +859,7 @@ public class WorkbenchDB implements DatabaseMethods
 			connection = this.getConnection();
 			statement = connection.prepareStatement(Statement.CREATE_BENCH__INSERT_DATA);
 			statement.setInt(1, user.Id);
-			statement.setLong(2, System.currentTimeMillis());
+			statement.setLong(2, created);
 			statement.setString(3, title);
 			statement.setString(4, color);
 			statement.executeUpdate();
@@ -842,7 +872,10 @@ public class WorkbenchDB implements DatabaseMethods
 		{
 			try
 			{
-				statement.close();
+				if (statement != null)
+				{
+					statement.close();
+				}
 			}
 			catch (SQLException e)
 			{
@@ -854,7 +887,7 @@ public class WorkbenchDB implements DatabaseMethods
 		{
 			statement = connection.prepareStatement(Statement.CREATE_BENCH__GRAB_BENCH_ID);
 			statement.setInt(1, user.Id);
-			statement.setLong(2, System.currentTimeMillis());
+			statement.setLong(2, created);
 			statement.setString(3, title);
 			ResultSet result = statement.executeQuery();
 
@@ -871,7 +904,10 @@ public class WorkbenchDB implements DatabaseMethods
 		{
 			try
 			{
-				statement.close();
+				if (statement != null)
+				{
+					statement.close();
+				}
 			}
 			catch (SQLException e)
 			{
@@ -1075,7 +1111,10 @@ public class WorkbenchDB implements DatabaseMethods
 		{
 			try
 			{
-				statement.close();
+				if (statement != null)
+				{
+					statement.close();
+				}
 			}
 			catch (SQLException e)
 			{
@@ -1106,7 +1145,10 @@ public class WorkbenchDB implements DatabaseMethods
 		{
 			try
 			{
-				statement.close();
+				if (statement != null)
+				{
+					statement.close();
+				}
 			}
 			catch (SQLException e)
 			{

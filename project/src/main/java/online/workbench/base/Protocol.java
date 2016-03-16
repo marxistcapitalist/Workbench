@@ -141,7 +141,7 @@ public enum Protocol
 	{
 		int id;
 		String verbosity;
-		ClientAgent agent = new ClientAgent();
+		ClientAgent agent;// = new ClientAgent();
 	}
 
 	@Data
