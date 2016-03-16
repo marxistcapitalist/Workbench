@@ -36,7 +36,9 @@ public class Statement
 
 	public static final String LOAD_BENCH__GET_USER_IDS = "SELECT `userId`, `level` FROM `Members` WHERE `benchId` = ?;";
 
-	public static final String LOAD_BENCH__GET_BENCH_NODE_IDS = "SELECT `bNodeId` FROM `BenchNodes` WHERE `benchId` = ?;";
+	public static final String LOAD_BENCH__GET_BENCH_NODE_DATA = "SELECT `bNodeId`, `userId`, `created`, `title`, `x`, `y`, `width`, `height`, `archived` FROM `BenchNodes` WHERE `benchId` = ?;";
+
+	public static final String LOAD_BENCH__GET_BENCH_NODE_CONTENT = "SELECT `bNodeId`, `lastEdit`, `type`, `content` FROM `BenchNodeContent` WHERE `benchId` = ?;";
 
 	public static final String COUNT_BENCH_MEMBERS = "SELECT `id` FROM `Members` WHERE `benchId` = ?;";
 

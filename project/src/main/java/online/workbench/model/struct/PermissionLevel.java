@@ -46,4 +46,21 @@ public enum PermissionLevel
 				return PermissionLevel.NONE;
 		}
 	}
+
+	public static PermissionLevel get(int level)
+	{
+		switch (level)
+		{
+			case 1:
+				return PermissionLevel.VIEWER;
+			case 2:
+				return PermissionLevel.EDITOR;
+			case 4:
+				return PermissionLevel.OWNER;
+			case 5:
+				return PermissionLevel.ADMIN;
+			default:
+				return PermissionLevel.NONE;
+		}
+	}
 }

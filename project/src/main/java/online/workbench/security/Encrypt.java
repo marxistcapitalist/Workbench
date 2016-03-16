@@ -17,7 +17,7 @@ public class Encrypt
 	{
 		try
 		{
-			byte[] result = getKey((password + id).getBytes(), mesh(username, email).getBytes(), 4096, 32);
+			byte[] result = getKey((password + id).getBytes(), mesh(username.toLowerCase(), email.toLowerCase()).getBytes(), 4096, 32);
 			return (toHex(result));
 		}
 		catch (NoSuchAlgorithmException | InvalidKeyException e)
