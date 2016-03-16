@@ -82,7 +82,7 @@ public class Statement
 
 	public static final String BENCH_EDIT_TITLE = "UPDATE `Benches` SET `title`= ? WHERE `benchId` = ?;";
 
-	public static final String BENCH_EDIT_RESIZE___DO_NOT_USE = "UPDATE `Benches` SET `width`= ?, `height`= ? WHERE `benchId` = ?;";
+	public static final String BENCH_EDIT_RESIZE___DO_NOT_USE_WILL_BREAK_EVERYTHING = "UPDATE `Benches` SET `width`= ?, `height`= ? WHERE `benchId` = ?;";
 
 	public static final String BENCH_USER_ADD = "INSERT INTO `Members` (`benchId`, `userId`, `level`) VALUES ( ? , ? , ? );";
 

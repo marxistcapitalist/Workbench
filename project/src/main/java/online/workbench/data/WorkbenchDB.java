@@ -1,9 +1,18 @@
 package online.workbench.data;
 
+import online.workbench.data.initialization.Statement;
 import online.workbench.managers.TokenManager;
 import online.workbench.base.DatabaseMethods;
 import online.workbench.model.struct.*;
 
+import java.sql.*;
+import java.util.ArrayList;
+
+/**
+ * Methods labeled as asynchronous in this class are actually blocking methods.
+ * The framework was designed for a production environment, but due to the nature
+ * of how it is being presented, asynchronisity is not required
+ */
 public class WorkbenchDB implements DatabaseMethods
 {
 	public static String name;
@@ -14,6 +23,20 @@ public class WorkbenchDB implements DatabaseMethods
 		initialize();
 	}
 
+	private Connection getConnection()
+	{
+		try
+		{
+			Class.forName("org.sqlite.JDBC");
+			return DriverManager.getConnection("jdbc:sqlite:" + name + ".db");
+		}
+		catch (ClassNotFoundException | SQLException e)
+		{
+			e.printStackTrace();
+		}
+		return null;
+	}
+
 	private void initialize()
 	{
 
@@ -22,36 +45,135 @@ public class WorkbenchDB implements DatabaseMethods
 	@Override
 	public void updateUserEmailAsync(int id, String email)
 	{
-
+		try
+		{
+			Connection connection = this.getConnection();
+			PreparedStatement statement = connection.prepareStatement(Statement.UPDATE_EMAIL);
+			statement.setString(1, email.toLowerCase());
+			statement.setInt(2, id);
+			statement.executeUpdate();
+			statement.close();
+			connection.close();
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
 	}
 
 	@Override
 	public void updateUserNameAsync(int id, String name)
 	{
-
+		try
+		{
+			Connection connection = this.getConnection();
+			PreparedStatement statement = connection.prepareStatement(Statement.UPDATE_USERNAME);
+			statement.setString(1, name.toLowerCase());
+			statement.setInt(2, id);
+			statement.executeUpdate();
+			statement.close();
+			connection.close();
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
 	}
 
 	@Override
 	public void updateUserAvatarAsync(int id, String avatar)
 	{
-
+		try
+		{
+			Connection connection = this.getConnection();
+			PreparedStatement statement = connection.prepareStatement(Statement.UPDATE_AVATAR);
+			statement.setString(1, avatar);
+			statement.setInt(2, id);
+			statement.executeUpdate();
+			statement.close();
+			connection.close();
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
 	}
 
 	@Override
 	public void updateUserPasswordAsync(int id, String passwordHash)
 	{
-
+		try
+		{
+			Connection connection = this.getConnection();
+			PreparedStatement statement = connection.prepareStatement(Statement.UPDATE_PASSWORD);
+			statement.setString(1, passwordHash);
+			statement.setInt(2, id);
+			statement.executeUpdate();
+			statement.close();
+			connection.close();
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
 	}
 
 	@Override
 	public void invalidateToken(String token)
 	{
-
+		try
+		{
+			Connection connection = this.getConnection();
+			PreparedStatement statement = connection.prepareStatement(Statement.INVALIDATE_TOKEN);
+			statement.setLong(1, System.currentTimeMillis());
+			statement.setString(2, token.toUpperCase());
+			statement.executeUpdate();
+			statement.close();
+			connection.close();
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
 	}
 
 	@Override
 	public boolean checkUsernameAvailability(String username)
 	{
+		Connection connection = null;
+		PreparedStatement statement = null;
+		try
+		{
+			connection = this.getConnection();
+			statement = connection.prepareStatement(Statement.CHECK_USERNAME_AVAILABILITY);
+			statement.setString(1, username.toLowerCase());
+			ResultSet result = statement.executeQuery();
+
+			if (result.next())
+			{
+				return false;
+			}
+			else
+			{
+				return true;
+			}
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			try
+			{
+				statement.close();
+				connection.close();
+			}
+			catch (SQLException e)
+			{
+				e.printStackTrace();
+			}
+		}
 		return false;
 	}
 

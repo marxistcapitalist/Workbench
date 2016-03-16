@@ -16,6 +16,6 @@ public class Token
 			token = new BigInteger(640, random).toString(32);
 		}
 
-		return token;
+		return token.toUpperCase();
 	}
 }
