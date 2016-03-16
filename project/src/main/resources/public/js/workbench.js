@@ -87,7 +87,7 @@ workbench.auth = {
     var logoutobj = {
       token: usertoken
     };
-    workbench.comm.http.post(logoutobj, "http://localhost:80/logout", function(resp) {
+    workbench.comm.http.post(logoutobj, "http://localhost:80/api/logout", function(resp) {
       if(resp.result) {
         // TODO UI show output
       } else {
@@ -96,26 +96,33 @@ workbench.auth = {
     });
   },
 
-  authenticate: function(autoLogin) {
+  authenticate: function(success, failure) {
     var usertoken = docCookies.getItem("wb_user_token");
     var userid = docCookies.getItem("wb_user_id");
     var authobj = {
       token: usertoken,
       id: userid
     };
-    workbench.comm.http.post(authobj, "http://localhost:80/authenticate", function(resp) {
+    workbench.comm.http.post(authobj, "http://localhost:80/api/authenticate", function(resp) {
       if(resp.result) {
-        if(!(resp.data.hasOwnProperty("id")) || !(resp.data.hasOwnProperty("token"))) {
-          if(autologin)
-            workbench.ui.popup.login.show(150);
+        if(!resp.data.hasOwnProperty("token") || !resp.data.hasOwnProperty("id") || resp.data.token.length < 1 || resp.data.id.length < 1) {
+          docCookies.removeItem("wb_user_token");
+          docCookies.removeItem("wb_user_id");
+          docCookies.removeItem("wb_user_name");
+          if(typeof failure != "undefined")
+            failure();
           return;
-        } // TODO Further implementation? ?? ?
-      } else {
-        if(typeof autoLogin == "boolean" && autoLogin) {
-          // TODO Delete current login cookies, logout, show login pane, authentication error
         } else {
-          // TODO Show authentication error message
+          if(typeof success != "undefined")
+            success();
+          return;
         }
+      } else {
+        docCookies.removeItem("wb_user_token");
+        docCookies.removeItem("wb_user_id");
+        docCookies.removeItem("wb_user_name");
+        if(typeof failure != "undefined")
+          failure();
       }
     });
   },
@@ -160,7 +167,7 @@ workbench.auth = {
       }
       return;
     }
-    workbench.comm.http.post(regobj, "http://localhost:80/register", function(resp) {
+    workbench.comm.http.post(regobj, "http://localhost:80/api/register", function(resp) {
       if(resp.result) {
         if(resp.data.hasOwnProperty("success") && resp.data.success == false) {
           docCookies.setItem("wb_user_token", resp.data.token, Infinity);
@@ -189,36 +196,37 @@ workbench.bench = {
     var userid = docCookies.getItem("wb_user_id");
     var usertoken = docCookies.getItem("wb_user_token");
     if(userid == null || usertoken == null) {
-      workbench.auth.authenticate(true);
-      console.log("Failed to retrieve userid and usertoken for loading available benches");
-      return;
-    }
+     workbench.auth.authenticate(function() { workbench.bench.benchSelect(); }, function() { workbench.ui.popup.login.show(); });
+     console.log("Failed to retrieve userid and usertoken for loading available benches");
+     return;
+   }
     var reqobj = {
       agent: {
         id: userid,
         token: usertoken
       }
     };
-    workbench.comm.http.post(reqobj, "http://localhost:80/user", function(resp) {
+    workbench.comm.http.post(reqobj, "http://localhost:80/api/user", function(resp) {
       if(resp.result) {
-        if(!(resp.data.hasOwnProperty("email"))) {
-          workbench.auth.authenticate(true);
-          return;
+        if(resp.data.hasOwnProperty("email")) {
+          if(!(resp.data.hasOwnProperty("owner")) || !(resp.data.hasOwnProperty("member")) || resp.data.owner.length < 1 || resp.data.member.length < 1) {
+            workbench.ui.popup.benchselect.showNoBenches();
+            return;
+          }
+          var benches = [];
+          for(var i=0;i<resp.data.owner.length;i++) {
+            benches.push(resp.data.owner[i]);
+          }
+          for(var i=0;i<resp.data.member.length;i++) {
+            benches.push(resp.data.member[i]);
+          }
+          workbench.ui.popup.benchselect.showBenches(benches);
+        } else {
+          workbench.auth.authenticate(function() { workbench.bench.benchSelect(); }, function() { workbench.ui.popup.login.show(150); });
         }
-        if(!(resp.data.hasOwnProperty("owner")) || !(resp.data.hasOwnProperty("member")) || (resp.data.owner.length < 1 && resp.data.member.length < 1)) {
-          workbench.ui.popup.benchselect.showNoBenches();
-          return;
-        }
-        var benches = [];
-        for(var i=0;i<resp.data.owner.length;i++) {
-          benches.push(resp.data.owner[i]);
-        }
-        for(var i=0;i<resp.data.member.length; i++) {
-          benches.push(resp.data.member[i]);
-        }
-        workbench.ui.popup.benchselect.showBenches(benches);
       } else {
-        workbench.ui.popup.errorbox.showError("Unable to contact server to retrieve available user benches. Check your connection and try reloading the page.", "HTTP Error")
+        workbench.ui.popup.errorbox.showError("Unable to contact server to retrieve available user benches. Check your connection and try reloading the page.", "HTTP Error");
+
         return;
       }
     });
@@ -283,11 +291,10 @@ workbench.core = {
     /* TODO Hash change detection. This is not a top priority, and currently used script is too old. */
     if(!(location.hash == "#nointro")) {
       workbench.ui.popup.intro.showTime(wait);
-      //setTimeout(workbench.auth.authenticate(true), wait);
-      setTimeout(function() { workbench.ui.popup.login.show(750) }, wait + 750);
+      setTimeout(workbench.auth.authenticate(function() { workbench.bench.benchSelect(); }, function() { setTimeout(function() { workbench.ui.popup.login.show(750) }, wait + 750); }), wait);
     } else {
       workbench.ui.popup.intro.hide();
-      workbench.ui.popup.login.show(750);
+      workbench.auth.authenticate(function() { workbench.bench.benchSelect(); }, function() { workbench.ui.popup.login.show(750); });
     }
     console.log("Started Successfully!");
   }
@@ -579,7 +586,7 @@ workbench.ui = {
         closeError: function() {
           $(this.selector).remove()
         }
-      })
+      });
 
       // Attach listeners for UI updates
       this.attachListeners();
