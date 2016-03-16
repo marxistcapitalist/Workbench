@@ -48,37 +48,16 @@ public class WorkbenchDB implements DatabaseMethods
 		try
 		{
 			Connection connection = this.getConnection();
-			PreparedStatement a = connection.prepareStatement(Table.Accounts);
-			PreparedStatement b = connection.prepareStatement(Table.BenchNodeContent);
-			PreparedStatement c = connection.prepareStatement(Table.BenchNodes);
-			PreparedStatement d = connection.prepareStatement(Table.Benches);
-			PreparedStatement e = connection.prepareStatement(Table.Folders);
-			PreparedStatement f = connection.prepareStatement(Table.Members);
-			PreparedStatement g = connection.prepareStatement(Table.Sessions);
-			PreparedStatement h = connection.prepareStatement(Table.UserNodeContent);
-			PreparedStatement i = connection.prepareStatement(Table.UserNodes);
+			java.sql.Statement statement = connection.createStatement();
 
-			a.execute();
-			b.execute();
-			c.execute();
-			d.execute();
-			e.execute();
-			f.execute();
-			g.execute();
-			h.execute();
-			i.execute();
+			statement.executeUpdate(Table.Accounts);
+			statement.executeUpdate(Table.BenchNodeContent);
+			statement.executeUpdate(Table.BenchNodes);
+			statement.executeUpdate(Table.Benches);
+			statement.executeUpdate(Table.Members);
+			statement.executeUpdate(Table.Sessions);
 
-			a.close();
-			b.close();
-			c.close();
-			d.close();
-			e.close();
-			f.close();
-			g.close();
-			h.close();
-			i.close();
-
-			connection.commit();
+			statement.close();
 			connection.close();
 		}
 		catch (SQLException e)

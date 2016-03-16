@@ -6,7 +6,7 @@ public class Tables
 			"CREATE TABLE IF NOT EXISTS Accounts " +
 			"( " +
 			"userId int UNSIGNED NOT NULL AUTO_INCREMENT, " +
-			"password char(64) NOT NULL, " +
+			"password char(64), " +
 			"username varchar(32) NOT NULL, " +
 			"email varchar(254) NOT NULL, " +
 			"confirmed tinyint(1) DEFAULT 1, " +

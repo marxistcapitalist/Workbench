@@ -40,6 +40,7 @@ public class WorkbenchAPI
 	{
 		////////// GENERAL ////////////
 		ping();
+		ping2();
 
 		////////// ACCOUNTS ////////////
 		login();
@@ -87,6 +88,11 @@ public class WorkbenchAPI
 	private void ping()
 	{
 		post(API + "ping", (req, res) -> "{}");
+	}
+
+	private void ping2()
+	{
+		get(API + "ping", (req, res) -> "pong!");
 	}
 
 	//////////// ACCOUNTS ///////////////
@@ -208,10 +214,8 @@ public class WorkbenchAPI
 	{
 		post(API + "authenticate", (req, res) ->
 		{
-			System.console().writer().println("MEMES");
-
-			System.console().writer().println(req.body());
-			Authenticate body = gson.fromJson(req.body(), Authenticate.class);
+			Gson g = new Gson();
+			Authenticate body = g.fromJson(req.body(), Authenticate.class);
 
 			if (!tokenManager.check(body.getId(), body.getToken()))
 			{
@@ -221,6 +225,7 @@ public class WorkbenchAPI
 			Authenticate response = new Authenticate();
 			response.setToken(body.getToken().toUpperCase());
 			response.setId(body.getId());
+			res.body();
 
 			return gson.toJson(response);
 		});
@@ -230,7 +235,6 @@ public class WorkbenchAPI
 	{
 		post(API + "logout", (req, res) ->
 		{
-
 
 			ClientToken body = gson.fromJson(req.body(), ClientToken.class);
 			this.database.invalidateToken(body.getToken());
