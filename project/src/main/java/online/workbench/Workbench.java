@@ -18,9 +18,9 @@ public class Workbench
 		port(80);
 		System.console().writer().println("==                                               ==");
 		System.console().writer().println("== • Port Set: 80                                ==");
-		threadPool(30);
+		threadPool(10);
 		System.console().writer().println("==                                               ==");
-		System.console().writer().println("== • Thread Pool Created: 30                     ==");
+		System.console().writer().println("== • Thread Pool Created: 10                     ==");
 		staticFileLocation("/public");
 		System.console().writer().println("==                                               ==");
 		System.console().writer().println("== • Static Content Location Set: /public        ==");
@@ -52,9 +52,9 @@ public class Workbench
 			public void run()
 			{
 				String input = "";
-				while (input != "stop")
+				while (input.equalsIgnoreCase("stop"))
 				{
-					input = System.console().readLine().trim().toLowerCase();
+					input = System.console().readLine().trim();
 				}
 				Spark.stop();
 			}

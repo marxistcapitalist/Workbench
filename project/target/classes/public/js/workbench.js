@@ -196,6 +196,18 @@ workbench.bench = {
   // NODE STORAGE
   nodes: [],
 
+  // Bench Properties - Every bench has all of these
+  title: "Untitled Bench",
+  owner: {
+    id: 0000000000,
+    user: "User"
+  },
+  preview: "",
+  background: "#CCC",
+  members: [],
+  created: "";
+
+
   benchSelect: function() { // Show bench selection screen
     var userid = docCookies.getItem("wb_user_id");
     var usertoken = docCookies.getItem("wb_user_token");
@@ -256,7 +268,8 @@ workbench.bench = {
       if(resp.result) {
 
       } else {
-
+        workbench.ui.popup.errorbox.showError("An HTTP error occured while attempting to load the bench, check your connection. See console for details", "HTTP Error");
+        return;
       }
     });
   },
