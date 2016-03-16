@@ -97,6 +97,8 @@ public class WorkbenchAPI
 	{
 		post(API + "login", (req, res) ->
 		{
+			res.status(200);
+
 			String body = req.body();
 			ClientLogin obj = gson.fromJson(body, ClientLogin.class);
 			String login = obj.getLoginkey();
@@ -124,6 +126,8 @@ public class WorkbenchAPI
 	{
 		post(API + "register", (req, res) ->
 		{
+			res.status(200);
+
 			Register body = gson.fromJson(req.body(), Register.class);
 			String email = body.getEmail().toLowerCase();
 			String username = body.getUsername().toLowerCase();
@@ -206,6 +210,8 @@ public class WorkbenchAPI
 	{
 		post(API + "authenticate", (req, res) ->
 		{
+			res.status(200);
+
 			Authenticate body = gson.fromJson(req.body(), Authenticate.class);
 
 			if (!tokenManager.check(body.getId(), body.getToken()))
@@ -225,6 +231,8 @@ public class WorkbenchAPI
 	{
 		post(API + "logout", (req, res) ->
 		{
+			res.status(200);
+
 			ClientToken body = gson.fromJson(req.body(), ClientToken.class);
 			this.database.invalidateToken(body.getToken());
 			tokenManager.invalidate(body.getToken());
@@ -236,6 +244,8 @@ public class WorkbenchAPI
 	{
 		post(API + "user", (req, res) ->
 		{
+			res.status(200);
+
 			ClientUserData body = gson.fromJson(req.body(), ClientUserData.class);
 			int id = body.getAgent().getId();
 			User user = userManager.load(id);
@@ -302,6 +312,8 @@ public class WorkbenchAPI
 	{
 		post(API + "useredit", (req, res) ->
 		{
+			res.status(200);
+
 			UserEditRequest body = gson.fromJson(req.body(), UserEditRequest.class);
 
 			if (tokenManager.check(body.getAgent().getId(), body.getAgent().getToken()))
@@ -354,6 +366,8 @@ public class WorkbenchAPI
 	{
 		post(API + "bench", (req, res) ->
 		{
+			res.status(200);
+
 			BenchInfoRequest request = new BenchInfoRequest();
 
 			if (tokenManager.check(request.getAgent().getId(), request.getAgent().getToken()))
@@ -496,6 +510,8 @@ public class WorkbenchAPI
 	{
 		post(API + "create", (req, res) ->
 		{
+			res.status(200);
+
 			BenchCreate request = gson.fromJson(req.body(), BenchCreate.class);
 
 			if (tokenManager.check(request.getAgent().getId(), request.getAgent().getToken()))
@@ -516,6 +532,8 @@ public class WorkbenchAPI
 	{
 		post(API + "delete", (req, res) ->
 		{
+			res.status(200);
+
 			BenchDelete request = gson.fromJson(req.body(), BenchDelete.class);
 
 			if (tokenManager.check(request.getAgent().getId(), request.getAgent().getToken()))
@@ -542,6 +560,8 @@ public class WorkbenchAPI
 	{
 		post(API + "edit", (req, res) ->
 		{
+			res.status(200);
+
 			BenchEdit request = gson.fromJson(req.body(), BenchEdit.class);
 
 			if (tokenManager.check(request.getAgent().getId(), request.getAgent().getToken()))
@@ -593,6 +613,8 @@ public class WorkbenchAPI
 	{
 		post(API + ":benchId/adduser", (req, res) ->
 		{
+			res.status(200);
+
 			Bench bench = benchManager.load(Integer.valueOf(req.params(":benchId")));
 			UserModObject request = gson.fromJson(req.body(), UserModObject.class);
 			BooleanResponse response = new BooleanResponse();
@@ -621,6 +643,8 @@ public class WorkbenchAPI
 	{
 		post(API + ":benchId/moduser", (req, res) ->
 		{
+			res.status(200);
+
 			Bench bench = benchManager.load(Integer.valueOf(req.params(":benchId")));
 			UserModObject request = gson.fromJson(req.body(), UserModObject.class);
 			BooleanResponse response = new BooleanResponse();
@@ -649,6 +673,8 @@ public class WorkbenchAPI
 	{
 		post(API + ":benchId/removeuser", (req, res) ->
 		{
+			res.status(200);
+
 			Bench bench = benchManager.load(Integer.valueOf(req.params(":benchId")));
 			UserModNoPermObject request = gson.fromJson(req.body(), UserModNoPermObject.class);
 			BooleanResponse response = new BooleanResponse();
@@ -681,6 +707,8 @@ public class WorkbenchAPI
 	{
 		post(API + ":benchId/create", (req, res) ->
 		{
+			res.status(200);
+
 			Bench bench = benchManager.load(Integer.valueOf(req.params(":benchId")));
 			BenchNodeCreate request = gson.fromJson(req.body(), BenchNodeCreate.class);
 			int id = request.getAgent().getId();
@@ -725,6 +753,8 @@ public class WorkbenchAPI
 	{
 		post(API + ":benchId/delete", (req, res) ->
 		{
+			res.status(200);
+
 			Bench bench = benchManager.load(Integer.valueOf(req.params(":benchId")));
 			BenchNodeDelete request = gson.fromJson(req.body(), BenchNodeDelete.class);
 			int id = request.getAgent().getId();
@@ -757,6 +787,8 @@ public class WorkbenchAPI
 	{
 		post(API + ":benchId/edit", (req, res) ->
 		{
+			res.status(200);
+
 			Bench bench = benchManager.load(Integer.valueOf(req.params(":benchId")));
 			BenchNodeEdit request = gson.fromJson(req.body(), BenchNodeEdit.class);
 			int id = request.getAgent().getId();
@@ -801,6 +833,8 @@ public class WorkbenchAPI
 	{
 		post(API + ":benchId/move", (req, res) ->
 		{
+			res.status(200);
+
 			Bench bench = benchManager.load(Integer.valueOf(req.params(":benchId")));
 			BenchNodeMove request = gson.fromJson(req.body(), BenchNodeMove.class);
 			int id = request.getAgent().getId();
@@ -842,6 +876,8 @@ public class WorkbenchAPI
 	{
 		post(API + ":benchId/rename", (req, res) ->
 		{
+			res.status(200);
+
 			Bench bench = benchManager.load(Integer.valueOf(req.params(":benchId")));
 			BenchNodeRename request = gson.fromJson(req.body(), BenchNodeRename.class);
 			int id = request.getAgent().getId();
@@ -880,6 +916,8 @@ public class WorkbenchAPI
 	{
 		post(API + ":benchId/resize", (req, res) ->
 		{
+			res.status(200);
+
 			Bench bench = benchManager.load(Integer.valueOf(req.params(":benchId")));
 			BenchNodeResize request = gson.fromJson(req.body(), BenchNodeResize.class);
 			int id = request.getAgent().getId();
