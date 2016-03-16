@@ -51,7 +51,7 @@ workbench.auth = {
       workbench.bench.load();
       return;
     }
-    workbench.comm.http.post(loginobj, "http://localhost:80/login", function(resp) {
+    workbench.comm.http.post(loginobj, "http://localhost:80/api/login", function(resp) {
       if(resp.result) {
         if(resp.data.hasOwnProperty("token") && resp.data.hasOwnProperty("agent")) {
           docCookies.setItem("wb_user_token", resp.data.token, Infinity);
@@ -99,6 +99,10 @@ workbench.auth = {
   authenticate: function(success, failure) {
     var usertoken = docCookies.getItem("wb_user_token");
     var userid = docCookies.getItem("wb_user_id");
+    if(usertoken === null || userid === null) {
+      failure();
+      return;
+    }
     var authobj = {
       token: usertoken,
       id: userid
@@ -131,7 +135,7 @@ workbench.auth = {
     var regobj = {
       username: user,
       password: pass,
-      mail: mail
+      email: mail
     };
     if(this.timeout)
       return;
@@ -169,7 +173,7 @@ workbench.auth = {
     }
     workbench.comm.http.post(regobj, "http://localhost:80/api/register", function(resp) {
       if(resp.result) {
-        if(resp.data.hasOwnProperty("success") && resp.data.success == false) {
+        if(resp.data.hasOwnProperty("success") && resp.data.success == true) {
           docCookies.setItem("wb_user_token", resp.data.token, Infinity);
           docCookies.setItem("wb_user_id", resp.data.agent.id, Infinity);
           docCookies.setItem("wb_user_name", resp.data.agent.user, Infinity);
@@ -183,6 +187,7 @@ workbench.auth = {
           workbench.ui.popup.register.hideLoad();
           workbench.ui.popup.register.showError("Malformed response; try again");
         }
+        console.log(resp.data);
       } else {
         workbench.ui.popup.register.hideLoad();
         workbench.ui.popup.register.showError("HTTP Error, check your connection");
@@ -211,7 +216,7 @@ workbench.bench = {
   benchSelect: function() { // Show bench selection screen
     var userid = docCookies.getItem("wb_user_id");
     var usertoken = docCookies.getItem("wb_user_token");
-    if(userid == null || usertoken == null) {
+    if(userid === null || usertoken === null) {
      workbench.auth.authenticate(function() { workbench.bench.benchSelect(); }, function() { workbench.ui.popup.login.show(); });
      console.log("Failed to retrieve userid and usertoken for loading available benches");
      return;
@@ -295,6 +300,7 @@ workbench.comm = {
       this.ajaxProgress = true;
       try {
         var jsonstring = JSON.stringify(data);
+        console.log(jsonstring);
         $.ajax({
           type: "POST",
           url: target,
@@ -303,6 +309,7 @@ workbench.comm = {
           contentType: "application/json; charset=UTF-8"
         })
         .done(function(data, status, xhr) { // Success
+          data = JSON.parse(data);
           callback({
             result: true,
             response: status,
