@@ -17,8 +17,7 @@ import static spark.Spark.*;
 
 public class WorkbenchWS implements WebsocketMethodsOutgoing
 {
-	private @Getter
-	WorkbenchAPI api;
+    private @Getter WorkbenchAPI api;
 	private @Getter Map<Bench, HashMap<Session, User>> sessions;
 	private Gson gson;
 
@@ -38,8 +37,8 @@ public class WorkbenchWS implements WebsocketMethodsOutgoing
 	 */
 	private void initialize()
 	{
+		WebsocketProtocolHandler.WebsocketProtocolHandlerInitialize(this);
 		webSocket(api.API + "ws", WebsocketProtocolHandler.class);
-		init();
 	}
 
 	/**

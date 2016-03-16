@@ -438,6 +438,7 @@ a:active {
   width: 50%;
   background: #171717;
   z-index: 4230;
+  border: 1px solid #666;
 }
 
 .error_box .inner {
@@ -446,6 +447,10 @@ a:active {
 
 .error_box h1 {
   margin: 10px 0 0 16px;
+}
+
+.error_box .error_desc {
+  color: #FFF;
 }
 
 .error_box button {
@@ -458,8 +463,8 @@ a:active {
 }
 
 .error_box.error {
-  background: #FFBABA;
-  color: #D8000C;
+  /*color: #D8000C;*/
+  color: #F00;
 }
 
 /*

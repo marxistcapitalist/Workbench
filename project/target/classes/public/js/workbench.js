@@ -87,7 +87,7 @@ workbench.auth = {
     var logoutobj = {
       token: usertoken
     };
-    workbench.comm.http.post(logoutobj, "http://localhost:80/logout", function(resp) {
+    workbench.comm.http.post(logoutobj, "http://localhost:80/api/logout", function(resp) {
       if(resp.result) {
         // TODO UI show output
       } else {
@@ -96,26 +96,33 @@ workbench.auth = {
     });
   },
 
-  authenticate: function(autoLogin) {
+  authenticate: function(success, failure) {
     var usertoken = docCookies.getItem("wb_user_token");
     var userid = docCookies.getItem("wb_user_id");
     var authobj = {
       token: usertoken,
       id: userid
     };
-    workbench.comm.http.post(authobj, "http://localhost:80/authenticate", function(resp) {
+    workbench.comm.http.post(authobj, "http://localhost:80/api/authenticate", function(resp) {
       if(resp.result) {
-        if(!(resp.data.hasOwnProperty("id")) || !(resp.data.hasOwnProperty("token"))) {
-          if(autologin)
-            workbench.ui.popup.login.show(150);
+        if(!resp.data.hasOwnProperty("token") || !resp.data.hasOwnProperty("id") || resp.data.token.length < 1 || resp.data.id.length < 1) {
+          docCookies.removeItem("wb_user_token");
+          docCookies.removeItem("wb_user_id");
+          docCookies.removeItem("wb_user_name");
+          if(typeof failure != "undefined")
+            failure();
           return;
-        } // TODO Further implementation? ?? ?
-      } else {
-        if(typeof autoLogin == "boolean" && autoLogin) {
-          // TODO Delete current login cookies, logout, show login pane, authentication error
         } else {
-          // TODO Show authentication error message
+          if(typeof success != "undefined")
+            success();
+          return;
         }
+      } else {
+        docCookies.removeItem("wb_user_token");
+        docCookies.removeItem("wb_user_id");
+        docCookies.removeItem("wb_user_name");
+        if(typeof failure != "undefined")
+          failure();
       }
     });
   },
@@ -160,7 +167,7 @@ workbench.auth = {
       }
       return;
     }
-    workbench.comm.http.post(regobj, "http://localhost:80/register", function(resp) {
+    workbench.comm.http.post(regobj, "http://localhost:80/api/register", function(resp) {
       if(resp.result) {
         if(resp.data.hasOwnProperty("success") && resp.data.success == false) {
           docCookies.setItem("wb_user_token", resp.data.token, Infinity);
@@ -185,43 +192,81 @@ workbench.auth = {
 };
 
 workbench.bench = {
+
+  // NODE STORAGE
+  nodes: [],
+
   benchSelect: function() { // Show bench selection screen
     var userid = docCookies.getItem("wb_user_id");
     var usertoken = docCookies.getItem("wb_user_token");
     if(userid == null || usertoken == null) {
-      workbench.auth.authenticate(true);
-      console.log("Failed to retrieve userid and usertoken for loading available benches");
-      return;
-    }
+     workbench.auth.authenticate(function() { workbench.bench.benchSelect(); }, function() { workbench.ui.popup.login.show(); });
+     console.log("Failed to retrieve userid and usertoken for loading available benches");
+     return;
+   }
     var reqobj = {
       agent: {
         id: userid,
         token: usertoken
       }
     };
-    workbench.comm.http.post(reqobj, "http://localhost:80/user", function(resp) {
+    workbench.comm.http.post(reqobj, "http://localhost:80/api/user", function(resp) {
       if(resp.result) {
-        if(!(resp.data.hasOwnProperty("email"))) {
-          workbench.auth.authenticate(true);
-          return;
+        if(resp.data.hasOwnProperty("email")) {
+          if(!(resp.data.hasOwnProperty("owner")) || !(resp.data.hasOwnProperty("member")) || resp.data.owner.length < 1 || resp.data.member.length < 1) {
+            workbench.ui.popup.benchselect.showNoBenches();
+            return;
+          }
+          var benches = [];
+          for(var i=0;i<resp.data.owner.length;i++) {
+            benches.push(resp.data.owner[i]);
+          }
+          for(var i=0;i<resp.data.member.length;i++) {
+            benches.push(resp.data.member[i]);
+          }
+          workbench.ui.popup.benchselect.showBenches(benches);
+        } else {
+          workbench.auth.authenticate(function() { workbench.bench.benchSelect(); }, function() { workbench.ui.popup.login.show(150); });
         }
-        if(!(resp.data.hasOwnProperty("owner")) || !(resp.data.hasOwnProperty("member")) || (resp.data.owner.length < 1 && resp.data.member.length < 1)) {
-          workbench.ui.popup.benchselect.showNoBenches();
-          return;
-        }
-        var benches = [];
-        for(var i=0;i<resp.data.owner.length;i++) {
-          benches.push(resp.data.owner[i]);
-        }
-        for(var i=0;i<resp.data.member.length; i++) {
-          benches.push(resp.data.member[i]);
-        }
-        workbench.ui.popup.benchselect.showBenches(benches);
       } else {
-        workbench.ui.popup.errorbox.showError("Unable to contact server to retrieve available user benches. Check your connection and try reloading the page.", "HTTP Error")
+        workbench.ui.popup.errorbox.showError("Unable to contact server to retrieve available user benches. Check your connection and try reloading the page.", "HTTP Error");
         return;
       }
     });
+  },
+
+  loadBench: function(benchid) {
+    if(typeof benchid != "number")
+      return;
+    var userid = docCookies.getItem("wb_user_id");
+    var usertoken = docCookies.getItem("wb_user_token");
+    if(userid === null || usertoken === null || userid.length < 1 || usertoken.length < 1) {
+      authenticate(function() { workbench.bench.loadBench(); }, function() { workbench.ui.popup.login.show(150); });
+      return;
+    }
+    var reqobj = {
+      id: benchid,
+      verbosity: "high",
+      agent: {
+        id: userid,
+        token: usertoken
+      }
+    };
+    workbench.comm.http.post(reqobj, "http://localhost:80/api/bench", function(resp) {
+      if(resp.result) {
+
+      } else {
+
+      }
+    });
+  },
+
+  // VERIFY CREATE DELETE EDIT MOVE RENAME RESIZE NOTIFY MOD
+  inbox: function(message) {
+    switch(message.type) {
+      default:
+        return;
+    }
   },
 
   load: function() { // TODO !! IMPLEMENTATION !!
@@ -271,8 +316,68 @@ workbench.comm = {
   },
 
   websocket: {
-    websocket: undefined, // Websocket object, not for direct use outside this namespace
-    wsTarget: "ws://localhost:80/" // TODO: Placeholder value for testing, repleace with implementation
+    socket: undefined, // Websocket object, not for direct use outside this namespace
+    //wsTarget: "ws://localhost:666/api/ws",
+    wsTarget: "ws://echo.websocket.org",
+    cleanClose: true, // Whether or not the websocket is in a clean close state at the moment. If this is false, and socket closes, the connection unexpectedly closed.
+
+    open: function() {
+      try {
+        this.socket = new WebSocket(this.wsTarget);
+        this.socket.onerror = this.onerror;
+        this.socket.onopen = this.onopen;
+        this.socket.onclose = this.onclose;
+      } catch(err) {
+        workbench.ui.popup.errorbox.showError("Failed to initialize WebSocket, see console for details.", "WebSocket Connection Failure");
+      }
+    },
+
+    close: function() {
+      try {
+        this.cleanClose = true;
+        this.socket.close();
+      } catch(err) {
+        console.log("Failed to properly close websocket. It probably wasn't open.");
+      }
+    },
+
+    onmessage: function(message) {
+      try {
+        var respobj = JSON.parse(message);
+        if(!respobj.hasOwnProperty("type") || !respobj.hasOwnProperty("bench") || respobj.type.length < 1 || respobj.bench.length < 1) {
+          workbench.ui.popup.errorbox.showError("Received malformed JSON request form server (missing required properties)", "Server Error");
+          return;
+        }
+        workbench.bench.inbox(respobj);
+      } catch(error) {
+        console.error(error);
+        return;
+      }
+    },
+
+    onerror: function() {
+      console.error("WebSocket Error! AKA something went horribly wrong. Reloading the page...");
+      setTimeout(function() { location.replace("index.html"); }, 3000);
+    },
+
+    onopen: function() {
+      console.log("WebSocket Opened!");
+      workbench.comm.websocket.cleanClose = false;
+      try {
+
+      } catch(err) {
+
+      }
+    },
+
+    onclose: function() {
+      if(workbench.comm.websocket.cleanClose) {
+        console.log("WebSocket gracefully, cleanly closed.");
+      } else {
+        console.log("WebSocket uncleanly closed, will attempt to re-authenticate...");
+        workbench.auth.authenticate(function() { workbench.comm.websocket.open(); }, function() { workbench.ui.popup.login.show(150); })
+      }
+    }
   }
 };
 
@@ -283,11 +388,10 @@ workbench.core = {
     /* TODO Hash change detection. This is not a top priority, and currently used script is too old. */
     if(!(location.hash == "#nointro")) {
       workbench.ui.popup.intro.showTime(wait);
-      //setTimeout(workbench.auth.authenticate(true), wait);
-      setTimeout(function() { workbench.ui.popup.login.show(750) }, wait + 750);
+      setTimeout(workbench.auth.authenticate(function() { workbench.bench.benchSelect(); }, function() { setTimeout(function() { workbench.ui.popup.login.show(750) }, wait + 750); }), wait);
     } else {
       workbench.ui.popup.intro.hide();
-      workbench.ui.popup.login.show(750);
+      workbench.auth.authenticate(function() { workbench.bench.benchSelect(); }, function() { workbench.ui.popup.login.show(750); });
     }
     console.log("Started Successfully!");
   }
@@ -579,7 +683,7 @@ workbench.ui = {
         closeError: function() {
           $(this.selector).remove()
         }
-      })
+      });
 
       // Attach listeners for UI updates
       this.attachListeners();

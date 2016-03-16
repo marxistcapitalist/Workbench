@@ -19,27 +19,25 @@ import java.util.*;
 @WebSocket
 public class WebsocketProtocolHandler
 {
-	private Gson gson;
-	private WorkbenchWS websocket;
-	private ArrayList<Session> pendingSessions;
+	private static Gson gson = new Gson();
+	private static WorkbenchWS websocket;
+	private static ArrayList<Session> pendingSessions = new ArrayList<>();
 	private List<String> incomingValids = new ArrayList<>(Arrays.asList(
 			"move", "resize", "textcursor", "textmodify", "textselect", "verify"
 
 			//Chat is not handled by this handler class
 	));
 
-	private BenchManager benchManager;
-	private UserManager userManager;
-	private TokenManager tokenManager;
+	private static BenchManager benchManager;
+	private static UserManager userManager;
+	private static TokenManager tokenManager;
 
-	public WebsocketProtocolHandler(WorkbenchWS websocket)
+	public static void WebsocketProtocolHandlerInitialize(WorkbenchWS websocket)
 	{
-		this.gson = new Gson();
-		this.websocket = websocket;
-		this.pendingSessions = new ArrayList<>();
-		this.benchManager = websocket.getApi().getBenchManager();
-		this.userManager = websocket.getApi().getUserManager();
-		this.tokenManager = websocket.getApi().getTokenManager();
+		WebsocketProtocolHandler.websocket = websocket;
+		benchManager = websocket.getApi().getBenchManager();
+		userManager = websocket.getApi().getUserManager();
+		tokenManager = websocket.getApi().getTokenManager();
 	}
 
 	@OnWebSocketConnect

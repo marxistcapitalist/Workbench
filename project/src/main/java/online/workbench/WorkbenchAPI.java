@@ -24,7 +24,7 @@ public class WorkbenchAPI
 	private @Getter TokenManager tokenManager;
 	private Gson gson;
 
-	public final String API = "api/";
+	public final String API = "/api/";
 	private static final char[] disallowed = {'\\', '\'', '\"', ';', '&', '@', '#', '/', '$', ':', '%', '^', '*', '<', '>', '{', '}', '[', ']', '(', ')'};
 
 	public WorkbenchAPI(WorkbenchDB database)
@@ -34,11 +34,9 @@ public class WorkbenchAPI
 		this.tokenManager = new TokenManager(database);
 		this.database = database;
 		this.gson = new Gson();
-
-		initialize();
 	}
 
-	private void initialize()
+	public void initialize()
 	{
 		////////// GENERAL ////////////
 		ping();
