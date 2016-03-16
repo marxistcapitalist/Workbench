@@ -4,8 +4,8 @@ import online.workbench.data.initialization.Statement;
 import online.workbench.managers.TokenManager;
 import online.workbench.base.DatabaseMethods;
 import online.workbench.model.struct.*;
-import online.workbench.security.Encrypt;
 import online.workbench.security.Token;
+import online.workbench.utils.HexSelector;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -472,7 +472,7 @@ public class WorkbenchDB implements DatabaseMethods
 			try
 			{
 				statement.close();
-				connection.close()
+				connection.close();
 			}
 			catch (SQLException e)
 			{
@@ -490,22 +490,70 @@ public class WorkbenchDB implements DatabaseMethods
 	/**
 	 * Only used internally by the loadBench() method.
 	 */
-	private BenchNode loadNode(Connection connection, int bNodeId)
+	private Map<Integer, BenchNode> loadNodes(Connection connection, int benchId)
 	{
+		HashMap<Integer, BenchNode> tempNodes = new HashMap<>();
+		Map<Integer, BenchNode> finalNodes = new HashMap<>();
+
 		PreparedStatement statement = null;
 		try
 		{
-			statement = connection.prepareStatement(Statement.VALIDATE_USER_LOGIN);
-			statement.setInt(1, id);
+			statement = connection.prepareStatement(Statement.LOAD_BENCH__GET_BENCH_NODE_DATA);
+			statement.setInt(1, benchId);
 			ResultSet result = statement.executeQuery();
 
-			if (result.next())
+			while (result.next())
 			{
-				String hash = result.getString(1);
+				int bNodeId = result.getInt(1);
+				int userId = result.getInt(2);
+				long created = result.getLong(3);
+				String title = result.getString(4);
+				int x = result.getInt(5);
+				int y = result.getInt(6);
+				int width = result.getInt(7);
+				int height = result.getInt(8);
+				boolean archived = result.getBoolean(9);
 
-				if (hash.equalsIgnoreCase(passwordHash))
+				tempNodes.put(bNodeId, new BenchNode(bNodeId, null, loadUser(userId), x, y, width, height, title, null, null, created, 0, archived));
+			}
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			try
+			{
+				statement.close();
+			}
+			catch (SQLException e)
+			{
+				e.printStackTrace();
+			}
+		}
+
+		try
+		{
+			statement = connection.prepareStatement(Statement.LOAD_BENCH__GET_BENCH_NODE_CONTENT);
+			statement.setInt(1, benchId);
+			ResultSet result = statement.executeQuery();
+
+			while (result.next())
+			{
+				int bNodeId = result.getInt(1);
+				long lastEdit = result.getLong(2);
+				ContentType type = ContentType.get(result.getString(3));
+				String content = result.getString(4);
+
+				if (tempNodes.containsKey(bNodeId))
 				{
-					return true;
+					BenchNode f_node = tempNodes.get(bNodeId);
+					f_node.LastEdit = lastEdit;
+					f_node.ContentType = type;
+					f_node.Content = content;
+
+					finalNodes.put(f_node.Id, f_node);
 				}
 			}
 		}
@@ -518,14 +566,13 @@ public class WorkbenchDB implements DatabaseMethods
 			try
 			{
 				statement.close();
-				connection.close();
 			}
 			catch (SQLException e)
 			{
 				e.printStackTrace();
 			}
 		}
-		return false;
+		return finalNodes;
 	}
 
 	@Override
@@ -536,7 +583,7 @@ public class WorkbenchDB implements DatabaseMethods
 		String title = null; //
 		long created = 0; //
 		Map<Integer, PermissionLevel> users = new HashMap<>(); //
-		Map<Integer, BenchNode> nodes = new HashMap<>();
+		Map<Integer, BenchNode> nodes = null; //
 		int width = 3840; //temp
 		int height = 2160; //temp
 		boolean archived = false; //
@@ -560,6 +607,7 @@ public class WorkbenchDB implements DatabaseMethods
 				created = result.getLong(2);
 				title = result.getString(3);
 				background = preview = result.getString(4);
+				archived = result.getBoolean(5);
 			}
 		}
 		catch (SQLException e)
@@ -609,17 +657,191 @@ public class WorkbenchDB implements DatabaseMethods
 			}
 		}
 
+		nodes = this.loadNodes(connection, benchId);
+
+		if (id != 0)
+		{
+			return new Bench(id, owner, title, created, users, nodes, width, height, archived, background, preview);
+		}
+		return null;
+	}
+
+	@Override
+	public int countBenchMembers(int benchId)
+	{
+		int counter = 0;
+
+		Connection connection = null;
+		PreparedStatement statement = null;
 		try
 		{
-			statement = connection.prepareStatement(Statement.LOAD_BENCH__GET_BENCH_NODE_IDS);
+			connection = this.getConnection();
+			statement = connection.prepareStatement(Statement.COUNT_BENCH_MEMBERS);
 			statement.setInt(1, benchId);
 			ResultSet result = statement.executeQuery();
 
 			while (result.next())
 			{
-				int bNodeId = result.getInt(1);
+				counter++;
+			}
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			try
+			{
+				statement.close();
+				connection.close();
+			}
+			catch (SQLException e)
+			{
+				e.printStackTrace();
+			}
+		}
+		return counter;
+	}
 
+	@Override
+	public int createNewUser(String username, String email)
+	{
+		int finalId = 0;
 
+		Connection connection = null;
+		PreparedStatement statement = null;
+		try
+		{
+			connection = this.getConnection();
+			statement = connection.prepareStatement(Statement.CREATE_USER__INITIAL_DATA);
+			statement.setString(1, username.toLowerCase());
+			statement.setString(2, email.toLowerCase());
+			statement.executeUpdate();
+
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			try
+			{
+				statement.close();
+			}
+			catch (SQLException e)
+			{
+				e.printStackTrace();
+			}
+		}
+
+		try
+		{
+			statement = connection.prepareStatement(Statement.CREATE_USER__GET_ID);
+			statement.setString(1, username.toLowerCase());
+			ResultSet result = statement.executeQuery();
+
+			if (result.next())
+			{
+				finalId = result.getInt(1);
+			}
+
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			try
+			{
+				statement.close();
+				connection.close();
+			}
+			catch (SQLException e)
+			{
+				e.printStackTrace();
+			}
+		}
+		return finalId;
+	}
+
+	@Override
+	public void setPassword(int id, String passwordHash)
+	{
+		Connection connection = null;
+		PreparedStatement statement = null;
+		try
+		{
+			connection = this.getConnection();
+			statement = connection.prepareStatement(Statement.CREATE_USER__INSERT_PASSWORD);
+			statement.setString(1, passwordHash);
+			statement.setInt(2, id);
+			statement.executeUpdate();
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			try
+			{
+				statement.close();
+			}
+			catch (SQLException e)
+			{
+				e.printStackTrace();
+			}
+		}
+	}
+
+	@Override
+	public Bench createBench(User user, String title, int w, int h)
+	{
+		String color = HexSelector.sel();
+		int benchId = 0;
+
+		Connection connection = null;
+		PreparedStatement statement = null;
+		try
+		{
+			connection = this.getConnection();
+			statement = connection.prepareStatement(Statement.CREATE_BENCH__INSERT_DATA);
+			statement.setInt(1, user.Id);
+			statement.setLong(2, System.currentTimeMillis());
+			statement.setString(3, title);
+			statement.setString(4, color);
+			statement.executeUpdate();
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			try
+			{
+				statement.close();
+			}
+			catch (SQLException e)
+			{
+				e.printStackTrace();
+			}
+		}
+
+		try
+		{
+			statement = connection.prepareStatement(Statement.CREATE_BENCH__GRAB_BENCH_ID);
+			statement.setInt(1, user.Id);
+			statement.setLong(2, System.currentTimeMillis());
+			statement.setString(3, title);
+			ResultSet result = statement.executeQuery();
+
+			if (result.next())
+			{
+				benchId = result.getInt(1);
 			}
 		}
 		catch (SQLException e)
@@ -638,132 +860,451 @@ public class WorkbenchDB implements DatabaseMethods
 			}
 		}
 
-		new Bench(id, owner, title, created, users, nodes, width, height, archived, background, preview);
-	}
-
-	@Override
-	public int countBenchMembers(int benchId)
-	{
-		return 0;
-	}
-
-	@Override
-	public int createNewUser(String username, String email)
-	{
-		return 0;
-	}
-
-	@Override
-	public void setPassword(int id, String passwordHash)
-	{
-
-	}
-
-	@Override
-	public Bench createBench(User user, String title, int w, int h)
-	{
+		if (benchId != 0)
+		{
+			try
+			{
+				statement = connection.prepareStatement(Statement.CREATE_BENCH__ADD_OWNER_AS_MEMBER);
+				statement.setInt(1, benchId);
+				statement.setInt(2, user.Id);
+				statement.setInt(3, PermissionLevel.OWNER.val());
+				statement.executeUpdate();
+			}
+			catch (SQLException e)
+			{
+				e.printStackTrace();
+			}
+			finally
+			{
+				try
+				{
+					statement.close();
+					connection.close();
+				}
+				catch (SQLException e)
+				{
+					e.printStackTrace();
+				}
+			}
+			return this.loadBench(benchId);
+		}
 		return null;
 	}
 
 	@Override
 	public void archiveBench(int id)
 	{
-
+		try
+		{
+			Connection connection = this.getConnection();
+			PreparedStatement statement = connection.prepareStatement(Statement.ARCHIVE_BENCH);
+			statement.setBoolean(1, true);
+			statement.setInt(2, id);
+			statement.executeUpdate();
+			statement.close();
+			connection.close();
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
 	}
 
 	@Override
 	public void submitNodeContentEditAsync(NodeType type, int id, String content)
 	{
-
+		try
+		{
+			Connection connection = this.getConnection();
+			PreparedStatement statement = connection.prepareStatement(Statement.BENCH_NODE_CONTENT_EDIT);
+			statement.setString(1, content);
+			statement.setInt(2, id);
+			statement.executeUpdate();
+			statement.close();
+			connection.close();
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
 	}
 
 	@Override
 	public void submitNodeContentTypeEditAsync(NodeType type, int id, ContentType cType)
 	{
-
+		try
+		{
+			Connection connection = this.getConnection();
+			PreparedStatement statement = connection.prepareStatement(Statement.BENCH_NODE_CONTENT_TYPE_EDIT);
+			statement.setString(1, cType.toString());
+			statement.setInt(2, id);
+			statement.executeUpdate();
+			statement.close();
+			connection.close();
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
 	}
 
 	@Override
 	public void submitNodeMoveAsync(NodeType type, int id, int x, int y)
 	{
-
+		try
+		{
+			Connection connection = this.getConnection();
+			PreparedStatement statement = connection.prepareStatement(Statement.BENCH_NODE_MOVE);
+			statement.setInt(1, x);
+			statement.setInt(2, y);
+			statement.setInt(3, id);
+			statement.executeUpdate();
+			statement.close();
+			connection.close();
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
 	}
 
 	@Override
 	public void submitNodeResizeAsync(NodeType type, int id, int w, int h)
 	{
-
+		try
+		{
+			Connection connection = this.getConnection();
+			PreparedStatement statement = connection.prepareStatement(Statement.BENCH_NODE_RESIZE);
+			statement.setInt(1, w);
+			statement.setInt(2, h);
+			statement.setInt(3, id);
+			statement.executeUpdate();
+			statement.close();
+			connection.close();
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
 	}
 
 	@Override
 	public void submitNodeRenameAsync(NodeType type, int id, String title)
 	{
-
+		try
+		{
+			Connection connection = this.getConnection();
+			PreparedStatement statement = connection.prepareStatement(Statement.BENCH_NODE_RENAME);
+			statement.setString(1, title);
+			statement.setInt(2, id);
+			statement.executeUpdate();
+			statement.close();
+			connection.close();
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
 	}
 
 	@Override
 	public void submitNodeArchiveAsync(NodeType type, int id)
 	{
-
+		try
+		{
+			Connection connection = this.getConnection();
+			PreparedStatement statement = connection.prepareStatement(Statement.BENCH_NODE_ARCHIVE);
+			statement.setBoolean(1, true);
+			statement.setInt(2, id);
+			statement.executeUpdate();
+			statement.close();
+			connection.close();
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
 	}
 
 	@Override
 	public BenchNode submitNodeCreate(BenchNode node)
 	{
+		int finalId = 0;
+
+		Connection connection = null;
+		PreparedStatement statement = null;
+		try
+		{
+			connection = this.getConnection();
+			statement = connection.prepareStatement(Statement.BENCH_NODE_CREATE__MAIN);
+			statement.setInt(1, node.Creator.Id);
+			statement.setInt(2, node.Bench.Id);
+			statement.setInt(3, node.Position.X);
+			statement.setInt(4, node.Position.Y);
+			statement.setInt(5, node.Position.Width);
+			statement.setInt(6, node.Position.Height);
+			statement.setString(7, node.Title);
+
+			statement.executeUpdate();
+
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			try
+			{
+				statement.close();
+			}
+			catch (SQLException e)
+			{
+				e.printStackTrace();
+			}
+		}
+
+		try
+		{
+			statement = connection.prepareStatement(Statement.BENCH_NODE_CREATE__GRAB_BENCH_NODE_ID);
+			statement.setInt(1, node.Creator.Id);
+			statement.setInt(2, node.Bench.Id);
+			statement.setString(3, node.Title);
+
+			ResultSet result = statement.executeQuery();
+
+			if (result.next())
+			{
+				finalId = result.getInt(1);
+			}
+
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			try
+			{
+				statement.close();
+			}
+			catch (SQLException e)
+			{
+				e.printStackTrace();
+			}
+		}
+
+		if (finalId != 0)
+		{
+			node.Id = finalId;
+
+			try
+			{
+				statement = connection.prepareStatement(Statement.BENCH_NODE_CREATE__SET_CONTENT_ENTRY);
+				statement.setInt(1, node.Id);
+				statement.setString(2, node.Content);
+				statement.setString(3, node.ContentType.toString());
+
+				statement.executeUpdate();
+			}
+			catch (SQLException e)
+			{
+				e.printStackTrace();
+			}
+			finally
+			{
+				try
+				{
+					statement.close();
+				}
+				catch (SQLException e)
+				{
+					e.printStackTrace();
+				}
+			}
+
+			return node;
+		}
 		return null;
 	}
 
 	@Override
 	public String grabEmail(String username)
 	{
+		try
+		{
+			Connection connection = this.getConnection();
+			PreparedStatement statement = connection.prepareStatement(Statement.GRAB_EMAIL);
+			statement.setString(1, username.toLowerCase());
+			ResultSet result = statement.executeQuery();
+
+			if (result.next())
+			{
+				return result.getString(1);
+			}
+
+			statement.close();
+			connection.close();
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
 		return null;
 	}
 
 	@Override
 	public String grabUser(String email)
 	{
+		try
+		{
+			Connection connection = this.getConnection();
+			PreparedStatement statement = connection.prepareStatement(Statement.GRAB_USER);
+			statement.setString(1, email.toLowerCase());
+			ResultSet result = statement.executeQuery();
+
+			if (result.next())
+			{
+				return result.getString(1);
+			}
+
+			statement.close();
+			connection.close();
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
 		return null;
 	}
 
 	@Override
 	public int grabId(String loginKey)
 	{
+		try
+		{
+			Connection connection = this.getConnection();
+			PreparedStatement statement = connection.prepareStatement(Statement.GRAB_ID);
+			statement.setString(1, loginKey.toLowerCase());
+			statement.setString(2, loginKey.toLowerCase());
+			ResultSet result = statement.executeQuery();
+
+			if (result.next())
+			{
+				return result.getInt(1);
+			}
+
+			statement.close();
+			connection.close();
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
 		return 0;
 	}
 
 	@Override
 	public void submitBenchBackgroundEdit(Bench bench, String background)
 	{
-
+		try
+		{
+			Connection connection = this.getConnection();
+			PreparedStatement statement = connection.prepareStatement(Statement.BENCH_EDIT_BACKGROUND);
+			statement.setString(1, background);
+			statement.setInt(2, bench.Id);
+			statement.executeUpdate();
+			statement.close();
+			connection.close();
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
 	}
 
 	@Override
 	public void submitBenchTitleEdit(Bench bench, String title)
 	{
-
+		try
+		{
+			Connection connection = this.getConnection();
+			PreparedStatement statement = connection.prepareStatement(Statement.BENCH_EDIT_TITLE);
+			statement.setString(1, title);
+			statement.setInt(2, bench.Id);
+			statement.executeUpdate();
+			statement.close();
+			connection.close();
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
 	}
 
 	@Override
 	public void submitBenchResize(Bench bench, int w, int h)
 	{
-
+		String statement = Statement.BENCH_EDIT_RESIZE___DO_NOT_USE_WILL_BREAK_EVERYTHING;
 	}
 
 	@Override
 	public void addUserToBench(Bench bench, int user, PermissionLevel role)
 	{
-
+		try
+		{
+			Connection connection = this.getConnection();
+			PreparedStatement statement = connection.prepareStatement(Statement.BENCH_USER_ADD);
+			statement.setInt(1, bench.Id);
+			statement.setInt(2, user);
+			statement.setInt(3, role.val());
+			statement.executeUpdate();
+			statement.close();
+			connection.close();
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
 	}
 
 	@Override
 	public void removeUserFromBench(Bench bench, int user)
 	{
-
+		try
+		{
+			Connection connection = this.getConnection();
+			PreparedStatement statement = connection.prepareStatement(Statement.BENCH_USER_REMOVE);
+			statement.setInt(1, user);
+			statement.setInt(2, bench.Id);
+			statement.executeUpdate();
+			statement.close();
+			connection.close();
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
 	}
 
 	@Override
 	public void modifyUserInBench(Bench bench, int user, PermissionLevel role)
 	{
-
+		try
+		{
+			Connection connection = this.getConnection();
+			PreparedStatement statement = connection.prepareStatement(Statement.BENCH_USER_MODIFY);
+			statement.setInt(1, role.val());
+			statement.setInt(2, user);
+			statement.setInt(3, bench.Id);
+			statement.executeUpdate();
+			statement.close();
+			connection.close();
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
 	}
 }
