@@ -210,8 +210,8 @@ public class WorkbenchAPI
 		{
 			res.status(200);
 
-			Authenticate body = gson.fromJson(req.body(), Authenticate.class);
 			System.console().writer().println(req.body());
+			Authenticate body = gson.fromJson(req.body(), Authenticate.class);
 
 			if (!tokenManager.check(body.getId(), body.getToken()))
 			{
