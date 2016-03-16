@@ -294,7 +294,14 @@ workbench.comm = {
     post: function(data, target, callback) { // Make a REST POST request, currently assumed to be in JSON format
       this.ajaxProgress = true;
       try {
-        $.post(target, data, null, "json")
+        var jsonstring = JSON.stringify(data);
+        $.ajax({
+          type: "POST",
+          url: target,
+          data: jsonstring,
+          dataType: "text",
+          contentType: "application/json; charset=UTF-8"
+        })
         .done(function(data, status, xhr) { // Success
           callback({
             result: true,
