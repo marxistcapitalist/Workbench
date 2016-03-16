@@ -28,7 +28,7 @@ public class Statement
 
 	public static final String LOAD_USER__BENCH_COUNT = "SELECT `benchId` FROM `Members` WHERE `userId` = ?;";
 
-	public static final String LOAD_USER__BENCH_DATA = "SELECT `owner`, `created`, `title`, `background`, `archived`, FROM `Benches` WHERE `benchId` = ?;";
+	public static final String LOAD_USER__BENCH_DATA = "SELECT `owner`, `created`, `title`, `background`, `archived` FROM `Benches` WHERE `benchId` = ?;";
 
 	public static final String LOAD_USER__BENCH_DATA_OWNER_USERNAME = "SELECT `username` FROM `Accounts` WHERE `userId` = ?;";
 

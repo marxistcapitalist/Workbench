@@ -48,6 +48,7 @@ public class WorkbenchAPI
 		authenticate();
 		logout();
 		useredit();
+		user();
 
 		///////// BENCH - CORE ////////////
 		bench();
@@ -303,6 +304,7 @@ public class WorkbenchAPI
 
 						response.setOwner(owner);
 						response.setMember(member);
+						response.setAvatar(avatar);
 						return gson.toJson(response);
 					}
 				}
@@ -337,25 +339,30 @@ public class WorkbenchAPI
 				{
 					response.setEmail(false);
 				}
+				else
+				{
+					response.setEmail(userManager.updateEmail(user, email.toLowerCase()));
+				}
 
 				if (username.length() > 32 || username.length() < 1)
 				{
 					response.setUsername(false);
 				}
+				else
+				{
+					response.setUsername(userManager.updateUsername(user, username.toLowerCase()));
+				}
 
 				if (password.length() > 256 || password.length() < 7)
 				{
 					response.setPassword(false);
-					return gson.toJson(response);
+				}
+				else
+				{
+					response.setPassword(userManager.updatePassword(userManager.load(user.Id), password));
 				}
 
 				if (!avatar.isEmpty()) response.setAvatar(userManager.updateAvatar(user, avatar));
-
-				if (!email.isEmpty()) response.setEmail(userManager.updateEmail(user, email.toLowerCase()));
-
-				if (!username.isEmpty()) response.setUsername(userManager.updateUsername(user, username.toLowerCase()));
-
-				if (!password.isEmpty()) response.setPassword(userManager.updatePassword(userManager.load(user.Id), password));
 
 				return gson.toJson(response);
 			}
