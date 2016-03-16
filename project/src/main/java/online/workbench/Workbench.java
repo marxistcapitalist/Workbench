@@ -51,7 +51,11 @@ public class Workbench
 			@Override
 			public void run()
 			{
-				System.console().readLine();
+				String input = "";
+				while (input != "stop")
+				{
+					input = System.console().readLine().trim().toLowerCase();
+				}
 				Spark.stop();
 			}
 		}.start();

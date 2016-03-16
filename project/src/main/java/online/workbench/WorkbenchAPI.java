@@ -208,6 +208,7 @@ public class WorkbenchAPI
 	{
 		post(API + "authenticate", (req, res) ->
 		{
+			System.console().writer().println("MEMES");
 			res.status(200);
 
 			System.console().writer().println(req.body());
