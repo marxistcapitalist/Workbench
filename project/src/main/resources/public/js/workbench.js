@@ -192,6 +192,10 @@ workbench.auth = {
 };
 
 workbench.bench = {
+
+  // NODE STORAGE
+  nodes: [],
+
   benchSelect: function() { // Show bench selection screen
     var userid = docCookies.getItem("wb_user_id");
     var usertoken = docCookies.getItem("wb_user_token");
@@ -226,10 +230,43 @@ workbench.bench = {
         }
       } else {
         workbench.ui.popup.errorbox.showError("Unable to contact server to retrieve available user benches. Check your connection and try reloading the page.", "HTTP Error");
-
         return;
       }
     });
+  },
+
+  loadBench: function(benchid) {
+    if(typeof benchid != "number")
+      return;
+    var userid = docCookies.getItem("wb_user_id");
+    var usertoken = docCookies.getItem("wb_user_token");
+    if(userid === null || usertoken === null || userid.length < 1 || usertoken.length < 1) {
+      authenticate(function() { workbench.bench.loadBench(); }, function() { workbench.ui.popup.login.show(150); });
+      return;
+    }
+    var reqobj = {
+      id: benchid,
+      verbosity: "high",
+      agent: {
+        id: userid,
+        token: usertoken
+      }
+    };
+    workbench.comm.http.post(reqobj, "http://localhost:80/api/bench", function(resp) {
+      if(resp.result) {
+
+      } else {
+
+      }
+    });
+  },
+
+  // VERIFY CREATE DELETE EDIT MOVE RENAME RESIZE NOTIFY MOD
+  inbox: function(message) {
+    switch(message.type) {
+      default:
+        return;
+    }
   },
 
   load: function() { // TODO !! IMPLEMENTATION !!
@@ -279,8 +316,68 @@ workbench.comm = {
   },
 
   websocket: {
-    websocket: undefined, // Websocket object, not for direct use outside this namespace
-    wsTarget: "ws://localhost:80/" // TODO: Placeholder value for testing, repleace with implementation
+    socket: undefined, // Websocket object, not for direct use outside this namespace
+    //wsTarget: "ws://localhost:666/api/ws",
+    wsTarget: "ws://echo.websocket.org",
+    cleanClose: true, // Whether or not the websocket is in a clean close state at the moment. If this is false, and socket closes, the connection unexpectedly closed.
+
+    open: function() {
+      try {
+        this.socket = new WebSocket(this.wsTarget);
+        this.socket.onerror = this.onerror;
+        this.socket.onopen = this.onopen;
+        this.socket.onclose = this.onclose;
+      } catch(err) {
+        workbench.ui.popup.errorbox.showError("Failed to initialize WebSocket, see console for details.", "WebSocket Connection Failure");
+      }
+    },
+
+    close: function() {
+      try {
+        this.cleanClose = true;
+        this.socket.close();
+      } catch(err) {
+        console.log("Failed to properly close websocket. It probably wasn't open.");
+      }
+    },
+
+    onmessage: function(message) {
+      try {
+        var respobj = JSON.parse(message);
+        if(!respobj.hasOwnProperty("type") || !respobj.hasOwnProperty("bench") || respobj.type.length < 1 || respobj.bench.length < 1) {
+          workbench.ui.popup.errorbox.showError("Received malformed JSON request form server (missing required properties)", "Server Error");
+          return;
+        }
+        workbench.bench.inbox(respobj);
+      } catch(error) {
+        console.error(error);
+        return;
+      }
+    },
+
+    onerror: function() {
+      console.error("WebSocket Error! AKA something went horribly wrong. Reloading the page...");
+      setTimeout(function() { location.replace("index.html"); }, 3000);
+    },
+
+    onopen: function() {
+      console.log("WebSocket Opened!");
+      workbench.comm.websocket.cleanClose = false;
+      try {
+
+      } catch(err) {
+
+      }
+    },
+
+    onclose: function() {
+      if(workbench.comm.websocket.cleanClose) {
+        console.log("WebSocket gracefully, cleanly closed.");
+      } else {
+        console.log("WebSocket uncleanly closed, will attempt to re-authenticate...");
+        workbench.auth.authenticate(function() { workbench.comm.websocket.open(); }, function() { workbench.ui.popup.login.show(150); })
+      }
+    }
   }
 };
 
