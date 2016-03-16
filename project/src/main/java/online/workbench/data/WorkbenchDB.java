@@ -1,6 +1,7 @@
 package online.workbench.data;
 
 import online.workbench.data.initialization.Statement;
+import online.workbench.data.initialization.Table;
 import online.workbench.managers.TokenManager;
 import online.workbench.base.DatabaseMethods;
 import online.workbench.model.struct.*;
@@ -44,7 +45,46 @@ public class WorkbenchDB implements DatabaseMethods
 
 	private void initialize()
 	{
+		try
+		{
+			Connection connection = this.getConnection();
+			PreparedStatement a = connection.prepareStatement(Table.Accounts);
+			PreparedStatement b = connection.prepareStatement(Table.BenchNodeContent);
+			PreparedStatement c = connection.prepareStatement(Table.BenchNodes);
+			PreparedStatement d = connection.prepareStatement(Table.Benches);
+			PreparedStatement e = connection.prepareStatement(Table.Folders);
+			PreparedStatement f = connection.prepareStatement(Table.Members);
+			PreparedStatement g = connection.prepareStatement(Table.Sessions);
+			PreparedStatement h = connection.prepareStatement(Table.UserNodeContent);
+			PreparedStatement i = connection.prepareStatement(Table.UserNodes);
 
+			a.execute();
+			b.execute();
+			c.execute();
+			d.execute();
+			e.execute();
+			f.execute();
+			g.execute();
+			h.execute();
+			i.execute();
+
+			a.close();
+			b.close();
+			c.close();
+			d.close();
+			e.close();
+			f.close();
+			g.close();
+			h.close();
+			i.close();
+
+			connection.commit();
+			connection.close();
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
 	}
 
 	@Override
