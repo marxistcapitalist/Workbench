@@ -94,7 +94,7 @@ public class WorkbenchAPI
 
 	private void ping2()
 	{
-		get(API + "ping", (req, res) -> "pong!");
+		get("/ping", (req, res) -> "pong!");
 	}
 
 	//////////// ACCOUNTS ///////////////

@@ -41,6 +41,8 @@ public class Workbench
 		System.console().writer().println("==                                               ==");
 		System.console().writer().println("== • Server Startup Complete!                    ==");
 		System.console().writer().println("==                                               ==");
+		System.console().writer().println("== • Server Running @ http://localhost (0.0.0.0) ==");
+		System.console().writer().println("==                                               ==");
 		System.console().writer().println("== • Type 'STOP' to stop the server              ==");
 		System.console().writer().println("==                                               ==");
 		System.console().writer().println("===================================================");

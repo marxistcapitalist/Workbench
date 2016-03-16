@@ -528,12 +528,12 @@ public class WorkbenchDB implements DatabaseMethods
 			{
 				int bNodeId = result.getInt(1);
 				int userId = result.getInt(2);
-				String title = result.getString(4);
-				int x = result.getInt(5);
-				int y = result.getInt(6);
-				int width = result.getInt(7);
-				int height = result.getInt(8);
-				boolean archived = result.getBoolean(9);
+				String title = result.getString(3);
+				int x = result.getInt(4);
+				int y = result.getInt(5);
+				int width = result.getInt(6);
+				int height = result.getInt(7);
+				boolean archived = result.getBoolean(8);
 
 				tempNodes.put(bNodeId, new BenchNode(bNodeId, null, loadUser(userId), x, y, width, height, title, null, null, 0, 0, archived));
 			}
@@ -568,9 +568,9 @@ public class WorkbenchDB implements DatabaseMethods
 
 				if (result.next())
 				{
-					long lastEdit = result.getLong(2);
-					ContentType type = ContentType.get(result.getString(3));
-					String content = result.getString(4);
+					long lastEdit = result.getLong(1);
+					ContentType type = ContentType.get(result.getString(2));
+					String content = result.getString(3);
 
 					b_t_node.getValue().LastEdit = lastEdit;
 					b_t_node.getValue().Content = content;
