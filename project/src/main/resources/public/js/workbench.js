@@ -39,15 +39,6 @@ workbench.auth = {
     }
     if(showUI)
       workbench.ui.popup.login.showLoad(250);
-    if(user == "marx" && pass == "mearse") { // TODO TESTING CODE, Remove with server implementation
-      workbench.ui.popup.login.hideLoad();
-      docCookies.setItem("wb_user_token", "jsdafoksndfasdlfjasidfoasjdfiojasiojdfiaoisejofaowiejfiosdfjidfopqjwoprpqorq3pirq3rri99i3q9ir90ruipfiafipaasidasdaposidpaosidiii", Infinity);
-      docCookies.setItem("wb_user_id", "aaaaaaaaaa", Infinity);
-      docCookies.setItem("wb_user_name", user, Infinity);
-      workbench.auth.status = true;
-      workbench.ui.popup.login.success(function() {
-        workbench.bench.benchSelect();
-      });
       workbench.bench.load();
       return;
     }
