@@ -514,6 +514,43 @@ input[type="submit"] {
 }
 
 /*
+* Toolbar
+* The bar atop the entire scrolling workbench, with workbench editing buttons, titles, etc.
+* Used for quick editing, new nodes, and more.
+*/
+#toolbar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 4100;
+  background: #333;
+  width: 100%;
+  height: 60px;
+}
+
+#toolbar .left {
+
+}
+
+#toolbar .left h1 {
+  margin: 5px 16px;
+}
+
+#toolbar .right {
+
+}
+
+#toolbar .center {
+  margin: 5px auto;
+  text-align: center;
+}
+
+#toolbar .center h1 {
+  margin: 10px auto;
+  font-family: 'Raleway', sans-serif;
+}
+
+/*
 * Workbench
 * Contains classes/IDs for the actual Workbench, including nodes
 * Does NOT include toolbars, message windows, and other UI functions
@@ -525,7 +562,12 @@ input[type="submit"] {
   height: 2160px;
   background: #222;
   z-index: -1;
-  overflow: auto;
+  overflow: auto;'
+  position: absolute;
+  top: 60px;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 #workbench .window {
