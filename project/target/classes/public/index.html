@@ -68,46 +68,6 @@
       <a href="#login" id="register_backlink">&larr; Back to Login</a>
     </div></div>
 
-    <!-- Bench Selection Menu (Select Menu Version) -->
-    <!--<div class="center_select_menu" id="bench_select"><div class="inner">
-      <div class="menu_header">
-        <div class="left">
-          <h1>Bench Select</h1>
-          <p>Select a bench below, or <a href="#">create a new bench</a></p>
-        </div>
-        <div class="right">
-          <div class="profile_info_small"></div>
-        </div>
-        <div class="clear"></div>
-      </div>
-      <div class="menu_content">
-        <div class="select_menu">
-          <div class="select_menu_header">
-            <div>Name</div>
-            <div>Owner</div>
-            <div>Permissions</div>
-          </div>
-          <div class="select_menu_item">
-            <div>John Cena&apos;s Amazing Bench</div>
-            <div>JohnCena69420</div>
-            <div>Editor</div>
-          </div>
-          <div class="select_menu_item">
-            <div>Your Awesome Bench</div>
-            <div>YourUsername</div>
-            <div>Owner</div>
-          </div>
-          <div class="select_menu_item">
-            <div>My Astounding Bench</div>
-            <div>MarxistCapitalist</div>
-            <div>Viewer</div>
-          </div>
-        </div>
-      </div>
-      <div class="menu_footer">
-      </div>
-    </div></div>-->
-
     <div class="property_menu" id="create_bench"><div class="inner">
       <div class="menu_title"><h1>Create new Bench</h1></div>
       <div class="menu_content">
@@ -147,18 +107,6 @@
               </div>
               <div class="clear"></div>
             </div>
-          </div>
-          <div class="item left">
-            <div class="image"><div class="color" style="background: LightSkyBlue;"></div><div class="cover"></div></div>
-            <div class="subtext">
-              <div class="left">
-                <p class="description">Amazing Bench!</p>
-              </div>
-              <div class="right">
-                <div class="profile_image"><div class="color" style="background: #420420"></div></div>
-              </div>
-              <div class="clear"></div>
-            </div>
           </div>-->
         </div>
         <div class="clear"></div>
@@ -173,12 +121,20 @@
         <h1></h1>
       </div>
       <div class="right">
-        <p><a href="" class="link_benchselect">Select Bench</a><a href="" class="link_logout">Logout</a></p>
+        <div class="menubutton" id="toolbar_maindropdown_button">
+          <i class="fa fa-chevron-down fa-2x"></i>
+        </div>
       </div>
       <div class="center">
         <h1 class="logo">Workbench</h1>
       </div>
       <div class="clear"></div>
+      <div class="menu" id="toolbar_maindropdown">
+        <nav><ul class="dropdown">
+          <li><a href="" class="link_benchselect">Select Bench...</a></li>
+          <li><a href="" class="link_logout">Logout</a></li>
+        </ul></nav>
+      </div>
     </div>
 
     <!-- Workbench Body -->

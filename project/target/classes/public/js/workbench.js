@@ -191,6 +191,7 @@ workbench.bench = {
 
   // NODE STORAGE
   nodes: [],
+  nodeOrder: [],
 
   // Bench Properties - Every bench has all of these
   id: "0",
@@ -337,6 +338,12 @@ workbench.bench = {
       workbench.ui.popup.closeAllPopups();
       workbench.ui.popup.cover.hide(150);
       workbench.ui.toolbar.setTitle(workbench.bench.title);
+      for(var i=0;i<workbench.bench.nodes.length;i++) {
+        var nodestr = '<div class="window" draggable="true" data-nodeid="' + workbench.bench.nodes[i].id + '"><div class="title"><span class="titletext">' + workbench.bench.nodes[i].title + '</span></div>' +
+        '<div class="content">' + workbench.bench.nodes[i].content + "</div></div>"
+
+        $("#workbench").append(nodestr);
+      }
     } catch(error) {
       console.error("Error while populating bench contents. See below: ")
       console.error(error);
@@ -519,14 +526,52 @@ workbench.ui = {
   },*/
 
   toolbar: {
+
+    menustates: {
+      main: false
+    },
+
     setTitle: function(title) {
       $("#toolbar .left h1").html(title);
       this.adjustCenter();
     },
+
+    initialize: function() {
+      this.attachListeners();
+    },
+
     adjustCenter: function() {
       var marginleft = $("#toolbar .left").outerWidth(true);
       var marginright = $("#toolbar .right").outerWidth(true);
       $("#toolbar .center").css("margin", "auto " + marginright + "px auto " + marginleft + "px");
+    },
+
+    attachListeners: function() {
+      $("#toolbar_maindropdown_button").hover(function() {
+        if(!workbench.ui.toolbar.menustates.main) {
+          workbench.ui.toolbar.menustates.main = true;
+          $(this).children("i").stop();
+          $(this).children("i").animate({"margin-top": "3px"}, 150);
+          $("#toolbar_maindropdown").stop();
+          $("#toolbar_maindropdown").fadeIn(150);
+        }
+      }, function() {
+        if(!workbench.ui.toolbar.menustates.main) {
+          workbench.ui.toolbar.menustates.main = false;
+          $(this).children("i").stop();
+          $(this).children("i").animate({"margin-top":"0"}, 150);
+          if(!$("#toolbar_maindropdown").is(":hover")) {
+            $("#toolbar_maindropdown").stop();
+            $("#toolbar_maindropdown").fadeOut(150);
+          }
+        }
+      });
+
+      $("#toolbar_maindropdown").mouseleave(function() {
+        workbench.ui.toolbar.menustates.main = false
+        $(this).stop();
+        $(this).fadeOut(150);
+      });
     }
   },
 
@@ -863,6 +908,7 @@ workbench.ui = {
   // This creates all of the UI overlay and tool objects, as they require workbench.ui to be completed before implementation can occur.
   initialize: function() {
     this.popup.initialize();
+    this.toolbar.initialize();
     this.adjustSizes();
   },
 
