@@ -1,8 +1,5 @@
 package online.workbench.model.struct;
 
-import com.sun.tools.javac.util.Pair;
-
-import java.util.Date;
 import java.util.Map;
 
 public class Bench

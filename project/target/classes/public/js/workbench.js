@@ -193,6 +193,7 @@ workbench.bench = {
   nodes: [],
 
   // Bench Properties - Every bench has all of these
+  id: "0",
   title: "Untitled Bench",
   owner: {
     id: 0000000000,
@@ -228,7 +229,7 @@ workbench.bench = {
             console.log("Owner: " + resp.data.hasOwnProperty("owner"));
             console.log("Member: " + resp.data.hasOwnProperty("member"));
             console.log("Owner Length: " + resp.data.owner.length);
-            console.log("Member Length: " + resp.data.owner.length);
+            console.log("Member Length: " + resp.data.member.length);
           }
           if((!(resp.data.hasOwnProperty("owner")) || !(resp.data.hasOwnProperty("member"))) || (resp.data.owner.length < 1 && resp.data.member.length < 1)) {
             workbench.ui.popup.benchselect.showNoBenches();
@@ -277,7 +278,20 @@ workbench.bench = {
     };
     workbench.comm.http.post(reqobj, "http://localhost:80/api/bench", function(resp) {
       if(resp.result) {
-
+        if(!resp.data.hasOwnProperty("id") || !resp.data.hasOwnProperty("title") || !resp.data.hasOwnProperty("owner") || !resp.data.hasOwnProperty("preview") || !resp.data.hasOwnProperty("background")) {
+          workbench.ui.popup.errorbox.showError("An unexpected, malformed response was received from the bench API endpoint.", "Malformed Response Error");
+          return;
+        }
+        workbench.bench.title = resp.data.title;
+        workbench.bench.owner = resp.data.owner;
+        workbench.bench.id = resp.data.id;
+        workbench.bench.preview = resp.data.preview;
+        workbench.bench.background = resp.data.background;
+        workbench.bench.created = resp.data.created;
+        workbench.bench.members = resp.data.members;
+        workbench.bench.nodes = resp.data.nodes;
+        workbench.bench.popUI();
+        workbench.bench.webSocketStart();
       } else {
         workbench.ui.popup.errorbox.showError("An HTTP error occured while attempting to load the bench, check your connection. See console for details", "HTTP Error");
         return;
@@ -309,12 +323,29 @@ workbench.bench = {
           workbench.auth.logout();
           return;
         }
+        workbench.ui.popup.closeAllPopups();
         workbench.bench.loadBench(resp.data.id);
       } else {
         workbench.ui.popup.errorbox.showError("An HTTP error occured while attempting to load the bench, check your connection. See console for details", "HTTP Error");
         return;
       }
     });
+  },
+
+  popUI: function() {
+    try {
+      workbench.ui.popup.closeAllPopups();
+      workbench.ui.popup.cover.hide(150);
+      workbench.ui.toolbar.setTitle(workbench.bench.title);
+    } catch(error) {
+      console.error("Error while populating bench contents. See below: ")
+      console.error(error);
+      workbench.ui.popup.errorbox.showError("An error occured while attempting to load bench elements. See console for details.", "Load Error");
+    }
+  },
+
+  webSocketStart: function() {
+
   },
 
   // VERIFY CREATE DELETE EDIT MOVE RENAME RESIZE NOTIFY MOD
@@ -487,6 +518,17 @@ workbench.ui = {
     options: false,
   },*/
 
+  toolbar: {
+    setTitle: function(title) {
+      $("#toolbar .left h1").html(title);
+      this.adjustCenter();
+    },
+    adjustCenter: function() {
+      var marginleft = $("#toolbar .left").outerWidth(true);
+      var marginright = $("#toolbar .right").outerWidth(true);
+      $("#toolbar .center").css("margin", "auto " + marginright + "px auto " + marginleft + "px");
+    }
+  },
 
   popup: {
 
@@ -750,6 +792,7 @@ workbench.ui = {
           }
           if(workbench.core.debug)
             console.log("Went somewhere");
+          $("#bench_select .menu_content .item").remove();
           var benchItems = [];
           for(var i=0; i<benches.length; i++) { // Generate HTML for each bench
             if(!benches[i].hasOwnProperty("id"))
@@ -774,6 +817,7 @@ workbench.ui = {
           $("#bench_select .menu_content .item").click(function(event) {
             event.preventDefault();
             console.log($(this).data("benchid"));
+            workbench.ui.popup.closeAllPopups();
             workbench.bench.loadBench($(this).data("benchid"));
           });
           console.log(benchItems);
