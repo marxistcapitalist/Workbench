@@ -229,6 +229,7 @@ workbench.bench = {
     };
     workbench.comm.http.post(reqobj, "http://localhost:80/api/user", function(resp) {
       if(resp.result) {
+        console.log(resp.data.hasOwnProperty("email"));
         if(resp.data.hasOwnProperty("email")) {
           if(!(resp.data.hasOwnProperty("owner")) || !(resp.data.hasOwnProperty("member")) || resp.data.owner.length < 1 || resp.data.member.length < 1) {
             workbench.ui.popup.benchselect.showNoBenches();
@@ -241,6 +242,8 @@ workbench.bench = {
           for(var i=0;i<resp.data.member.length;i++) {
             benches.push(resp.data.member[i]);
           }
+          if(workbench.core.debug)
+            console.log(benches);
           workbench.ui.popup.benchselect.showBenches(benches);
         } else {
           workbench.auth.authenticate(function() { workbench.bench.benchSelect(); }, function() { workbench.ui.popup.login.show(150); });
@@ -258,7 +261,7 @@ workbench.bench = {
     var userid = docCookies.getItem("wb_user_id");
     var usertoken = docCookies.getItem("wb_user_token");
     if(userid === null || usertoken === null || userid.length < 1 || usertoken.length < 1) {
-      authenticate(function() { workbench.bench.loadBench(); }, function() { workbench.ui.popup.login.show(150); });
+      authenticate(function() { workbench.bench.logout(); }, function() { workbench.ui.popup.login.show(150); });
       return;
     }
     var reqobj = {
@@ -272,6 +275,38 @@ workbench.bench = {
     workbench.comm.http.post(reqobj, "http://localhost:80/api/bench", function(resp) {
       if(resp.result) {
 
+      } else {
+        workbench.ui.popup.errorbox.showError("An HTTP error occured while attempting to load the bench, check your connection. See console for details", "HTTP Error");
+        return;
+      }
+    });
+  },
+
+  createBench: function(name, width, height) {
+    var userid = docCookies.getItem("wb_user_id");
+    var usertoken = docCookies.getItem("wb_user_token");
+    if(userid === null || usertoken === null || userid.length < 1 || usertoken.length < 1) {
+      authenticate(function() { workbench.bench.logout(); }, function() { workbench.ui.popup.login.show(150); });
+      return;
+    }
+    var reqobj = {
+      title: name,
+      dimensions: {
+        w: width,
+        h: height
+      },
+      agent: {
+        id: userid,
+        token: usertoken
+      }
+    };
+    workbench.comm.http.post(reqobj, "http://localhost:80/api/create", function(resp) {
+      if(resp.result) {
+        if(!resp.data.hasOwnProperty("id")) {
+          workbench.auth.logout();
+          return;
+        }
+        workbench.bench.loadBench(resp.data.id);
       } else {
         workbench.ui.popup.errorbox.showError("An HTTP error occured while attempting to load the bench, check your connection. See console for details", "HTTP Error");
         return;
@@ -513,11 +548,18 @@ workbench.ui = {
       }
     },
 
+    // This is the adjustable base object. It adds one function, sizeadjust, to any object that extends it.
+    adjustable: {
+      sizeAdjust: function(nothide) {
+        this.show();
+        var realheight = $(this.selector + " > .inner").height();
+        if(typeof nothide == "undefined")
+          this.hide();
+        $(this.selector).height(realheight + 50);
+      }
+    },
+
     attachListeners: function() {
-      $("#login_submit").click(function(event) {
-        event.preventDefault();
-        $("#loginform").submit();
-      });
 
       $("#loginform").submit(function(event) {
         event.preventDefault();
@@ -566,9 +608,22 @@ workbench.ui = {
         }
       });
 
-      $("#register_submit").click(function(event) {
+      $("#createbenchform").submit(function(event) {
         event.preventDefault();
-        $("#registerform").submit();
+        if($("#createbench_title").val().length < 1 || $("#createbench_title").val().length > 256) {
+          workbench.ui.popup.createbench.hideLoad();
+          workbench.ui.popup.createbench.showError("Title must be between 1 and 256 characters long");
+          return;
+        }
+        workbench.bench.createBench($("#createbench_title").val(), 3840, 2160);
+      }),
+
+      /* Better Spec */
+      $(".link_benchselect").click(function(event) {
+        event.preventDefault();
+        workbench.ui.popup.createbench.hide(150, function() {
+          workbench.ui.popup.benchselect.show(150);
+        });
       });
     },
 
@@ -655,6 +710,8 @@ workbench.ui = {
         selector: "#bench_select",
         showNoBenches: function() {
           $(this.selector + " .nobenches").css("display", "block");
+          this.sizeAdjust();
+          this.show(150);
         },
         hideNoBenches: function() {
           $(this.selector + " .nobenches").css("display", "none");
@@ -664,7 +721,8 @@ workbench.ui = {
             console.error("No benches supplied to bench show function");
             return;
           }
-          var benchItems;
+          console.log("Went somewhere");
+          var benchItems = [];
           for(var i=0; i<benches.length; i++) { // Generate HTML for each bench
             if(!benches[i].hasOwnProperty("id"))
               continue;
@@ -680,6 +738,8 @@ workbench.ui = {
             else
               itemstr = itemstr + '<div class="left"><p class="description">Untitled Bench</p></div>';
             itemstr = itemstr + '<div class="right"><div class="profile_image"><div class="color" style="background: #420420"></div></div></div><div class="clear"></div></div>'; // TODO: Get user image? With user?
+            benchItems.push(itemstr);
+            console.log(itemstr);
           }
           console.log(benchItems);
         }
@@ -688,13 +748,6 @@ workbench.ui = {
       // ERRORBOX - Error box
       this.errorbox = $.extend({}, this.popupbase, {
         selector: ".error_box",
-        sizeAdjust: function(nothide) {
-          this.show();
-          var realheight = $(this.selector + " > .inner").height();
-          if(typeof nothide == "undefined")
-            this.hide();
-          $(this.selector).height(realheight + 50);
-        },
         showError: function(error, title) {
           if(typeof error == "undefined")
             error = "An unspecified error occured.";
@@ -716,6 +769,12 @@ workbench.ui = {
           $(this.selector).remove()
         }
       });
+
+      // PROPERTYBOX - Create bench properties menu
+      this.createbench = $.extend({}, this.popupbase, this.adjustable, {
+        selector: "#create_bench"
+
+      })
 
       // Attach listeners for UI updates
       this.attachListeners();

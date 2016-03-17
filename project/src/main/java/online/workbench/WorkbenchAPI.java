@@ -472,6 +472,8 @@ public class WorkbenchAPI
 								object.getPosition().setW(node.Position.Width);
 								object.getPosition().setX(node.Position.X);
 								object.getPosition().setY(node.Position.Y);
+								object.getCreator().setId(node.Creator.Id);
+								object.getCreator().setUser(node.Creator.Username);
 
 								nodes.add(object);
 							}

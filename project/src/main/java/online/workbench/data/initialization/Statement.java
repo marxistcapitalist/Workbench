@@ -62,7 +62,7 @@ public class Statement
 
 	public static final String BENCH_NODE_MOVE = "UPDATE `BenchNodes` SET `x`= ? , `y`= ? WHERE `bNodeId` = ?;";
 
-	public static final String BENCH_NODE_RESIZE = "UPDATE `BenchNodes` SET `w`= ? , `h`= ? WHERE `bNodeId` = ?;";
+	public static final String BENCH_NODE_RESIZE = "UPDATE `BenchNodes` SET `width`= ? , `height`= ? WHERE `bNodeId` = ?;";
 
 	public static final String BENCH_NODE_RENAME =  "UPDATE `BenchNodes` SET `title`= ? WHERE `bNodeId` = ?;";
 
