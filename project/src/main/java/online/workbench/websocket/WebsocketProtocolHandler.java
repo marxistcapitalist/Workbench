@@ -44,6 +44,7 @@ public class WebsocketProtocolHandler
 	public void onConnect(Session session)
 	{
 		if (session.isOpen()) pendingSessions.add(session);
+		session.setIdleTimeout(1000000000);
 	}
 
 	@OnWebSocketClose
@@ -68,7 +69,16 @@ public class WebsocketProtocolHandler
 	@OnWebSocketMessage
 	public void onMessage(Session session, String message)
 	{
-		JSONObject json = new JSONObject(message);
+
+		try
+		{
+			session.getRemote().sendString("RESPONSE");
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+		JSONObject json = new JSONObject(message.trim());
 		if (json.has("type") && incomingValids.contains(json.getString("type").toLowerCase())
 				&& json.has("bench") && json.has("agent") && json.getJSONObject("agent").has("id")
 				&& json.getJSONObject("agent").has("token") && json.getJSONObject("agent").getInt("id") != 0)
@@ -77,10 +87,27 @@ public class WebsocketProtocolHandler
 			Bench bench = benchManager.load(json.getInt("bench"));
 			Protocol.ClientAgent agent = gson.fromJson(json.getJSONObject("agent").toString(), Protocol.ClientAgent.class);
 
+			try
+			{
+				session.getRemote().sendString(websocket.getSessions().containsKey(bench) + "" + websocket.getSessions().get(bench).containsKey(session));
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+
 			if (tokenManager.check(agent.getId(), agent.getToken()) && bench.Users.containsKey(agent.getId()))
 			{
 				if (pendingSessions.contains(session))
 				{
+					try
+					{
+						session.getRemote().sendString("PENDING SESSION CONTAINS");
+					}
+					catch (IOException e)
+					{
+						e.printStackTrace();
+					}
 					if (!type.equals("verify"))
 					{
 						session.close();
@@ -118,30 +145,33 @@ public class WebsocketProtocolHandler
 		{
 			Map<Bench, HashMap<Session, User>> sessionMap = this.websocket.getSessions();
 
-			if (sessionMap.containsKey(bench))
+			if (!sessionMap.containsKey(bench))
 			{
-				HashMap<Session, User> sessions = sessionMap.get(bench);
-				sessions.put(session, user);
-
-				Protocol.VerifyOutgoing message = new Protocol.VerifyOutgoing();
-				message.setBench(bench.Id);
-				message.setRole(bench.Users.get(user.Id).toString());
-				message.setType("verify");
-
-				try
-				{
-					session.getRemote().sendString(gson.toJson(message, Protocol.VerifyOutgoing.class));
-				}
-				catch (IOException e)
-				{
-					e.printStackTrace();
-				}
-
-				if (pendingSessions.contains(session))
-				{
-					pendingSessions.remove(session);
-				}
+				benchManager.load(bench.Id);
 			}
+
+			HashMap<Session, User> sessions = sessionMap.get(bench);
+			sessions.put(session, user);
+
+			Protocol.VerifyOutgoing message = new Protocol.VerifyOutgoing();
+			message.setBench(bench.Id);
+			message.setRole(bench.Users.get(user.Id).toString());
+			message.setType("verify");
+
+			try
+			{
+				session.getRemote().sendString(gson.toJson(message, Protocol.VerifyOutgoing.class));
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+
+			if (pendingSessions.contains(session))
+			{
+				pendingSessions.remove(session);
+			}
+
 		}
 	}
 
