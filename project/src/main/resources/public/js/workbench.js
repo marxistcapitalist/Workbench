@@ -39,9 +39,6 @@ workbench.auth = {
     }
     if(showUI)
       workbench.ui.popup.login.showLoad(250);
-      workbench.bench.load();
-      return;
-    }
     workbench.comm.http.post(loginobj, "http://localhost:80/api/login", function(resp) {
       if(resp.result) {
         if(resp.data.hasOwnProperty("token") && resp.data.hasOwnProperty("agent")) {
