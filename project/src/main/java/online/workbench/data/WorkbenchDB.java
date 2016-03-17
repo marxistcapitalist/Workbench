@@ -619,6 +619,7 @@ public class WorkbenchDB implements DatabaseMethods
 		boolean archived = false; //
 		String background = null; //
 		String preview = null; //
+		int ownerId_e = 0;
 
 
 		Connection connection = null;
@@ -633,7 +634,7 @@ public class WorkbenchDB implements DatabaseMethods
 
 			if (result.next())
 			{
-				owner = loadUser(result.getInt(1));
+				ownerId_e = result.getInt(1);
 				created = result.getLong(2);
 				title = result.getString(3);
 				background = preview = result.getString(4);
@@ -659,6 +660,7 @@ public class WorkbenchDB implements DatabaseMethods
 			}
 		}
 
+		owner = this.loadUser(ownerId_e);
 
 		try
 		{

@@ -103,25 +103,33 @@ public class WorkbenchAPI
 	{
 		post(API + "login", (req, res) ->
 		{
-			String body = req.body();
-			ClientLogin obj = gson.fromJson(body, ClientLogin.class);
-			String login = obj.getLoginkey().toLowerCase();
-			String password = obj.getPassword();
-
-			int id = this.userManager.validateUser(login, password);
-
-			if (id != 0)
+			try
 			{
-				User user = this.userManager.load(id);
+				String body = req.body();
+				ClientLogin obj = gson.fromJson(body, ClientLogin.class);
+				String login = obj.getLoginkey().toLowerCase();
+				String password = obj.getPassword();
 
-				ServerLogin response = new ServerLogin();
-				response.getAgent().setId(user.Id);
-				response.getAgent().setUser(user.Username);
-				String token = tokenManager.issue(id);
-				response.setToken(token);
+				int id = this.userManager.validateUser(login, password);
 
-				return gson.toJson(response);
+				if (id != 0)
+				{
+					User user = this.userManager.load(id);
+
+					ServerLogin response = new ServerLogin();
+					response.getAgent().setId(user.Id);
+					response.getAgent().setUser(user.Username);
+					String token = tokenManager.issue(id);
+					response.setToken(token);
+
+					return gson.toJson(response);
+				}
 			}
+			catch (Exception e)
+			{
+				res.status(500);
+			}
+
 			return "{}";
 		});
 	}
@@ -417,6 +425,8 @@ public class WorkbenchAPI
 								object.getPosition().setW(node.Position.Width);
 								object.getPosition().setX(node.Position.X);
 								object.getPosition().setY(node.Position.Y);
+								object.getCreator().setId(node.Creator.Id);
+								object.getCreator().setUser(node.Creator.Username);
 
 								nodes.add(object);
 							}

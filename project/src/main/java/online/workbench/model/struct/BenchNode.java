@@ -1,7 +1,5 @@
 package online.workbench.model.struct;
 
-import java.util.Date;
-
 public class BenchNode extends Node
 {
 	public Bench Bench;

@@ -193,7 +193,7 @@ public enum Protocol
 		String lastUpdate;
 		Creator creator = new Creator();
 		@Data
-		class Creator
+		public static class Creator
 		{
 			int id;
 			String user;
