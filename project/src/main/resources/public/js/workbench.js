@@ -38,7 +38,7 @@ workbench.auth = {
       return;
     }
     if(showUI)
-      workbench.ui.popup.login.showLoad(150);
+      workbench.ui.popup.login.showLoad(250);
     if(user == "marx" && pass == "mearse") { // TODO TESTING CODE, Remove with server implementation
       workbench.ui.popup.login.hideLoad();
       docCookies.setItem("wb_user_token", "jsdafoksndfasdlfjasidfoasjdfiojasiojdfiaoisejofaowiejfiosdfjidfopqjwoprpqorq3pirq3rri99i3q9ir90ruipfiafipaasidasdaposidpaosidiii", Infinity);
@@ -72,12 +72,16 @@ workbench.auth = {
   },
 
   logout: function() { // Logs the user out of their CURRENT session, by deleting their cookies
-    if(docCookies.getItem("wb_user_token") === null)
+    if(docCookies.getItem("wb_user_token") === null) {
+      location.replace("index.html#nointro");
+      location.reload();
       return;
+    }
     docCookies.removeItem("wb_user_token");
     docCookies.removeItem("wb_user_id");
     docCookies.removeItem("wb_user_name");
     location.replace("index.html#nointro");
+    location.reload();
   },
 
   globalLogout: function() { // Logs the user out of their GLOBAL session, by invalidating their token
@@ -153,7 +157,7 @@ workbench.auth = {
     if(mail.length < 6 || mail.length > 254)
       errors.push("Email must be between 6 and 254 characters long");
     if(showUI)
-      workbench.ui.popup.register.showLoad(150);
+      workbench.ui.popup.register.showLoad(250);
     if(errors.length > 0) {
       if(showUI) {
         var err = "";
@@ -216,11 +220,11 @@ workbench.bench = {
     var userid = docCookies.getItem("wb_user_id");
     var usertoken = docCookies.getItem("wb_user_token");
     if(userid === null || usertoken === null) {
-     workbench.auth.authenticate(function() { workbench.bench.benchSelect(); }, function() { workbench.ui.popup.login.show(); });
+     workbench.auth.authenticate(function() { workbench.bench.benchSelect(250); }, function() { workbench.ui.popup.login.show(); });
      if(workbench.core.debug)
       console.log("Failed to retrieve userid and usertoken for loading available benches");
      return;
-   }
+  }
     var reqobj = {
       agent: {
         id: userid,
@@ -229,10 +233,13 @@ workbench.bench = {
     };
     workbench.comm.http.post(reqobj, "http://localhost:80/api/user", function(resp) {
       if(resp.result) {
-        console.log(resp.data.hasOwnProperty("email"));
+        if(workbench.core.debug)
+          console.log(resp.data.hasOwnProperty("email"));
         if(resp.data.hasOwnProperty("email")) {
-          if(!(resp.data.hasOwnProperty("owner")) || !(resp.data.hasOwnProperty("member")) || resp.data.owner.length < 1 || resp.data.member.length < 1) {
+          if(!(resp.data.hasOwnProperty("owner")) || !(resp.data.hasOwnProperty("member")) && (resp.data.owner.length < 1 && resp.data.member.length < 1)) {
             workbench.ui.popup.benchselect.showNoBenches();
+            workbench.ui.popup.benchselect.sizeAdjust();
+            workbench.ui.popup.benchselect.show(250);
             return;
           }
           var benches = [];
@@ -245,8 +252,10 @@ workbench.bench = {
           if(workbench.core.debug)
             console.log(benches);
           workbench.ui.popup.benchselect.showBenches(benches);
+          workbench.ui.popup.benchselect.sizeAdjust();
+          workbench.ui.popup.benchselect.show(250);
         } else {
-          workbench.auth.authenticate(function() { workbench.bench.benchSelect(); }, function() { workbench.ui.popup.login.show(150); });
+          workbench.auth.authenticate(function() { workbench.bench.benchSelect(); }, function() { workbench.ui.popup.login.show(250); });
         }
       } else {
         workbench.ui.popup.errorbox.showError("Unable to contact server to retrieve available user benches. Check your connection and try reloading the page.", "HTTP Error");
@@ -261,7 +270,7 @@ workbench.bench = {
     var userid = docCookies.getItem("wb_user_id");
     var usertoken = docCookies.getItem("wb_user_token");
     if(userid === null || usertoken === null || userid.length < 1 || usertoken.length < 1) {
-      authenticate(function() { workbench.bench.logout(); }, function() { workbench.ui.popup.login.show(150); });
+      authenticate(function() { workbench.bench.logout(); }, function() { workbench.ui.popup.login.show(250); });
       return;
     }
     var reqobj = {
@@ -286,7 +295,7 @@ workbench.bench = {
     var userid = docCookies.getItem("wb_user_id");
     var usertoken = docCookies.getItem("wb_user_token");
     if(userid === null || usertoken === null || userid.length < 1 || usertoken.length < 1) {
-      authenticate(function() { workbench.bench.logout(); }, function() { workbench.ui.popup.login.show(150); });
+      authenticate(function() { workbench.bench.logout(); }, function() { workbench.ui.popup.login.show(250); });
       return;
     }
     var reqobj = {
@@ -441,7 +450,7 @@ workbench.comm = {
         console.log("WebSocket gracefully, cleanly closed.");
       } else {
         console.log("WebSocket uncleanly closed, will attempt to re-authenticate...");
-        workbench.auth.authenticate(function() { workbench.comm.websocket.open(); }, function() { workbench.ui.popup.login.show(150); })
+        workbench.auth.authenticate(function() { workbench.comm.websocket.open(); }, function() { workbench.ui.popup.login.show(250); })
       }
     }
   }
@@ -454,8 +463,8 @@ workbench.core = {
     var wait = 3000;
     /* TODO Hash change detection. This is not a top priority, and currently used script is too old. */
     if(!(location.hash == "#nointro")) {
-      workbench.ui.popup.intro.showTime(wait);
-      setTimeout(workbench.auth.authenticate(function() { workbench.bench.benchSelect(); }, function() { setTimeout(function() { workbench.ui.popup.login.show(750) }, wait + 750); }), wait);
+      workbench.ui.popup.intro.show(750);
+      workbench.auth.authenticate(function() { setTimeout(function() { workbench.ui.popup.intro.hide(750, function() { workbench.bench.benchSelect(); }); }, 1000);  }, function() { setTimeout(function() { workbench.ui.popup.intro.hide(750, function() { workbench.ui.popup.login.show(750); }); }, 3000); });
     } else {
       workbench.ui.popup.intro.hide();
       workbench.auth.authenticate(function() { workbench.bench.benchSelect(); }, function() { workbench.ui.popup.login.show(750); });
@@ -488,6 +497,13 @@ workbench.ui = {
   popup: {
 
     defaultDuration: 750, // Default number of msecs that a popup transition should take
+    openPopups: [], // Popups that are currently open
+
+    closeAllPopups: function() {
+      for(var i=0;i<this.openPopups.length;i++) {
+        this.openPopups[i].hide(250);
+      }
+    },
 
     // This is the base popup object. All popups extend this object. Calling functions on this object will do nothing.
     popupbase: {
@@ -504,6 +520,8 @@ workbench.ui = {
             $(this.selector).fadeIn(duration);
         }
         this.visibility = true;
+        if(!workbench.ui.popup.openPopups.indexOf(this) > -1)
+          workbench.ui.popup.openPopups.push(this);
         return this;
       },
 
@@ -517,6 +535,9 @@ workbench.ui = {
             $(this.selector).fadeOut(duration);
         }
         this.visibility = false;
+        var thisindex = workbench.ui.popup.openPopups.indexOf(this);
+        if(thisindex > -1)
+          workbench.ui.popup.openPopups.splice(thisindex, 1);
         return this;
       }
     },
@@ -621,11 +642,23 @@ workbench.ui = {
       /* Better Spec */
       $(".link_benchselect").click(function(event) {
         event.preventDefault();
-        workbench.ui.popup.createbench.hide(150, function() {
-          workbench.ui.popup.benchselect.show(150);
-        });
+        workbench.ui.popup.closeAllPopups()
+        workbench.bench.benchSelect();
+      });
+
+      $(".link_logout").click(function(event) {
+        event.preventDefault();
+        workbench.auth.logout();
+      });
+
+      $(".link_createbench").click(function(event) {
+        event.preventDefault();
+        workbench.ui.popup.closeAllPopups();
+        workbench.ui.popup.createbench.sizeAdjust();
+        workbench.ui.popup.createbench.show(250);
       });
     },
+
 
     initialize: function() {
       // Define UI Objects
@@ -691,7 +724,7 @@ workbench.ui = {
           this.sizeAdjust(true);
         },
         success: function(callback) {
-          this.hide(150, callback);
+          this.hide(250, callback);
         }
       });
 
@@ -710,8 +743,8 @@ workbench.ui = {
         selector: "#bench_select",
         showNoBenches: function() {
           $(this.selector + " .nobenches").css("display", "block");
-          this.sizeAdjust();
-          this.show(150);
+          if(workbench.core.debug)
+            console.log("Showing no benches...");
         },
         hideNoBenches: function() {
           $(this.selector + " .nobenches").css("display", "none");
@@ -721,13 +754,14 @@ workbench.ui = {
             console.error("No benches supplied to bench show function");
             return;
           }
-          console.log("Went somewhere");
+          if(workbench.core.debug)
+            console.log("Went somewhere");
           var benchItems = [];
           for(var i=0; i<benches.length; i++) { // Generate HTML for each bench
             if(!benches[i].hasOwnProperty("id"))
               continue;
             var itemStr;
-            itemstr = '<div class="item left" id="' + benches[i].id + '">';
+            itemstr = '<div class="item left" data-benchid="' + benches[i].id + '">';
             if(benches[i].hasOwnProperty("preview"))
               itemstr = itemstr + '<div class="image"><div class="color" style="background: ' + benches[i].preview + ';"></div><div class="cover"></div></div>';
             else
@@ -739,8 +773,15 @@ workbench.ui = {
               itemstr = itemstr + '<div class="left"><p class="description">Untitled Bench</p></div>';
             itemstr = itemstr + '<div class="right"><div class="profile_image"><div class="color" style="background: #420420"></div></div></div><div class="clear"></div></div>'; // TODO: Get user image? With user?
             benchItems.push(itemstr);
-            console.log(itemstr);
           }
+          for(i=0;i<benchItems.length;i++) {
+            $("#bench_select .menu_content").append(benchItems[i]);
+          }
+          $("#bench_select .menu_content .item").click(function(event) {
+            event.preventDefault();
+            console.log($(this).data("benchid"));
+            workbench.bench.loadBench($(this).data("benchid"));
+          });
           console.log(benchItems);
         }
       });

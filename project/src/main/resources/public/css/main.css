@@ -442,6 +442,12 @@ input[type="submit"] {
   width: 240px;
   height: 135px;
   font-size: 12px;
+  border: 2px solid #000;
+}
+
+#bench_select .menu_content .item:hover {
+  border-color: #FFF;
+  cursor: pointer;
 }
 
 #bench_select .menu_content .item .image .color {

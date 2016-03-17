@@ -109,13 +109,13 @@
     </div></div>-->
 
     <div class="property_menu" id="create_bench"><div class="inner">
-      <div class="menu_title"><h1>Create new bench</h1></div>
+      <div class="menu_title"><h1>Create new Bench</h1></div>
       <div class="menu_content">
         <form id="createbenchform">
-          <label for="createbench_title">Name your bench</label>
+          <label for="createbench_title">Name your Bench</label>
           <input type="text" name="createbench_title" id="createbench_title" placeholder="My Bench" required="required" /><br /><br />
-          <input type="submit" name="submit" value="Create bench" />
-          <a class="link_benchselect">&larr; Back to Bench Select</a>
+          <input type="submit" name="submit" value="Create Bench" /><br /><br />
+          <a class="link_benchselect" href="">&larr; Back to Bench Select</a>
         </form>
       </div>
       <div class="menu_footer"></div>
@@ -126,15 +126,15 @@
       <div class="menu_header">
         <div class="left">
           <h1>Bench Select</h1>
-          <p>Select a bench below, or <a href="#">create a new bench</a></p>
+          <p>Select a bench below, or <a href="" class="link_createbench">create a new bench</a></p>
         </div>
         <div class="right">
-          <div class="profile_info_small"></div>
+          <div class="profile_info_small"><a class="link_logout" href="">Logout</a></div>
         </div>
         <div class="clear"></div>
       </div>
       <div class="menu_content">
-        <div class="nobenches">There are no benches available. <a href="#">Create a new bench</a></div>
+        <div class="nobenches">There are no benches available. <a href="" class="link_createbench">Create a new bench</a></div>
         <div class="item_row">
           <!--<div class="item left">
             <div class="image"><div class="color" style="background: LightSkyBlue;"></div><div class="cover"></div></div>
