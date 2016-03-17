@@ -39,18 +39,6 @@ workbench.auth = {
     }
     if(showUI)
       workbench.ui.popup.login.showLoad(250);
-    if(user == "marx" && pass == "mearse") { // TODO TESTING CODE, Remove with server implementation
-      workbench.ui.popup.login.hideLoad();
-      docCookies.setItem("wb_user_token", "jsdafoksndfasdlfjasidfoasjdfiojasiojdfiaoisejofaowiejfiosdfjidfopqjwoprpqorq3pirq3rri99i3q9ir90ruipfiafipaasidasdaposidpaosidiii", Infinity);
-      docCookies.setItem("wb_user_id", "aaaaaaaaaa", Infinity);
-      docCookies.setItem("wb_user_name", user, Infinity);
-      workbench.auth.status = true;
-      workbench.ui.popup.login.success(function() {
-        workbench.bench.benchSelect();
-      });
-      workbench.bench.load();
-      return;
-    }
     workbench.comm.http.post(loginobj, "http://localhost:80/api/login", function(resp) {
       if(resp.result) {
         if(resp.data.hasOwnProperty("token") && resp.data.hasOwnProperty("agent")) {
@@ -73,14 +61,14 @@ workbench.auth = {
 
   logout: function() { // Logs the user out of their CURRENT session, by deleting their cookies
     if(docCookies.getItem("wb_user_token") === null) {
-      location.replace("index.html#nointro");
+      location.assign("index.html#nointro");
       location.reload();
       return;
     }
     docCookies.removeItem("wb_user_token");
     docCookies.removeItem("wb_user_id");
     docCookies.removeItem("wb_user_name");
-    location.replace("index.html#nointro");
+    location.assign("index.html#nointro");
     location.reload();
   },
 
@@ -183,7 +171,7 @@ workbench.auth = {
           docCookies.setItem("wb_user_name", resp.data.agent.user, Infinity);
           workbench.auth.status = true;
           workbench.ui.popup.register.success();
-          workbench.bench.load();
+          workbench.bench.benchSelect();
         } else if(resp.data.hasOwnProperty("success") && resp.data.success == false && resp.data.hasOwnProperty("error")) {
           workbench.ui.popup.register.hideLoad();
           workbench.ui.popup.register.showError(resp.data.error);
@@ -236,7 +224,13 @@ workbench.bench = {
         if(workbench.core.debug)
           console.log(resp.data.hasOwnProperty("email"));
         if(resp.data.hasOwnProperty("email")) {
-          if(!(resp.data.hasOwnProperty("owner")) || !(resp.data.hasOwnProperty("member")) && (resp.data.owner.length < 1 && resp.data.member.length < 1)) {
+          if(workbench.core.debug) {
+            console.log("Owner: " + resp.data.hasOwnProperty("owner"));
+            console.log("Member: " + resp.data.hasOwnProperty("member"));
+            console.log("Owner Length: " + resp.data.owner.length);
+            console.log("Member Length: " + resp.data.owner.length);
+          }
+          if((!(resp.data.hasOwnProperty("owner")) || !(resp.data.hasOwnProperty("member"))) || (resp.data.owner.length < 1 && resp.data.member.length < 1)) {
             workbench.ui.popup.benchselect.showNoBenches();
             workbench.ui.popup.benchselect.sizeAdjust();
             workbench.ui.popup.benchselect.show(250);
@@ -432,7 +426,7 @@ workbench.comm = {
 
     onerror: function() {
       console.error("WebSocket Error! AKA something went horribly wrong. Reloading the page...");
-      setTimeout(function() { location.replace("index.html"); }, 3000);
+      setTimeout(function() { location.replace("index.html#nointro"); }, 3000);
     },
 
     onopen: function() {
