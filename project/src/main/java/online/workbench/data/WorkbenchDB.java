@@ -46,10 +46,12 @@ public class WorkbenchDB implements DatabaseMethods
 
 	private void initialize()
 	{
+		Connection connection = null;
+		java.sql.Statement statement = null;
 		try
 		{
-			Connection connection = this.getConnection();
-			java.sql.Statement statement = connection.createStatement();
+			connection = this.getConnection();
+			statement = connection.createStatement();
 
 			statement.executeUpdate(Table.Accounts);
 			statement.executeUpdate(Table.BenchNodeContent);
@@ -58,107 +60,183 @@ public class WorkbenchDB implements DatabaseMethods
 			statement.executeUpdate(Table.Members);
 			statement.executeUpdate(Table.Sessions);
 
-			statement.close();
-			connection.close();
 		}
 		catch (SQLException e)
 		{
 			e.printStackTrace();
 		}
+		finally
+		{
+			try
+			{
+				if (statement != null) statement.close();
+				if (connection != null) connection.close();
+			}
+			catch (SQLException e)
+			{
+				e.printStackTrace();
+			}
+		}
+
 	}
 
 	@Override
 	public synchronized void updateUserEmailAsync(int id, String email)
 	{
+		Connection connection = null;
+		PreparedStatement statement = null;
+
 		try
 		{
-			Connection connection = this.getConnection();
-			PreparedStatement statement = connection.prepareStatement(Statement.UPDATE_EMAIL);
+			connection = this.getConnection();
+			statement = connection.prepareStatement(Statement.UPDATE_EMAIL);
 			statement.setString(1, email.toLowerCase());
 			statement.setInt(2, id);
 			statement.executeUpdate();
-			statement.close();
-			connection.close();
 		}
 		catch (SQLException e)
 		{
 			e.printStackTrace();
+		}
+		finally
+		{
+			try
+			{
+				if (statement != null) statement.close();
+				if (connection != null) connection.close();
+			}
+			catch (SQLException e)
+			{
+				e.printStackTrace();
+			}
 		}
 	}
 
 	@Override
 	public synchronized void updateUserNameAsync(int id, String name)
 	{
+		Connection connection = null;
+		PreparedStatement statement = null;
+
 		try
 		{
-			Connection connection = this.getConnection();
-			PreparedStatement statement = connection.prepareStatement(Statement.UPDATE_USERNAME);
+			connection = this.getConnection();
+			statement = connection.prepareStatement(Statement.UPDATE_USERNAME);
 			statement.setString(1, name.toLowerCase());
 			statement.setInt(2, id);
 			statement.executeUpdate();
-			statement.close();
-			connection.close();
 		}
 		catch (SQLException e)
 		{
 			e.printStackTrace();
+		}
+		finally
+		{
+			try
+			{
+				if (statement != null) statement.close();
+				if (connection != null) connection.close();
+			}
+			catch (SQLException e)
+			{
+				e.printStackTrace();
+			}
 		}
 	}
 
 	@Override
 	public synchronized void updateUserAvatarAsync(int id, String avatar)
 	{
+		Connection connection = null;
+		PreparedStatement statement = null;
+
 		try
 		{
-			Connection connection = this.getConnection();
-			PreparedStatement statement = connection.prepareStatement(Statement.UPDATE_AVATAR);
+			connection = this.getConnection();
+			statement = connection.prepareStatement(Statement.UPDATE_AVATAR);
 			statement.setString(1, avatar);
 			statement.setInt(2, id);
 			statement.executeUpdate();
-			statement.close();
-			connection.close();
 		}
 		catch (SQLException e)
 		{
 			e.printStackTrace();
+		}
+		finally
+		{
+			try
+			{
+				if (statement != null) statement.close();
+				if (connection != null) connection.close();
+			}
+			catch (SQLException e)
+			{
+				e.printStackTrace();
+			}
 		}
 	}
 
 	@Override
 	public synchronized void updateUserPasswordAsync(int id, String passwordHash)
 	{
+		Connection connection = null;
+		PreparedStatement statement = null;
+
 		try
 		{
-			Connection connection = this.getConnection();
-			PreparedStatement statement = connection.prepareStatement(Statement.UPDATE_PASSWORD);
+			connection = this.getConnection();
+			statement = connection.prepareStatement(Statement.UPDATE_PASSWORD);
 			statement.setString(1, passwordHash);
 			statement.setInt(2, id);
 			statement.executeUpdate();
-			statement.close();
-			connection.close();
 		}
 		catch (SQLException e)
 		{
 			e.printStackTrace();
+		}
+		finally
+		{
+			try
+			{
+				if (statement != null) statement.close();
+				if (connection != null) connection.close();
+			}
+			catch (SQLException e)
+			{
+				e.printStackTrace();
+			}
 		}
 	}
 
 	@Override
 	public synchronized void invalidateToken(String token)
 	{
+		Connection connection = null;
+		PreparedStatement statement = null;
+
 		try
 		{
-			Connection connection = this.getConnection();
-			PreparedStatement statement = connection.prepareStatement(Statement.INVALIDATE_TOKEN);
+			connection = this.getConnection();
+			statement = connection.prepareStatement(Statement.INVALIDATE_TOKEN);
 			statement.setLong(1, System.currentTimeMillis());
 			statement.setString(2, token.toUpperCase());
 			statement.executeUpdate();
-			statement.close();
-			connection.close();
 		}
 		catch (SQLException e)
 		{
 			e.printStackTrace();
+		}
+		finally
+		{
+			try
+			{
+				if (statement != null) statement.close();
+				if (connection != null) connection.close();
+			}
+			catch (SQLException e)
+			{
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -168,6 +246,7 @@ public class WorkbenchDB implements DatabaseMethods
 		Connection connection = null;
 		PreparedStatement statement = null;
 		ResultSet result = null;
+
 		try
 		{
 			connection = this.getConnection();
@@ -326,8 +405,6 @@ public class WorkbenchDB implements DatabaseMethods
 				statement.setString(2, token);
 				statement.setLong(3, time);
 				statement.executeUpdate();
-				statement.close();
-				connection.close();
 			}
 			catch (SQLException e)
 			{
@@ -1060,8 +1137,6 @@ public class WorkbenchDB implements DatabaseMethods
 			statement.setString(1, cType.toString());
 			statement.setInt(2, id);
 			statement.executeUpdate();
-			statement.close();
-			connection.close();
 		}
 		catch (SQLException e)
 		{
@@ -1095,8 +1170,6 @@ public class WorkbenchDB implements DatabaseMethods
 			statement.setInt(2, y);
 			statement.setInt(3, id);
 			statement.executeUpdate();
-			statement.close();
-			connection.close();
 		}
 		catch (SQLException e)
 		{
@@ -1129,8 +1202,6 @@ public class WorkbenchDB implements DatabaseMethods
 			statement.setInt(2, h);
 			statement.setInt(3, id);
 			statement.executeUpdate();
-			statement.close();
-			connection.close();
 		}
 		catch (SQLException e)
 		{
@@ -1162,8 +1233,6 @@ public class WorkbenchDB implements DatabaseMethods
 			statement.setString(1, title);
 			statement.setInt(2, id);
 			statement.executeUpdate();
-			statement.close();
-			connection.close();
 		}
 		catch (SQLException e)
 		{
@@ -1195,8 +1264,6 @@ public class WorkbenchDB implements DatabaseMethods
 			statement.setBoolean(1, true);
 			statement.setInt(2, id);
 			statement.executeUpdate();
-			statement.close();
-			connection.close();
 		}
 		catch (SQLException e)
 		{
