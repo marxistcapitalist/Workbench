@@ -29,7 +29,7 @@ public class WorkbenchDB implements DatabaseMethods
 		initialize();
 	}
 
-	private Connection getConnection()
+	private synchronized Connection getConnection()
 	{
 		try
 		{
@@ -67,7 +67,7 @@ public class WorkbenchDB implements DatabaseMethods
 	}
 
 	@Override
-	public void updateUserEmailAsync(int id, String email)
+	public synchronized void updateUserEmailAsync(int id, String email)
 	{
 		try
 		{
@@ -86,7 +86,7 @@ public class WorkbenchDB implements DatabaseMethods
 	}
 
 	@Override
-	public void updateUserNameAsync(int id, String name)
+	public synchronized void updateUserNameAsync(int id, String name)
 	{
 		try
 		{
@@ -105,7 +105,7 @@ public class WorkbenchDB implements DatabaseMethods
 	}
 
 	@Override
-	public void updateUserAvatarAsync(int id, String avatar)
+	public synchronized void updateUserAvatarAsync(int id, String avatar)
 	{
 		try
 		{
@@ -124,7 +124,7 @@ public class WorkbenchDB implements DatabaseMethods
 	}
 
 	@Override
-	public void updateUserPasswordAsync(int id, String passwordHash)
+	public synchronized void updateUserPasswordAsync(int id, String passwordHash)
 	{
 		try
 		{
@@ -143,7 +143,7 @@ public class WorkbenchDB implements DatabaseMethods
 	}
 
 	@Override
-	public void invalidateToken(String token)
+	public synchronized void invalidateToken(String token)
 	{
 		try
 		{
@@ -162,7 +162,7 @@ public class WorkbenchDB implements DatabaseMethods
 	}
 
 	@Override
-	public boolean checkUsernameAvailability(String username)
+	public synchronized boolean checkUsernameAvailability(String username)
 	{
 		Connection connection = null;
 		PreparedStatement statement = null;
@@ -186,8 +186,8 @@ public class WorkbenchDB implements DatabaseMethods
 		{
 			try
 			{
-				statement.close();
-				connection.close();
+				if (statement != null) statement.close();
+				if (connection != null) connection.close();
 			}
 			catch (SQLException e)
 			{
@@ -198,7 +198,7 @@ public class WorkbenchDB implements DatabaseMethods
 	}
 
 	@Override
-	public boolean checkEmailAvailability(String email)
+	public synchronized boolean checkEmailAvailability(String email)
 	{
 		Connection connection = null;
 		PreparedStatement statement = null;
@@ -222,8 +222,8 @@ public class WorkbenchDB implements DatabaseMethods
 		{
 			try
 			{
-				statement.close();
-				connection.close();
+				if (statement != null) statement.close();
+				if (connection != null) connection.close();
 			}
 			catch (SQLException e)
 			{
@@ -234,7 +234,7 @@ public class WorkbenchDB implements DatabaseMethods
 	}
 
 	@Override
-	public TokenManager.Token loadToken(int id)
+	public synchronized TokenManager.Token loadToken(int id)
 	{
 		Connection connection = null;
 		PreparedStatement statement = null;
@@ -262,8 +262,8 @@ public class WorkbenchDB implements DatabaseMethods
 		{
 			try
 			{
-				statement.close();
-				connection.close();
+				if (statement != null) statement.close();
+				if (connection != null) connection.close();
 			}
 			catch (SQLException e)
 			{
@@ -274,7 +274,7 @@ public class WorkbenchDB implements DatabaseMethods
 	}
 
 	@Override
-	public String generateToken(int id)
+	public synchronized String generateToken(int id)
 	{
 		long time = System.currentTimeMillis();
 		String token = Token.gen();
@@ -319,7 +319,7 @@ public class WorkbenchDB implements DatabaseMethods
 	}
 
 	@Override
-	public boolean validateUserLogin(int id, String passwordHash)
+	public synchronized boolean validateUserLogin(int id, String passwordHash)
 	{
 		Connection connection = null;
 		PreparedStatement statement = null;
@@ -348,8 +348,8 @@ public class WorkbenchDB implements DatabaseMethods
 		{
 			try
 			{
-				statement.close();
-				connection.close();
+				if (statement != null) statement.close();
+				if (connection != null) connection.close();
 			}
 			catch (SQLException e)
 			{
@@ -360,7 +360,7 @@ public class WorkbenchDB implements DatabaseMethods
 	}
 
 	@Override
-	public User loadUser(int userId)
+	public synchronized User loadUser(int userId)
 	{
 		int id = userId;
 		String username = null;
@@ -398,7 +398,7 @@ public class WorkbenchDB implements DatabaseMethods
 		{
 			try
 			{
-				statement.close();
+				if (statement != null) statement.close();
 			}
 			catch (SQLException e)
 			{
@@ -426,7 +426,7 @@ public class WorkbenchDB implements DatabaseMethods
 		{
 			try
 			{
-				statement.close();
+				if (statement != null) statement.close();
 			}
 			catch (SQLException e)
 			{
@@ -463,7 +463,7 @@ public class WorkbenchDB implements DatabaseMethods
 		{
 			try
 			{
-				statement.close();
+				if (statement != null) statement.close();
 			}
 			catch (SQLException e)
 			{
@@ -493,7 +493,7 @@ public class WorkbenchDB implements DatabaseMethods
 		{
 			try
 			{
-				statement.close();
+				if (statement != null) statement.close();
 				connection.close();
 			}
 			catch (SQLException e)
@@ -512,7 +512,7 @@ public class WorkbenchDB implements DatabaseMethods
 	/**
 	 * Only used internally by the loadBench() method.
 	 */
-	private Map<Integer, BenchNode> loadNodes(Connection connection, int benchId)
+	private synchronized Map<Integer, BenchNode> loadNodes(Connection connection, int benchId)
 	{
 		HashMap<Integer, BenchNode> tempNodes = new HashMap<>();
 		Map<Integer, BenchNode> finalNodes = new HashMap<>();
@@ -576,7 +576,10 @@ public class WorkbenchDB implements DatabaseMethods
 					b_t_node.getValue().Content = content;
 					b_t_node.getValue().ContentType = type;
 
-					finalNodes.put(b_t_node.getKey(), b_t_node.getValue());
+					if (!b_t_node.getValue().Archived)
+					{
+						finalNodes.put(b_t_node.getKey(), b_t_node.getValue());
+					}
 				}
 			}
 
@@ -603,7 +606,7 @@ public class WorkbenchDB implements DatabaseMethods
 	}
 
 	@Override
-	public Bench loadBench(int benchId)
+	public synchronized Bench loadBench(int benchId)
 	{
 		int id = benchId; //
 		User owner = null; //
@@ -634,6 +637,7 @@ public class WorkbenchDB implements DatabaseMethods
 				created = result.getLong(2);
 				title = result.getString(3);
 				background = preview = result.getString(4);
+				archived = result.getBoolean(5);
 			}
 		}
 		catch (SQLException e)
@@ -693,13 +697,13 @@ public class WorkbenchDB implements DatabaseMethods
 
 		if (id != 0)
 		{
-			return new Bench(id, owner, title, created, users, nodes, width, height, archived, background, preview);
+			if (!archived) return new Bench(id, owner, title, created, users, nodes, width, height, archived, background, preview);
 		}
 		return null;
 	}
 
 	@Override
-	public int countBenchMembers(int benchId)
+	public synchronized int countBenchMembers(int benchId)
 	{
 		int counter = 0;
 
@@ -744,7 +748,7 @@ public class WorkbenchDB implements DatabaseMethods
 	}
 
 	@Override
-	public int createNewUser(String username, String email)
+	public synchronized int createNewUser(String username, String email)
 	{
 		int finalId = 0;
 
@@ -813,7 +817,7 @@ public class WorkbenchDB implements DatabaseMethods
 	}
 
 	@Override
-	public void setPassword(int id, String passwordHash)
+	public synchronized void setPassword(int id, String passwordHash)
 	{
 		Connection connection = null;
 		PreparedStatement statement = null;
@@ -846,7 +850,7 @@ public class WorkbenchDB implements DatabaseMethods
 	}
 
 	@Override
-	public Bench createBench(User user, String title, int w, int h)
+	public synchronized Bench createBench(User user, String title, int w, int h)
 	{
 		String color = HexSelector.sel();
 		int benchId = 0;
@@ -947,7 +951,7 @@ public class WorkbenchDB implements DatabaseMethods
 	}
 
 	@Override
-	public void archiveBench(int id)
+	public synchronized void archiveBench(int id)
 	{
 		try
 		{
@@ -966,7 +970,7 @@ public class WorkbenchDB implements DatabaseMethods
 	}
 
 	@Override
-	public void submitNodeContentEditAsync(NodeType type, int id, String content)
+	public synchronized void submitNodeContentEditAsync(NodeType type, int id, String content)
 	{
 		try
 		{
@@ -985,7 +989,7 @@ public class WorkbenchDB implements DatabaseMethods
 	}
 
 	@Override
-	public void submitNodeContentTypeEditAsync(NodeType type, int id, ContentType cType)
+	public synchronized void submitNodeContentTypeEditAsync(NodeType type, int id, ContentType cType)
 	{
 		try
 		{
@@ -1004,7 +1008,7 @@ public class WorkbenchDB implements DatabaseMethods
 	}
 
 	@Override
-	public void submitNodeMoveAsync(NodeType type, int id, int x, int y)
+	public synchronized void submitNodeMoveAsync(NodeType type, int id, int x, int y)
 	{
 		try
 		{
@@ -1024,7 +1028,7 @@ public class WorkbenchDB implements DatabaseMethods
 	}
 
 	@Override
-	public void submitNodeResizeAsync(NodeType type, int id, int w, int h)
+	public synchronized void submitNodeResizeAsync(NodeType type, int id, int w, int h)
 	{
 		try
 		{
@@ -1044,7 +1048,7 @@ public class WorkbenchDB implements DatabaseMethods
 	}
 
 	@Override
-	public void submitNodeRenameAsync(NodeType type, int id, String title)
+	public synchronized void submitNodeRenameAsync(NodeType type, int id, String title)
 	{
 		try
 		{
@@ -1063,7 +1067,7 @@ public class WorkbenchDB implements DatabaseMethods
 	}
 
 	@Override
-	public void submitNodeArchiveAsync(NodeType type, int id)
+	public synchronized void submitNodeArchiveAsync(NodeType type, int id)
 	{
 		try
 		{
@@ -1082,7 +1086,7 @@ public class WorkbenchDB implements DatabaseMethods
 	}
 
 	@Override
-	public BenchNode submitNodeCreate(BenchNode node)
+	public synchronized BenchNode submitNodeCreate(BenchNode node)
 	{
 		int finalId = 0;
 
@@ -1191,12 +1195,14 @@ public class WorkbenchDB implements DatabaseMethods
 	}
 
 	@Override
-	public String grabEmail(String username)
+	public synchronized String grabEmail(String username)
 	{
+		Connection connection = null;
+		PreparedStatement statement = null;
 		try
 		{
-			Connection connection = this.getConnection();
-			PreparedStatement statement = connection.prepareStatement(Statement.GRAB_EMAIL);
+			connection = this.getConnection();
+			statement = connection.prepareStatement(Statement.GRAB_EMAIL);
 			statement.setString(1, username.toLowerCase());
 			ResultSet result = statement.executeQuery();
 
@@ -1205,23 +1211,35 @@ public class WorkbenchDB implements DatabaseMethods
 				return result.getString(1);
 			}
 
-			statement.close();
-			connection.close();
 		}
 		catch (SQLException e)
 		{
 			e.printStackTrace();
 		}
+		finally
+		{
+			try
+			{
+				if (statement != null) statement.close();
+				if (connection != null) connection.close();
+			}
+			catch (SQLException e)
+			{
+				e.printStackTrace();
+			}
+		}
 		return null;
 	}
 
 	@Override
-	public String grabUser(String email)
+	public synchronized String grabUser(String email)
 	{
+		Connection connection = null;
+		PreparedStatement statement = null;
 		try
 		{
-			Connection connection = this.getConnection();
-			PreparedStatement statement = connection.prepareStatement(Statement.GRAB_USER);
+			connection = this.getConnection();
+			statement = connection.prepareStatement(Statement.GRAB_USER);
 			statement.setString(1, email.toLowerCase());
 			ResultSet result = statement.executeQuery();
 
@@ -1229,24 +1247,35 @@ public class WorkbenchDB implements DatabaseMethods
 			{
 				return result.getString(1);
 			}
-
-			statement.close();
-			connection.close();
 		}
 		catch (SQLException e)
 		{
 			e.printStackTrace();
 		}
+		finally
+		{
+			try
+			{
+				if (statement != null) statement.close();
+				if (connection != null) connection.close();
+			}
+			catch (SQLException e)
+			{
+				e.printStackTrace();
+			}
+		}
 		return null;
 	}
 
 	@Override
-	public int grabId(String loginKey)
+	public synchronized int grabId(String loginKey)
 	{
+		Connection connection = null;
+		PreparedStatement statement = null;
 		try
 		{
-			Connection connection = this.getConnection();
-			PreparedStatement statement = connection.prepareStatement(Statement.GRAB_ID);
+			connection = this.getConnection();
+			statement = connection.prepareStatement(Statement.GRAB_ID);
 			statement.setString(1, loginKey.toLowerCase());
 			statement.setString(2, loginKey.toLowerCase());
 			ResultSet result = statement.executeQuery();
@@ -1256,18 +1285,29 @@ public class WorkbenchDB implements DatabaseMethods
 				return result.getInt(1);
 			}
 
-			statement.close();
-			connection.close();
+
 		}
 		catch (SQLException e)
 		{
 			e.printStackTrace();
 		}
+		finally
+		{
+			try
+			{
+				if (statement != null) statement.close();
+				if (connection != null) connection.close();
+			}
+			catch (SQLException e)
+			{
+				e.printStackTrace();
+			}
+		}
 		return 0;
 	}
 
 	@Override
-	public void submitBenchBackgroundEdit(Bench bench, String background)
+	public synchronized void submitBenchBackgroundEdit(Bench bench, String background)
 	{
 		try
 		{
@@ -1286,7 +1326,7 @@ public class WorkbenchDB implements DatabaseMethods
 	}
 
 	@Override
-	public void submitBenchTitleEdit(Bench bench, String title)
+	public synchronized void submitBenchTitleEdit(Bench bench, String title)
 	{
 		try
 		{
@@ -1305,13 +1345,13 @@ public class WorkbenchDB implements DatabaseMethods
 	}
 
 	@Override
-	public void submitBenchResize(Bench bench, int w, int h)
+	public synchronized void submitBenchResize(Bench bench, int w, int h)
 	{
 		String statement = Statement.BENCH_EDIT_RESIZE___DO_NOT_USE_WILL_BREAK_EVERYTHING;
 	}
 
 	@Override
-	public void addUserToBench(Bench bench, int user, PermissionLevel role)
+	public synchronized void addUserToBench(Bench bench, int user, PermissionLevel role)
 	{
 		try
 		{
@@ -1331,7 +1371,7 @@ public class WorkbenchDB implements DatabaseMethods
 	}
 
 	@Override
-	public void removeUserFromBench(Bench bench, int user)
+	public synchronized void removeUserFromBench(Bench bench, int user)
 	{
 		try
 		{
@@ -1350,7 +1390,7 @@ public class WorkbenchDB implements DatabaseMethods
 	}
 
 	@Override
-	public void modifyUserInBench(Bench bench, int user, PermissionLevel role)
+	public synchronized void modifyUserInBench(Bench bench, int user, PermissionLevel role)
 	{
 		try
 		{

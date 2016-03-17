@@ -103,11 +103,9 @@ public class WorkbenchAPI
 	{
 		post(API + "login", (req, res) ->
 		{
-
-
 			String body = req.body();
 			ClientLogin obj = gson.fromJson(body, ClientLogin.class);
-			String login = obj.getLoginkey();
+			String login = obj.getLoginkey().toLowerCase();
 			String password = obj.getPassword();
 
 			int id = this.userManager.validateUser(login, password);
@@ -140,6 +138,7 @@ public class WorkbenchAPI
 			String password = body.getPassword();
 
 			ServerRegister response = new ServerRegister();
+
 
 			if (email.length() < 6 && email.length() > 254)
 			{
@@ -383,6 +382,11 @@ public class WorkbenchAPI
 			{
 				Bench bench = benchManager.load(request.getId());
 
+				if (bench == null)
+				{
+					return "{}";
+				}
+
 				if (bench.Users.containsKey(request.getAgent().getId()))
 				{
 					switch (request.getVerbosity().toLowerCase())
@@ -550,7 +554,13 @@ public class WorkbenchAPI
 				Bench bench = benchManager.load(request.getId());
 				BooleanResponse response = new BooleanResponse();
 
-				if (bench != null && bench.Owner.Id == request.getId())
+				if (bench == null)
+				{
+					response.setResult(false);
+					return gson.toJson(response);
+				}
+
+				if (bench != null && bench.Owner.Id == request.getAgent().getId())
 				{
 					benchManager.deleteBench(bench);
 					response.setResult(true);

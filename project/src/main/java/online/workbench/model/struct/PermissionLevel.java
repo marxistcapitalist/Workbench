@@ -32,6 +32,8 @@ public enum PermissionLevel
 
 	public static PermissionLevel get(String level)
 	{
+		if (level == null) return PermissionLevel.NONE;
+
 		switch (level.toLowerCase())
 		{
 			case "viewer":

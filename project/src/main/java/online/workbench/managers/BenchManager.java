@@ -48,7 +48,7 @@ public class BenchManager
 		{
 			if (bench.Owner.Id != user.Id && bench.Users.containsKey(user.Id))
 			{
-				if (!bench.Users.get(user.Id).equals(level) && level.equals(PermissionLevel.ADMIN))
+				if (!bench.Users.get(user.Id).equals(level) && !level.equals(PermissionLevel.ADMIN))
 				{
 					bench.Users.put(user.Id, level);
 					database.modifyUserInBench(bench, user.Id, level);
