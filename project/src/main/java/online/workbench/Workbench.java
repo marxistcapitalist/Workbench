@@ -10,22 +10,29 @@ import static spark.Spark.*;
 
 public class Workbench
 {
-	public static final int PORT = 80;
-	public static final int POOL = 20;
 	public static final String DATABASE = "workbench";
 	public static final String STATIC = "/public";
 
 	public static void main(String[] args)
 	{
+		int port = 80;
+		int pool = 20;
+
+		if (args.length == 2)
+		{
+			port = Integer.valueOf(args[0]);
+			pool = Integer.valueOf(args[1]);
+		}
+
 		System.console().writer().println("===================================================");
 		System.console().writer().println("==              Launching Workbench              ==");
 		System.console().writer().println("===================================================");
-		port(PORT);
+		port(port);
 		System.console().writer().println("==                                               ==");
-		System.console().writer().println("== • Port Set: "+PORT+"                                ==");
-		threadPool(POOL);
+		System.console().writer().println("== • Port Set: "+port+"                                ==");
+		threadPool(pool);
 		System.console().writer().println("==                                               ==");
-		System.console().writer().println("== • Thread Pool Created: "+POOL+"                     ==");
+		System.console().writer().println("== • Thread Pool Created: "+pool+"                     ==");
 		staticFileLocation(STATIC);
 		System.console().writer().println("==                                               ==");
 		System.console().writer().println("== • Static Content Location Set: "+STATIC+"        ==");
