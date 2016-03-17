@@ -108,6 +108,19 @@
       </div>
     </div></div>-->
 
+    <div class="property_menu" id="create_bench"><div class="inner">
+      <div class="menu_title"><h1>Create new bench</h1></div>
+      <div class="menu_content">
+        <form id="createbenchform">
+          <label for="createbench_title">Name your bench</label>
+          <input type="text" name="createbench_title" id="createbench_title" placeholder="My Bench" required="required" /><br /><br />
+          <input type="submit" name="submit" value="Create bench" />
+          <a class="link_benchselect">&larr; Back to Bench Select</a>
+        </form>
+      </div>
+      <div class="menu_footer"></div>
+    </div></div>
+
     <!-- Bench Selection Menu (Block Verison) --><!-- TODO WARNING: More than ~3 benches will currently break the row formatting. Fix ASAP. -->
     <div class="block_menu" id="bench_select"><div class="inner">
       <div class="menu_header">
@@ -123,7 +136,7 @@
       <div class="menu_content">
         <div class="nobenches">There are no benches available. <a href="#">Create a new bench</a></div>
         <div class="item_row">
-          <div class="item left">
+          <!--<div class="item left">
             <div class="image"><div class="color" style="background: LightSkyBlue;"></div><div class="cover"></div></div>
             <div class="subtext">
               <div class="left">
@@ -146,15 +159,13 @@
               </div>
               <div class="clear"></div>
             </div>
-          </div>
+          </div>-->
         </div>
         <div class="clear"></div>
       </div>
       <div class="menu_footer">
       </div>
     </div></div>
-
-
 
     <!-- Workbench Body -->
     <div id="workbench">
