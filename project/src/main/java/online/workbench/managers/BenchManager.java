@@ -81,6 +81,7 @@ public class BenchManager
 	public Bench createBench(User user, String title, int w, int h)
 	{
 		Bench bench = database.createBench(user, title, w, h);
+		user.Benches.add(new BenchData(bench.Id, bench.Owner.Username, bench.Owner.Id, bench.Title, bench.Created, bench.Archived, bench.Background));
 		return bench.Id != 0 ? bench : null;
 	}
 

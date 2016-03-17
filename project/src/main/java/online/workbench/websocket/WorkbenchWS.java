@@ -6,7 +6,6 @@ import online.workbench.WorkbenchAPI;
 import online.workbench.base.Protocol;
 import online.workbench.base.WebsocketMethodsOutgoing;
 import online.workbench.model.struct.*;
-import online.workbench.websocket.WebsocketProtocolHandler;
 import org.eclipse.jetty.websocket.api.Session;
 
 import java.io.IOException;
@@ -18,13 +17,11 @@ import static spark.Spark.*;
 public class WorkbenchWS implements WebsocketMethodsOutgoing
 {
     private @Getter WorkbenchAPI api;
-	private @Getter Map<Bench, HashMap<Session, User>> sessions;
 	private Gson gson;
 
 	public WorkbenchWS(WorkbenchAPI api)
 	{
 		api.getBenchManager().setWebsocket(this);
-		this.sessions = new HashMap<>();
 		this.gson = new Gson();
 		this.api = api;
 
@@ -200,9 +197,9 @@ public class WorkbenchWS implements WebsocketMethodsOutgoing
 	{
 		String out = gson.toJson(message);
 
-		if (sessions.containsKey(bench))
+		if (WebsocketProtocolHandler.sessions.containsKey(bench.Id))
 		{
-			sessions.get(bench).keySet().forEach(s ->
+			WebsocketProtocolHandler.sessions.get(bench.Id).keySet().forEach(s ->
 			{
 				if (s.isOpen())
 				{
@@ -227,24 +224,24 @@ public class WorkbenchWS implements WebsocketMethodsOutgoing
 	 */
 	public void addBenchToSessions(Bench bench)
 	{
-		if (!sessions.containsKey(bench))
+		if (!WebsocketProtocolHandler.sessions.containsKey(bench.Id))
 		{
-			sessions.put(bench, new HashMap<Session, User>());
+			WebsocketProtocolHandler.sessions.put(bench.Id, new SessionMap());
 		}
 	}
 
 	public void removeBenchFromSessions(Bench bench)
 	{
-		if (sessions.containsKey(bench))
+		if (WebsocketProtocolHandler.sessions.containsKey(bench.Id))
 		{
-			for (Map.Entry<Session, User> item : sessions.get(bench).entrySet())
+			for (Map.Entry<Session, User> item : WebsocketProtocolHandler.sessions.get(bench.Id).entrySet())
 			{
 				if (item.getKey().isOpen())
 				{
 					item.getKey().close();
 				}
 			}
-			sessions.remove(bench);
+			WebsocketProtocolHandler.sessions.remove(bench.Id);
 		}
 	}
 }

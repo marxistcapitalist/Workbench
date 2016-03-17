@@ -2,6 +2,7 @@ package online.workbench.websocket;
 
 
 import com.google.gson.Gson;
+import lombok.Getter;
 import online.workbench.managers.BenchManager;
 import online.workbench.managers.TokenManager;
 import online.workbench.managers.UserManager;
@@ -22,6 +23,7 @@ public class WebsocketProtocolHandler
 	private static Gson gson = new Gson();
 	private static WorkbenchWS websocket;
 	private static ArrayList<Session> pendingSessions = new ArrayList<>();
+	public static  Map<Integer, HashMap<Session, User>> sessions = new HashMap<>();
 	private List<String> incomingValids = new ArrayList<>(Arrays.asList(
 			"move", "resize", "textcursor", "textmodify", "textselect", "verify"
 
@@ -56,7 +58,7 @@ public class WebsocketProtocolHandler
 		}
 		else
 		{
-			for (HashMap<Session, User> benchKey : websocket.getSessions().values())
+			for (HashMap<Session, User> benchKey : sessions.values())
 			{
 				if (benchKey.containsKey(session))
 				{
@@ -89,8 +91,18 @@ public class WebsocketProtocolHandler
 
 			try
 			{
-				session.getRemote().sendString(websocket.getSessions().containsKey(bench) + "" + websocket.getSessions().get(bench).containsKey(session));
+				for (Map.Entry<Integer, HashMap<Session, User>> s : sessions.entrySet())
+				{
+					session.getRemote().sendString(s.getKey() + "------------");
+
+					for (Map.Entry<Session, User> u : s.getValue().entrySet())
+					{
+						session.getRemote().sendString(u.getKey().getRemoteAddress() + " " + u.getValue().Id);
+					}
+				}
+
 			}
+
 			catch (IOException e)
 			{
 				e.printStackTrace();
@@ -117,7 +129,7 @@ public class WebsocketProtocolHandler
 						verify(session, bench, agent.getId());
 					}
 				}
-				else if (websocket.getSessions().containsKey(bench) && websocket.getSessions().get(bench).containsKey(session))
+				else if (sessions.containsKey(bench.Id) && sessions.get(bench.Id).containsKey(session))
 				{
 					if (bench.Users.get(agent.getId()).val() >= PermissionLevel.EDITOR.val())
 					{
@@ -143,15 +155,20 @@ public class WebsocketProtocolHandler
 
 		if (user != null && user.Id != 0)
 		{
-			Map<Bench, HashMap<Session, User>> sessionMap = this.websocket.getSessions();
-
-			if (!sessionMap.containsKey(bench))
+			if (!sessions.containsKey(bench.Id))
 			{
 				benchManager.load(bench.Id);
 			}
 
-			HashMap<Session, User> sessions = sessionMap.get(bench);
-			sessions.put(session, user);
+			try
+			{
+				session.getRemote().sendString("PREFIX");
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+			sessions.get(bench.Id).put(session, user);
 
 			Protocol.VerifyOutgoing message = new Protocol.VerifyOutgoing();
 			message.setBench(bench.Id);
