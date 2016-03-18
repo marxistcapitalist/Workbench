@@ -186,12 +186,15 @@ a:active {
 }
 
 input[type="text"],
-input[type="password"] {
+input[type="password"],
+input[type="number"],
+select,
+textarea {
   background: #000;
   color: #FFF;
   padding: 10px;
   border: 2px solid #333;
-  margin-bottom: 6px;
+  margin-top: 6px;
   border-radius: 6px;
 }
 
@@ -424,7 +427,7 @@ input[type="submit"] {
 }
 
 .property_menu .menu_content label {
-  margin-bottom: 8px;
+  margin-top: 6px;
   display: block;
 }
 
@@ -448,6 +451,14 @@ input[type="submit"] {
 #bench_select .menu_content .item:hover {
   border-color: #FFF;
   cursor: pointer;
+}
+
+#bench_select .menu_content .item_row:after {
+  content: ".";
+  visibility: hidden;
+  display: block;
+  height: 0;
+  clear: both;
 }
 
 #bench_select .menu_content .item .image .color {
@@ -609,7 +620,7 @@ input[type="submit"] {
   bottom: 0;
 }
 
-#workbench .window {
+#workbench .node {
   width: 300px;
   height: 200px;
   background: #666;
@@ -619,14 +630,14 @@ input[type="submit"] {
   z-index: 100;
 }
 
-#workbench .window .title {
+#workbench .node .title {
   background: #000;
   color: #FFF;
   height: 30px;
   padding-top: 12px;
 }
 
-#workbench .window .title span {
+#workbench .node .title span {
   margin-left: 5px;
 }
 
