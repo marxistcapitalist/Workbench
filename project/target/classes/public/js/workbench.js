@@ -375,16 +375,37 @@ workbench.bench = {
           console.error("Move error: ");
           console.error(resp.error);
         }
-        else return;
       });
+      wsobj = {
+        type: "move",
+        node: nodedata.id,
+        dimensions: {
+          x: event.clientX + nodedata.offsetx,
+          y: event.clientY + nodedata.offsety
+        },
+        agent: {
+          id: docCookies.getItem("wb_user_id"),
+          token: docCookies.getItem("wb_user_token")
+        }
+      };
+      console.log("Sending WS JSON: ");
+      wsstring = JSON.stringify(wsobj);
+      console.log(wsstring);
+      workbench.comm.websocket.socket.send(wsstring);
     });
     try {
       workbench.ui.popup.closeAllPopups();
       workbench.ui.popup.cover.hide(150);
       workbench.ui.toolbar.setTitle(workbench.bench.title);
       for(var i=0;i<workbench.bench.nodes.length;i++) {
+        processedcontent = "";
+        type = workbench.bench.nodes[i].contentType;
+        if(type == "text")
+          processedcontent = workbench.bench.nodes[i].content;
+        else if(type == "image")
+          processedcontent = '<img src="' + workbench.bench.nodes[i].content + '" />';
         var nodestr = '<div class="node" draggable="true" data-nodeid="' + workbench.bench.nodes[i].id + '"><div class="title"><span class="titletext">' + workbench.bench.nodes[i].title + '</span></div>' +
-        '<div class="content">' + workbench.bench.nodes[i].content + "</div></div>";
+        '<div class="content">' + processedcontent + "</div></div>";
         console.log(workbench.bench.nodes[i].content);
         $("#workbench").append(nodestr);
         $("#workbench").children("[data-nodeid='" + workbench.bench.nodes[i].id + "']").css({
@@ -445,11 +466,20 @@ workbench.bench = {
 
   // VERIFY CREATE DELETE EDIT MOVE RENAME RESIZE NOTIFY MOD
   inbox: function(message) {
+    console.log("Received WS Message: ");
     console.log(message);
-    switch(message.type) {
-      default:
-        return;
+    type = message.type;
+    if(type == "move") {
+      workbench.bench.moveNode(message.node, message.dimensions);
     }
+  },
+
+  moveNode: function(nodeid, dimensions) {
+    node = $("#workbench").children("[data-nodeid='" + nodeid + "']");
+    $(node).css({
+      "left": dimensions.x + "px",
+      "top": dimensions.y + "px"
+    });
   },
 
   load: function() { // TODO !! IMPLEMENTATION !!
@@ -459,7 +489,7 @@ workbench.bench = {
 
 workbench.comm = {
   http: {
-    restTarget: "http://workbench.online:80/api/", // REST API target (base URI), not currently used
+    restTarget: "http://workbench.online/api/", // REST API target (base URI), not currently used
     ajaxProgress: false, // Whether or not there is currently an AJAX request in progress
     post: function(data, target, callback) { // Make a REST POST request, currently assumed to be in JSON format
       this.ajaxProgress = true;
@@ -514,13 +544,14 @@ workbench.comm = {
 
   websocket: {
     socket: undefined, // Websocket object, not for direct use outside this namespace
-    wsTarget: "ws://workbench.online:80/api/ws",
+    wsTarget: "ws://workbench.online/api/ws",
     cleanClose: true, // Whether or not the websocket is in a clean close state at the moment. If this is false, and socket closes, the connection unexpectedly closed.
 
     open: function() {
       workbench.auth.validateCookies();
       try {
         this.socket = new WebSocket(this.wsTarget);
+        this.socket.onmessage = this.onmessage;
         this.socket.onerror = this.onerror;
         this.socket.onopen = this.onopen;
         this.socket.onclose = this.onclose;
@@ -538,8 +569,10 @@ workbench.comm = {
       }
     },
 
-    onmessage: function(message) {
+    onmessage: function(messageevent) {
       try {
+        var message = messageevent.data;
+        console.log("MESSAGE: " + message);
         var respobj = JSON.parse(message);
         if(!respobj.hasOwnProperty("type") || !respobj.hasOwnProperty("bench") || respobj.type.length < 1 || respobj.bench.length < 1) {
           workbench.ui.popup.errorbox.showError("Received malformed JSON request form server (missing required properties)", "Server Error");
@@ -547,7 +580,7 @@ workbench.comm = {
         }
         workbench.bench.inbox(respobj);
       } catch(error) {
-        console.error(error);
+        //console.log(error);
         return;
       }
     },
@@ -558,7 +591,8 @@ workbench.comm = {
     },
 
     onopen: function() {
-      /*console.log("WebSocket Opened!");
+      workbench.auth.validateCookies();
+      console.log("WebSocket Opened!");
       workbench.comm.websocket.cleanClose = false;
       try {
         reqobj = {
@@ -569,10 +603,13 @@ workbench.comm = {
             token: docCookies.getItem("wb_user_token")
           }
         };
-        workbench.comm.websocket.socket.send(reqobj);
+        reqstring = JSON.stringify(reqobj);
+        if(workbench.core.debug)
+          console.log(reqstring);
+        workbench.comm.websocket.socket.send(reqstring);
       } catch(err) {
 
-      }*/
+      }
     },
 
     onclose: function() {
@@ -681,7 +718,7 @@ workbench.ui = {
         if($(this).val() == "text")
           $("#nodecontentbox").html('<textarea id="createnode_content_text" cols="50" rows="6"></textarea>');
         else if($(this).val() == "image")
-          $("#nodecontentbox").html('<input type="text" name="createnode_content_image" id="createnode_content_image placeholder="Image URL" />');
+          $("#nodecontentbox").html('<input type="text" name="createnode_content_image" id="createnode_content_image" placeholder="Image URL" />');
       });
 
       $("#createnodeform").submit(function(event) { // TODO Error Box and error checking
