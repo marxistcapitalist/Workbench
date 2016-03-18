@@ -68,9 +68,9 @@ public class Statement
 
 	public static final String BENCH_NODE_ARCHIVE = "UPDATE `BenchNodes` SET `archived` = ? WHERE `bNodeId` = ?;";
 
-	public static final String BENCH_NODE_CREATE__MAIN = "INSERT INTO `BenchNodes` (`userId`, `benchId`, `x`, `y`, `width`, `height`, `title`) VALUES (?, ?, ?, ?, ?, ?, ?);";
+	public static final String BENCH_NODE_CREATE__MAIN = "INSERT INTO `BenchNodes` (`userId`, `benchId`, `x`, `y`, `width`, `height`, `title`, `created`) VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
 
-	public static final String BENCH_NODE_CREATE__GRAB_BENCH_NODE_ID = "SELECT `bNodeId` FROM `BenchNodes` WHERE `userId` = ? AND `benchId` = ? AND `title` = ?;";
+	public static final String BENCH_NODE_CREATE__GRAB_BENCH_NODE_ID = "SELECT `bNodeId` FROM `BenchNodes` WHERE `userId` = ? AND `benchId` = ? AND `title` = ? AND `created` = ?;";
 
 	public static final String BENCH_NODE_CREATE__SET_CONTENT_ENTRY = "INSERT INTO `BenchNodeContent` (`bNodeId`, `content`, `type`) VALUES (?, ?, ?);";
 

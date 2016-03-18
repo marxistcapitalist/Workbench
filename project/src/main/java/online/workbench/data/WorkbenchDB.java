@@ -1287,6 +1287,7 @@ public class WorkbenchDB implements DatabaseMethods
 	public synchronized BenchNode submitNodeCreate(BenchNode node)
 	{
 		int finalId = 0;
+		long c_created = System.currentTimeMillis();
 
 		Connection connection = null;
 		PreparedStatement statement = null;
@@ -1303,6 +1304,7 @@ public class WorkbenchDB implements DatabaseMethods
 			statement.setInt(5, node.Position.Width);
 			statement.setInt(6, node.Position.Height);
 			statement.setString(7, node.Title);
+			statement.setLong(8, c_created);
 
 			statement.executeUpdate();
 
@@ -1329,6 +1331,7 @@ public class WorkbenchDB implements DatabaseMethods
 			statement.setInt(1, node.Creator.Id);
 			statement.setInt(2, node.Bench.Id);
 			statement.setString(3, node.Title);
+			statement.setLong(4, c_created);
 
 			result = statement.executeQuery();
 

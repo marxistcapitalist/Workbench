@@ -34,6 +34,7 @@ public class Table
 					"width smallint UNSIGNED NOT NULL, " +
 					"height smallint UNSIGNED NOT NULL, " +
 					"title text, " +
+					"created bigint UNSIGNED, " +
 					"archived tinyint(1) DEFAULT 0 " +
 					")";
 
