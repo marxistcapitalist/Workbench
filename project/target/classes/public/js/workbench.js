@@ -305,6 +305,7 @@ workbench.bench = {
         workbench.bench.nodes = resp.data.nodes;
         console.log(resp.data.nodes);
         $("#workbench").children().remove();
+        $("#workbench").css("background", resp.data.background);
         workbench.bench.popUI();
         workbench.comm.websocket.open();
         workbench.bench.loaded = true;
@@ -405,8 +406,8 @@ workbench.bench = {
           processedcontent = workbench.bench.nodes[i].content;
         else if(type == "image")
           processedcontent = '<img src="' + workbench.bench.nodes[i].content + '" />';
-        var nodestr = '<div class="node" draggable="true" data-nodeid="' + workbench.bench.nodes[i].id + '"><div class="title"><span class="titletext">' + workbench.bench.nodes[i].title + '</span></div>' +
-        '<div class="content">' + processedcontent + "</div></div>";
+        var nodestr = '<div class="node" draggable="true" data-nodeid="' + workbench.bench.nodes[i].id + '"><div class="title"><span class="titletext">' + workbench.bench.nodes[i].title + '</span>' +
+        '<div class="node_menu_button"><i class="fa fa-cog fa-2x"></i></div></div><div class="content">' + processedcontent + "</div></div>";
         console.log(workbench.bench.nodes[i].content);
         $("#workbench").append(nodestr);
         $("#workbench").children("[data-nodeid='" + workbench.bench.nodes[i].id + "']").css({
@@ -512,7 +513,7 @@ workbench.bench = {
     } else if(type == "edit") {
 
     } else if(type == "delete") {
-
+      workbench.bench.deleteNode(message.node);
     }
   },
 
@@ -543,6 +544,16 @@ workbench.bench = {
     };
     workbench.bench.nodes.push(node);
     workbench.bench.renderNodes();
+  },
+
+  deleteNode: function(nodeid) {
+    $("#workbench").children("[data-nodeid='" + nodeid + "']").remove();
+    for(var i=0;i<workbench.bench.nodes.length;i++) {
+      if(workbench.bench.nodes[i].id == nodeid) {
+        workbench.bench.nodes.splice(i, 1);
+        break;
+      }
+    }
   },
 
   load: function() { // TODO !! IMPLEMENTATION !!
