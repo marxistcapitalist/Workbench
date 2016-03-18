@@ -39,7 +39,7 @@ workbench.auth = {
     }
     if(showUI)
       workbench.ui.popup.login.showLoad(250);
-    workbench.comm.http.post(loginobj, "http://localhost:80/api/login", function(resp) {
+    workbench.comm.http.post(loginobj, "login", function(resp) {
       if(resp.result) {
         if(resp.data.hasOwnProperty("token") && resp.data.hasOwnProperty("agent")) {
           docCookies.setItem("wb_user_token", resp.data.token, Infinity);
@@ -79,7 +79,7 @@ workbench.auth = {
     var logoutobj = {
       token: usertoken
     };
-    workbench.comm.http.post(logoutobj, "http://localhost:80/api/logout", function(resp) {
+    workbench.comm.http.post(logoutobj, "logout", function(resp) {
       if(resp.result) {
         // TODO UI show output
       } else {
@@ -99,7 +99,7 @@ workbench.auth = {
       token: usertoken,
       id: userid
     };
-    workbench.comm.http.post(authobj, "http://localhost:80/api/authenticate", function(resp) {
+    workbench.comm.http.post(authobj, "authenticate", function(resp) {
       if(resp.result) {
         if(!resp.data.hasOwnProperty("token") || !resp.data.hasOwnProperty("id") || resp.data.token.length < 1 || resp.data.id.length < 1) {
           docCookies.removeItem("wb_user_token");
@@ -163,7 +163,7 @@ workbench.auth = {
       }
       return;
     }
-    workbench.comm.http.post(regobj, "http://localhost:80/api/register", function(resp) {
+    workbench.comm.http.post(regobj, "register", function(resp) {
       if(resp.result) {
         if(resp.data.hasOwnProperty("success") && resp.data.success == true) {
           docCookies.setItem("wb_user_token", resp.data.token, Infinity);
@@ -184,10 +184,20 @@ workbench.auth = {
         workbench.ui.popup.register.showError("HTTP Error, check your connection");
       }
     });
+  },
+
+  validateCookies: function() {
+    if(docCookies.getItem("wb_user_id") === null || docCookies.getItem("wb_user_token") === null)
+      workbench.auth.logout();
+    else
+      return;
   }
 };
 
 workbench.bench = {
+
+  // Whether or not a bench is loaded
+  loaded: false,
 
   // NODE STORAGE
   nodes: [],
@@ -205,6 +215,8 @@ workbench.bench = {
   members: [],
   created: "",
 
+  // Node Movement
+  dragging: false,
 
   benchSelect: function() { // Show bench selection screen
     var userid = docCookies.getItem("wb_user_id");
@@ -221,7 +233,7 @@ workbench.bench = {
         token: usertoken
       }
     };
-    workbench.comm.http.post(reqobj, "http://localhost:80/api/user", function(resp) {
+    workbench.comm.http.post(reqobj, "user", function(resp) {
       if(resp.result) {
         if(workbench.core.debug)
           console.log(resp.data.hasOwnProperty("email"));
@@ -277,7 +289,7 @@ workbench.bench = {
         token: usertoken
       }
     };
-    workbench.comm.http.post(reqobj, "http://localhost:80/api/bench", function(resp) {
+    workbench.comm.http.post(reqobj, "bench", function(resp) {
       if(resp.result) {
         if(!resp.data.hasOwnProperty("id") || !resp.data.hasOwnProperty("title") || !resp.data.hasOwnProperty("owner") || !resp.data.hasOwnProperty("preview") || !resp.data.hasOwnProperty("background")) {
           workbench.ui.popup.errorbox.showError("An unexpected, malformed response was received from the bench API endpoint.", "Malformed Response Error");
@@ -291,8 +303,10 @@ workbench.bench = {
         workbench.bench.created = resp.data.created;
         workbench.bench.members = resp.data.members;
         workbench.bench.nodes = resp.data.nodes;
+        console.log(resp.data.nodes);
         workbench.bench.popUI();
-        workbench.bench.webSocketStart();
+        workbench.comm.websocket.open();
+        workbench.bench.loaded = true;
       } else {
         workbench.ui.popup.errorbox.showError("An HTTP error occured while attempting to load the bench, check your connection. See console for details", "HTTP Error");
         return;
@@ -318,7 +332,7 @@ workbench.bench = {
         token: usertoken
       }
     };
-    workbench.comm.http.post(reqobj, "http://localhost:80/api/create", function(resp) {
+    workbench.comm.http.post(reqobj, "create", function(resp) {
       if(resp.result) {
         if(!resp.data.hasOwnProperty("id")) {
           workbench.auth.logout();
@@ -334,16 +348,66 @@ workbench.bench = {
   },
 
   popUI: function() {
+    $("#workbench").bind("dragover", function(event) {
+      event.preventDefault();
+    });
+    $("#workbench").bind("drop", function(event) {
+      event.preventDefault();
+      workbench.bench.dragging = false;
+      nodedata = JSON.parse(event.dataTransfer.getData("application/json"));
+      node = $("#workbench").children("[data-nodeid='" + nodedata.id + "']");
+      $(node).css("left", event.clientX + nodedata.offsetx + "px");
+      $(node).css("top", event.clientY + nodedata.offsety + "px");
+      workbench.auth.validateCookies();
+      reqobj = {
+        node: nodedata.id,
+        dimensions: {
+          x: event.clientX + nodedata.offsetx,
+          y: event.clientY + nodedata.offsety
+        },
+        agent: {
+          id: docCookies.getItem("wb_user_id"),
+          token: docCookies.getItem("wb_user_token")
+        }
+      };
+      workbench.comm.http.post(reqobj, workbench.bench.id + "/move", function(resp) {
+        if(!resp.result || resp.data.length < 1) {
+          console.error("Move error: ");
+          console.error(resp.error);
+        }
+        else return;
+      });
+    });
     try {
       workbench.ui.popup.closeAllPopups();
       workbench.ui.popup.cover.hide(150);
       workbench.ui.toolbar.setTitle(workbench.bench.title);
       for(var i=0;i<workbench.bench.nodes.length;i++) {
-        var nodestr = '<div class="window" draggable="true" data-nodeid="' + workbench.bench.nodes[i].id + '"><div class="title"><span class="titletext">' + workbench.bench.nodes[i].title + '</span></div>' +
-        '<div class="content">' + workbench.bench.nodes[i].content + "</div></div>"
-
+        var nodestr = '<div class="node" draggable="true" data-nodeid="' + workbench.bench.nodes[i].id + '"><div class="title"><span class="titletext">' + workbench.bench.nodes[i].title + '</span></div>' +
+        '<div class="content">' + workbench.bench.nodes[i].content + "</div></div>";
+        console.log(workbench.bench.nodes[i].content);
         $("#workbench").append(nodestr);
+        $("#workbench").children("[data-nodeid='" + workbench.bench.nodes[i].id + "']").css({
+          "left": workbench.bench.nodes[i].position.x + "px",
+          "top": workbench.bench.nodes[i].position.y + "px",
+          "width": workbench.bench.nodes[i].position.w + "px",
+          "height": workbench.bench.nodes[i].position.h + "px"
+        });
       }
+      $(".node").bind("dragstart", function(event) {
+        transfer = {
+          x: $(this).position().left,
+          y: $(this).position().top,
+          offsetx: $(this).position().left - event.clientX,
+          offsety: $(this).position().top - event.clientY,
+          id: $(this).data("nodeid")
+        };
+        console.log(event);
+        transfer = JSON.stringify(transfer);
+        event.dataTransfer.setData("application/json", transfer);
+        workbench.bench.dragging = true;
+        //workbench.bench.moveloop(event);
+      });
     } catch(error) {
       console.error("Error while populating bench contents. See below: ")
       console.error(error);
@@ -351,12 +415,37 @@ workbench.bench = {
     }
   },
 
+  moveloop: function(event) {
+    nodedata = JSON.parse(event.dataTransfer.getData("application/json"));
+    if(this.dragging) {
+      transfer = {
+        type: "move",
+        node: nodedata.id,
+        bench: this.id,
+        dimensions: {
+          x: nodedata.x,
+          y: nodedata.y
+        },
+        agent: {
+          id: docCookies.getItem("wb_user_id"),
+          token: docCookies.getItem("wb_user_token")
+        }
+      };
+      workbench.comm.websocket.socket.send(transfer);
+      console.log("Sent WS");
+      console.log(transfer);
+      setTimeout(this.moveLoop, 100);
+    } else return;
+  },
+
   webSocketStart: function() {
 
+    workbench.comm.websocket.open();
   },
 
   // VERIFY CREATE DELETE EDIT MOVE RENAME RESIZE NOTIFY MOD
   inbox: function(message) {
+    console.log(message);
     switch(message.type) {
       default:
         return;
@@ -370,10 +459,11 @@ workbench.bench = {
 
 workbench.comm = {
   http: {
-    restTarget: "http://api.workbench.online/", // REST API target (base URI), not currently used
+    restTarget: "http://localhost:80/api/", // REST API target (base URI), not currently used
     ajaxProgress: false, // Whether or not there is currently an AJAX request in progress
     post: function(data, target, callback) { // Make a REST POST request, currently assumed to be in JSON format
       this.ajaxProgress = true;
+      target = this.restTarget + target;
       try {
         var jsonstring = JSON.stringify(data);
         if(workbench.core.debug)
@@ -424,11 +514,11 @@ workbench.comm = {
 
   websocket: {
     socket: undefined, // Websocket object, not for direct use outside this namespace
-    //wsTarget: "ws://localhost:666/api/ws",
-    wsTarget: "ws://echo.websocket.org",
+    wsTarget: "ws://localhost:80/api/ws",
     cleanClose: true, // Whether or not the websocket is in a clean close state at the moment. If this is false, and socket closes, the connection unexpectedly closed.
 
     open: function() {
+      workbench.auth.validateCookies();
       try {
         this.socket = new WebSocket(this.wsTarget);
         this.socket.onerror = this.onerror;
@@ -468,13 +558,21 @@ workbench.comm = {
     },
 
     onopen: function() {
-      console.log("WebSocket Opened!");
+      /*console.log("WebSocket Opened!");
       workbench.comm.websocket.cleanClose = false;
       try {
-
+        reqobj = {
+          type: "verify",
+          bench: workbench.bench.id,
+          agent: {
+            id: docCookies.getItem("wb_user_id"),
+            token: docCookies.getItem("wb_user_token")
+          }
+        };
+        workbench.comm.websocket.socket.send(reqobj);
       } catch(err) {
 
-      }
+      }*/
     },
 
     onclose: function() {
@@ -492,6 +590,7 @@ workbench.core = {
   version: "Build 10",
   debug: true,
   initialize: function() {
+    jQuery.event.props.push('dataTransfer'); // TODO MAJOR workaround as jQuery normally doesn't record dataTransfer. May break in future jQuery verions, although they'll hopefually add it before then.
     var wait = 3000;
     /* TODO Hash change detection. This is not a top priority, and currently used script is too old. */
     if(!(location.hash == "#nointro")) {
@@ -572,6 +671,58 @@ workbench.ui = {
         $(this).stop();
         $(this).fadeOut(150);
       });
+
+      $(".link_createnode").click(function(event) {
+        event.preventDefault();
+        workbench.ui.popup.createnode.sizeAdjust(true);
+      });
+
+      $("#createnode_contenttype").change(function() {
+        if($(this).val() == "text")
+          $("#nodecontentbox").html('<textarea id="createnode_content_text" cols="50" rows="6"></textarea>');
+        else if($(this).val() == "image")
+          $("#nodecontentbox").html('<input type="text" name="createnode_content_image" id="createnode_content_image placeholder="Image URL" />');
+      });
+
+      $("#createnodeform").submit(function(event) { // TODO Error Box and error checking
+        event.preventDefault();
+        contenttype = $("#createnode_contenttype").val();
+        contentdata = "";
+        if(contenttype == "text")
+          contentdata = $("#createnode_content_text").val();
+        else if(contenttype == "image")
+          contentdata = $("#createnode_content_image").val();
+        try {
+          reqobj = {
+            dimensions: {
+              x: 100,
+              y: 100,
+              w: $("#createnode_width").val(),
+              h: $("#createnode_height").val()
+            },
+            content: {
+              title: $("#createnode_title").val(),
+              type: contenttype,
+              data: contentdata
+            },
+            agent: {
+              id: docCookies.getItem("wb_user_id"),
+              token: docCookies.getItem("wb_user_token")
+            }
+          };
+          workbench.comm.http.post(reqobj, workbench.bench.id + "/create", function(resp) {
+            if(!resp.result || resp.data.length < 1) {
+              workbench.ui.popup.errorbox.showError("Failed to create bench node due to invalid response. See console for details", "Card create error")
+            }
+            workbench.ui.popup.createnode.hide(150);
+            workbench.ui.popup.cover.hide(150);
+            return;
+          });
+        } catch(error) {
+          console.error(error);
+          workbench.ui.popup.errorbox.showError("Failed to create new card. See console for details", "Card create error");
+        }
+      });
     }
   },
 
@@ -603,6 +754,8 @@ workbench.ui = {
         this.visibility = true;
         if(!workbench.ui.popup.openPopups.indexOf(this) > -1)
           workbench.ui.popup.openPopups.push(this);
+        if(!workbench.ui.popup.cover.visibility)
+          workbench.ui.popup.cover.show(150);
         return this;
       },
 
@@ -859,6 +1012,7 @@ workbench.ui = {
           for(i=0;i<benchItems.length;i++) {
             $("#bench_select .menu_content").append(benchItems[i]);
           }
+          $("#bench_select .menu_content").append('<div class="clear"></div>');
           $("#bench_select .menu_content .item").click(function(event) {
             event.preventDefault();
             console.log($(this).data("benchid"));
@@ -870,7 +1024,7 @@ workbench.ui = {
       });
 
       // ERRORBOX - Error box
-      this.errorbox = $.extend({}, this.popupbase, {
+      this.errorbox = $.extend({}, this.popupbase, this.adjustable, {
         selector: ".error_box",
         showError: function(error, title) {
           if(typeof error == "undefined")
@@ -897,8 +1051,12 @@ workbench.ui = {
       // PROPERTYBOX - Create bench properties menu
       this.createbench = $.extend({}, this.popupbase, this.adjustable, {
         selector: "#create_bench"
+      });
 
-      })
+      // PROPERTYBOX - Create node properties menu
+      this.createnode = $.extend({}, this.popupbase, this.adjustable, {
+        selector: "#create_node"
+      });
 
       // Attach listeners for UI updates
       this.attachListeners();

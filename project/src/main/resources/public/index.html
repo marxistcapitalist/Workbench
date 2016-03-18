@@ -81,6 +81,31 @@
       <div class="menu_footer"></div>
     </div></div>
 
+    <div class="property_menu" id="create_node"><div class="inner">
+      <div class="menu_title"><h1>Create new Card</h1></div>
+      <div class="menu_content">
+        <form id="createnodeform">
+          <h2>Dimensions</h2>
+          <label for="nodewidth">Width: </label><input type="number" name="nodewidth" id="createnode_width" min="30" placeholder="400" /><br />
+          <label for="nodeheight">Height: </label><input type="number" name="nodeheight" id="createnode_height" min="30" placeholder="300" /><br /><br />
+          <h2>Content</h2>
+          <label for="nodetitle">Title: </label><input type="text" name="nodetitle" id="createnode_title", placeholder="Fancy Node" /><br />
+          <label for="nodecontenttype">Content Type: </label><select name="nodecontenttype" id="createnode_contenttype">
+            <option value="text">Text</option>
+            <option value="image">Image</option>
+            <!-- <option value="video">Video (YouTube)</option> -->
+          </select><br />
+          <label>Content: </label>
+          <div id="nodecontentbox">
+            <textarea id="createnode_content_text"></textarea>
+          </div>
+          <input type="submit" value="Submit" name="submit" />
+        </form>
+      </div>
+      <div class="menu_footer">
+      </div>
+    </div></div>
+
     <!-- Bench Selection Menu (Block Verison) --><!-- TODO WARNING: More than ~3 benches will currently break the row formatting. Fix ASAP. -->
     <div class="block_menu" id="bench_select"><div class="inner">
       <div class="menu_header">
@@ -96,20 +121,7 @@
       <div class="menu_content">
         <div class="nobenches">There are no benches available. <a href="" class="link_createbench">Create a new bench</a></div>
         <div class="item_row">
-          <!--<div class="item left">
-            <div class="image"><div class="color" style="background: LightSkyBlue;"></div><div class="cover"></div></div>
-            <div class="subtext">
-              <div class="left">
-                <p class="description">Amazing Bench!</p>
-              </div>
-              <div class="right">
-                <div class="profile_image"><div class="color" style="background: #420420"></div></div>
-              </div>
-              <div class="clear"></div>
-            </div>
-          </div>-->
         </div>
-        <div class="clear"></div>
       </div>
       <div class="menu_footer">
       </div>
@@ -131,6 +143,8 @@
       <div class="clear"></div>
       <div class="menu" id="toolbar_maindropdown">
         <nav><ul class="dropdown">
+          <li><a href="" class="link_createnode">Create new node</a></li>
+          <li><a href="" class="link_benchproperties">Bench Properties...</a><li>
           <li><a href="" class="link_benchselect">Select Bench...</a></li>
           <li><a href="" class="link_logout">Logout</a></li>
         </ul></nav>
@@ -139,7 +153,7 @@
 
     <!-- Workbench Body -->
     <div id="workbench">
-      <div class="window" draggable="true">
+      <div class="node" draggable="true">
         <div class="title">
           <span class="titletext">Test Window!</span>
         </div>
