@@ -635,10 +635,24 @@ input[type="submit"] {
   color: #FFF;
   height: 30px;
   padding-top: 12px;
+  position: relative;
 }
 
 #workbench .node .title span {
   margin-left: 5px;
+}
+
+#workbench .node .title .node_menu_button {
+  position: absolute;
+  right: 0;
+  top: 0;
+  padding: 5px 10px;
+  color: #666;
+}
+
+#workbench .node .title .node_menu_button:hover {
+  cursor: pointer;
+  color: #FFF;
 }
 
 #workbench .content {
