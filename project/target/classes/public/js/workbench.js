@@ -304,6 +304,7 @@ workbench.bench = {
         workbench.bench.members = resp.data.members;
         workbench.bench.nodes = resp.data.nodes;
         console.log(resp.data.nodes);
+        $("#workbench").children().remove();
         workbench.bench.popUI();
         workbench.comm.websocket.open();
         workbench.bench.loaded = true;
@@ -464,6 +465,41 @@ workbench.bench = {
     workbench.comm.websocket.open();
   },
 
+  renderNodes: function() {
+    $("#workbench").children().remove();
+    for(var i=0;i<workbench.bench.nodes.length;i++) {
+      processedcontent = "";
+      type = workbench.bench.nodes[i].contentType;
+      if(type == "text")
+        processedcontent = workbench.bench.nodes[i].content;
+      else if(type == "image")
+        processedcontent = '<img src="' + workbench.bench.nodes[i].content + '" />';
+      var nodestr = '<div class="node" draggable="true" data-nodeid="' + workbench.bench.nodes[i].id + '"><div class="title"><span class="titletext">' + workbench.bench.nodes[i].title + '</span></div>' +
+      '<div class="content">' + processedcontent + "</div></div>";
+      $("#workbench").append(nodestr);
+      $("#workbench").children("[data-nodeid='" + workbench.bench.nodes[i].id + "']").css({
+        "left": workbench.bench.nodes[i].position.x + "px",
+        "top": workbench.bench.nodes[i].position.y + "px",
+        "width": workbench.bench.nodes[i].position.w + "px",
+        "height": workbench.bench.nodes[i].position.h + "px"
+      });
+    }
+    $(".node").bind("dragstart", function(event) {
+      transfer = {
+        x: $(this).position().left,
+        y: $(this).position().top,
+        offsetx: $(this).position().left - event.clientX,
+        offsety: $(this).position().top - event.clientY,
+        id: $(this).data("nodeid")
+      };
+      console.log(event);
+      transfer = JSON.stringify(transfer);
+      event.dataTransfer.setData("application/json", transfer);
+      workbench.bench.dragging = true;
+      //workbench.bench.moveloop(event);
+    });
+  },
+
   // VERIFY CREATE DELETE EDIT MOVE RENAME RESIZE NOTIFY MOD
   inbox: function(message) {
     console.log("Received WS Message: ");
@@ -471,6 +507,12 @@ workbench.bench = {
     type = message.type;
     if(type == "move") {
       workbench.bench.moveNode(message.node, message.dimensions);
+    } else if(type == "create") {
+      workbench.bench.createNode(message.bench, message.node, message.dimensions, message.content); //123
+    } else if(type == "edit") {
+
+    } else if(type == "delete") {
+
     }
   },
 
@@ -480,6 +522,27 @@ workbench.bench = {
       "left": dimensions.x + "px",
       "top": dimensions.y + "px"
     });
+  },
+
+  createNode: function(benchid, nodeid, dimensions, content) {
+    node = {
+      bench: benchid,
+      id: nodeid,
+      position: {
+        h: dimensions.h,
+        w: dimensions.w,
+        x: dimensions.x,
+        y: dimensions.y
+      },
+      title: content.title,
+      content: content.data,
+      contentType: content.type,
+      created: "",
+      creator: {},
+      lastUpdate: ""
+    };
+    workbench.bench.nodes.push(node);
+    workbench.bench.renderNodes();
   },
 
   load: function() { // TODO !! IMPLEMENTATION !!
