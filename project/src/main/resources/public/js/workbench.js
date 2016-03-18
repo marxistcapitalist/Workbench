@@ -459,7 +459,7 @@ workbench.bench = {
 
 workbench.comm = {
   http: {
-    restTarget: "http://localhost:80/api/", // REST API target (base URI), not currently used
+    restTarget: "http://workbench.online:80/api/", // REST API target (base URI), not currently used
     ajaxProgress: false, // Whether or not there is currently an AJAX request in progress
     post: function(data, target, callback) { // Make a REST POST request, currently assumed to be in JSON format
       this.ajaxProgress = true;
@@ -514,7 +514,7 @@ workbench.comm = {
 
   websocket: {
     socket: undefined, // Websocket object, not for direct use outside this namespace
-    wsTarget: "ws://localhost:80/api/ws",
+    wsTarget: "ws://workbench.online:80/api/ws",
     cleanClose: true, // Whether or not the websocket is in a clean close state at the moment. If this is false, and socket closes, the connection unexpectedly closed.
 
     open: function() {
