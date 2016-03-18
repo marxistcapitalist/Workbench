@@ -71,15 +71,6 @@ public class WebsocketProtocolHandler
 	@OnWebSocketMessage
 	public void onMessage(Session session, String message)
 	{
-
-		try
-		{
-			session.getRemote().sendString("RESPONSE");
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
 		JSONObject json = new JSONObject(message.trim());
 		if (json.has("type") && incomingValids.contains(json.getString("type").toLowerCase())
 				&& json.has("bench") && json.has("agent") && json.getJSONObject("agent").has("id")
@@ -89,37 +80,10 @@ public class WebsocketProtocolHandler
 			Bench bench = benchManager.load(json.getInt("bench"));
 			Protocol.ClientAgent agent = gson.fromJson(json.getJSONObject("agent").toString(), Protocol.ClientAgent.class);
 
-			try
-			{
-				for (Map.Entry<Integer, HashMap<Session, User>> s : sessions.entrySet())
-				{
-					session.getRemote().sendString(s.getKey() + "------------");
-
-					for (Map.Entry<Session, User> u : s.getValue().entrySet())
-					{
-						session.getRemote().sendString(u.getKey().getRemoteAddress() + " " + u.getValue().Id);
-					}
-				}
-
-			}
-
-			catch (IOException e)
-			{
-				e.printStackTrace();
-			}
-
 			if (tokenManager.check(agent.getId(), agent.getToken()) && bench.Users.containsKey(agent.getId()))
 			{
 				if (pendingSessions.contains(session))
 				{
-					try
-					{
-						session.getRemote().sendString("PENDING SESSION CONTAINS");
-					}
-					catch (IOException e)
-					{
-						e.printStackTrace();
-					}
 					if (!type.equals("verify"))
 					{
 						session.close();
@@ -160,14 +124,6 @@ public class WebsocketProtocolHandler
 				benchManager.load(bench.Id);
 			}
 
-			try
-			{
-				session.getRemote().sendString("PREFIX");
-			}
-			catch (IOException e)
-			{
-				e.printStackTrace();
-			}
 			sessions.get(bench.Id).put(session, user);
 
 			Protocol.VerifyOutgoing message = new Protocol.VerifyOutgoing();
