@@ -4,28 +4,44 @@
   <title>Workbench</title>
   <meta charset="UTF-8" />
   <link rel="stylesheet" type="text/css" href="css/master.css" />
+  <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css" />
+  <link rel="stylesheet" href="css/jquery.mCustomScrollbar.min.css" />
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+  <script src="js/jquery.mCustomScrollbar.concat.min.js"></script>
+  <script src="js/testing.js"></script>
 </head>
 <body>
   <!-- On-bench menus -->
   <div id="topbar-left" class="topbar left">
     <div id="topbar-button-add" class="topbarbutton">
+      <i class="fa fa-plus fa-3x"></i>
     </div>
     <div id="topbar-button-settings" class="topbarbutton">
+      <i class="fa fa-cog fa-3x"></i>
     </div>
   </div>
   <div id="topbar-right" class="topbar right">
     <div id="topbar-button-mainmenu" class="topbarbutton">
+      <i class="fa fa-bars fa-3x"></i>
     </div>
   </div>
   <div id="addbar" class="sidebar left">
+    <a href="#" onclick="closeSidebar()" style="color: #FFF;">Click here to close</a>
   </div>
 
   <!-- Bench -->
-  <div id="workbench" class="workbench">
-    <div id="node-12345" class="node">
-      <h1>This is a basic HTML node!</h1>
-      <p>Hello World!</p>
+  <div id="bench-viewport" class="benchviewport">
+    <div id="workbench" class="workbench">
+      <div id="node-12345" class="node">
+        <div class="header">Node Title</div>
+        <div class="body">
+          <h1>This is a basic HTML node!</h1>
+          <p>Hello World!</p>
+        </div>
+      </div>
     </div>
+    <div class="nozone"></div>
   </div>
 </body>
 </html>

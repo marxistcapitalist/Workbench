@@ -1,21 +1,41 @@
 /* Workbench (c) 2016 J Teissler and Ethan Crowder, All Rights Reserved. */
 
-/* === ORGANIZATION ===
+/*
+   === ORGANIZATION ===
    This CSS document serves as the main stylesheet of the Workbench application.
-   It sets basic styles of the document down to window container and toolbar.
-   Past this, separate stylesheets (nodes.css, toolbar.css) are defined.
+   It sets basic styles of the document down to window container.
+
+   Sections:
+   (I) Imports
+   1. Global - Defines global, element-wide styles
+   2. Structure - Defines structural elements, and theiur positioning
+      2.1 - Topbar - The top buttons
+      2.2 - Topmenus - The top menus the top buttons open
+   3. Presentation - Styles things up to look pretty
+      3.1 - Topbar
+      3.2 - Topmenus
+
+   Z-Index Reference:
+   NEG  - 0     :: BACKGROUND range, goes behind everything. Used for Workbench "backgrounds" and the like.
+   1    - 49    :: RESERVED range, for anything that goes in front of background but behind nodes
+   50   - 4099  :: NODE range, for current node usage (Assuming 4096 possible nodes, plus 3 to make things even)
+   4100 - 4198  :: TOOL range, for toolbars, bench tool buttons, tool panels, and the like
+   4199         :: COVER, goes between nodes/tools and popups to prevent interaction
+   4200 - 4249  :: POPUP range, for popups that do not allow bench interaction during use
+   4250 -  ??   :: NOT ASSIGNED
+
 */
 
 /* === IMPORTS === */
 
 
-/* Googly Fonts */
+/* Fonts */
 @import url(https://fonts.googleapis.com/css?family=Open+Sans:400,400italic,700,700italic);
 @import url(https://fonts.googleapis.com/css?family=Raleway);
+@import url(https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css);
 
 /* ===================================== */
 /* === GLOBAL                        === */
-/* === Defines basic element styles  === */
 /* ===================================== */
 
 body, html {
@@ -27,4 +47,119 @@ body, html {
 
 body {
   font-family: 'Open Sans', sans-serif;
+}
+
+h1, p {
+  margin: 0;
+}
+
+/* ===================================== */
+/* === STRUCTURE                     === */
+/* ===================================== */
+
+.topbar {
+  position: fixed;
+  top: 0;
+  height: 60px;
+  z-index: 4100;
+  overflow: hidden;
+  white-space: nowrap;
+  font-size: 0px;
+}
+
+.topbar.left {
+  left: 0;
+}
+
+.topbar.right {
+  right: 16px;
+}
+
+.benchviewport {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+}
+
+.workbench {
+  /* TODO: Temporary, will eventually be actual bench size */
+  width: 4096px;
+  height: 2160px;
+  /* */
+  background: #333;
+  color: #FFF;
+  z-index: 0;
+  position: relative;
+  top: 50px;
+  left: 50px;
+  bottom: 50px;
+  right: 50px;
+}
+
+/* Temporary */
+.workbench .node {
+  position: absolute;
+  top: 75px;
+  left: 75px;
+  z-index: 50;
+  background: #777;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.nozone {
+  width: 4196px;
+  height: 2260px;
+  background: #222;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -1;
+}
+
+.workbench .node .header {
+  background: #000;
+  padding: 5px;
+  overflow: hidden;
+}
+
+.workbench .node .body {
+  padding: 12px;
+}
+
+/* ===================================== */
+/* === PRESENTATION                  === */
+/* ===================================== */
+
+.topbarbutton {
+  text-align: center;
+  width: 60px;
+  height: 60px;
+  color: #555;
+  display: inline-block;
+  font-size: 12px;
+}
+
+.topbarbutton:hover,
+.topbarbutton:active {
+  cursor: pointer;
+  color: #FFF;
+}
+
+.topbarbutton i {
+  margin-top: 10px;
+}
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 250px;
+  background: #000;
+  display: none;
+  z-index: 4102;
 }
