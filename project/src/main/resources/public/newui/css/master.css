@@ -1,0 +1,30 @@
+/* Workbench (c) 2016 J Teissler and Ethan Crowder, All Rights Reserved. */
+
+/* === ORGANIZATION ===
+   This CSS document serves as the main stylesheet of the Workbench application.
+   It sets basic styles of the document down to window container and toolbar.
+   Past this, separate stylesheets (nodes.css, toolbar.css) are defined.
+*/
+
+/* === IMPORTS === */
+
+
+/* Googly Fonts */
+@import url(https://fonts.googleapis.com/css?family=Open+Sans:400,400italic,700,700italic);
+@import url(https://fonts.googleapis.com/css?family=Raleway);
+
+/* ===================================== */
+/* === GLOBAL                        === */
+/* === Defines basic element styles  === */
+/* ===================================== */
+
+body, html {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+}
+
+body {
+  font-family: 'Open Sans', sans-serif;
+}
