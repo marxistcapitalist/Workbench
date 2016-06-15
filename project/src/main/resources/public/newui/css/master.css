@@ -3,17 +3,15 @@
 /*
    === ORGANIZATION ===
    This CSS document serves as the main stylesheet of the Workbench application.
-   It sets basic styles of the document down to window container.
+   It sets styles of the document down to individual nodes.
 
    Sections:
    (I) Imports
    1. Global - Defines global, element-wide styles
-   2. Structure - Defines structural elements, and theiur positioning
+   2. On-Bench Menus
       2.1 - Topbar - The top buttons
       2.2 - Topmenus - The top menus the top buttons open
-   3. Presentation - Styles things up to look pretty
-      3.1 - Topbar
-      3.2 - Topmenus
+   3. Workbench
 
    Z-Index Reference:
    NEG  - 0     :: BACKGROUND range, goes behind everything. Used for Workbench "backgrounds" and the like.
@@ -24,6 +22,9 @@
    4200 - 4249  :: POPUP range, for popups that do not allow bench interaction during use
    4250 -  ??   :: NOT ASSIGNED
 
+   0 - Background
+   4100 - Topbar
+   4105 - Sidebars
 */
 
 /* === IMPORTS === */
@@ -49,14 +50,15 @@ body {
   font-family: 'Open Sans', sans-serif;
 }
 
-h1, p {
+h1, h2, h3, h4, h5, h6, p {
   margin: 0;
 }
 
 /* ===================================== */
-/* === STRUCTURE                     === */
+/* === On-Bench Menus                === */
 /* ===================================== */
 
+/* === Topbar  === */
 .topbar {
   position: fixed;
   top: 0;
@@ -74,6 +76,61 @@ h1, p {
 .topbar.right {
   right: 16px;
 }
+
+
+.topbarbutton {
+  text-align: center;
+  width: 60px;
+  height: 60px;
+  color: #536dfe;
+  display: inline-block;
+  font-size: 12px;
+}
+
+.topbarbutton:hover,
+.topbarbutton:active {
+  cursor: pointer;
+  color: #68f0ff;
+}
+
+.topbarbutton i {
+  margin-top: 10px;
+}
+
+/* === Topmenus === */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: -250px;
+  height: 100%;
+  width: 250px;
+  background: #536dfe;
+  color: #FFF;
+  display: none;
+  z-index: 4105;
+}
+
+.sidebar .title {
+  font-size: 28px;
+  margin: 24px 14px;
+}
+
+.sidebar .closebutton {
+  padding: 10px;
+  margin: 10px;
+  cursor: pointer;
+}
+
+.sidebar .title.right { float: right; }
+.sidebar .title.left { float: left; }
+.sidebar .closebutton.right { float: right; }
+.sidebar .closebuton.left { float: left; }
+.sidebar .closebutton:after { clear: both; }
+
+
+/* ===================================== */
+/* === PRESENTATION                  === */
+/* ===================================== */
 
 .benchviewport {
   width: 100%;
@@ -128,46 +185,4 @@ h1, p {
 
 .workbench .node .body {
   padding: 12px;
-}
-
-/* ===================================== */
-/* === PRESENTATION                  === */
-/* ===================================== */
-
-.topbarbutton {
-  text-align: center;
-  width: 60px;
-  height: 60px;
-  color: #536dfe;
-  display: inline-block;
-  font-size: 12px;
-}
-
-.topbarbutton:hover,
-.topbarbutton:active {
-  cursor: pointer;
-  color: #68f0ff;
-}
-
-.topbarbutton i {
-  margin-top: 10px;
-}
-
-.sidebar {
-  position: fixed;
-  top: 0;
-  left: -250px;
-  height: 100%;
-  width: 250px;
-  background: #536dfe;
-  color: #FFF;
-  display: none;
-  z-index: 4102;
-}
-
-.sidebar .closeleft {
-  float: right;
-  padding: 10px;
-  margin: 10px;
-  cursor: pointer;
 }
