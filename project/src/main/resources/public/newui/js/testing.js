@@ -7,8 +7,15 @@
 /* Slidey sidebar */
 $(document).ready(function() {
   $("#topbar-button-add").click(function() {
-    $("#addbar").animate({width:'toggle'}, 200);
+    $("#addbar").css("display", "block");
+    $("#addbar").animate({left:0}, 200);
     console.log("clickylick");
+  });
+
+  $("#addbar-close").click(function() {
+    $("#addbar").animate({left:"-250px"}, 200, "swing", function() {
+      $("#addbar").css("display", "none");
+    });
   });
 });
 
@@ -22,7 +29,3 @@ $(window).load(function() {
   });
   $(".workbench").droppable();
 });
-
-function closeSidebar() {
-  $("#addbar").animate({width:'toggle'}, 200);
-}

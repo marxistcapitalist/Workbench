@@ -93,10 +93,10 @@ h1, p {
   color: #FFF;
   z-index: 0;
   position: relative;
-  top: 50px;
-  left: 50px;
-  bottom: 50px;
-  right: 50px;
+  top: 60px;
+  left: 60px;
+  bottom: 60px;
+  right: 60px;
 }
 
 /* Temporary */
@@ -111,8 +111,8 @@ h1, p {
 }
 
 .nozone {
-  width: 4196px;
-  height: 2260px;
+  width: 4216px;
+  height: 2280px;
   background: #222;
   position: absolute;
   top: 0;
@@ -138,7 +138,7 @@ h1, p {
   text-align: center;
   width: 60px;
   height: 60px;
-  color: #555;
+  color: #536dfe;
   display: inline-block;
   font-size: 12px;
 }
@@ -146,7 +146,7 @@ h1, p {
 .topbarbutton:hover,
 .topbarbutton:active {
   cursor: pointer;
-  color: #FFF;
+  color: #68f0ff;
 }
 
 .topbarbutton i {
@@ -156,10 +156,18 @@ h1, p {
 .sidebar {
   position: fixed;
   top: 0;
-  left: 0;
+  left: -250px;
   height: 100%;
   width: 250px;
-  background: #000;
+  background: #536dfe;
+  color: #FFF;
   display: none;
   z-index: 4102;
+}
+
+.sidebar .closeleft {
+  float: right;
+  padding: 10px;
+  margin: 10px;
+  cursor: pointer;
 }

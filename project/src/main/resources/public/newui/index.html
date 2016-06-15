@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="css/jquery.mCustomScrollbar.min.css" />
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+  <script src="js/jquery.scrollTo.min.js"></script>
   <script src="js/jquery.mCustomScrollbar.concat.min.js"></script>
   <script src="js/testing.js"></script>
 </head>
@@ -17,17 +18,20 @@
     <div id="topbar-button-add" class="topbarbutton">
       <i class="fa fa-plus fa-3x"></i>
     </div>
-    <div id="topbar-button-settings" class="topbarbutton">
-      <i class="fa fa-cog fa-3x"></i>
+    <div id="topbar-button-edit" class="topbarbutton">
+      <i class="fa fa-pencil fa-3x"></i>
     </div>
   </div>
   <div id="topbar-right" class="topbar right">
+    <div id="topbar-button-settings" class="topbarbutton">
+      <i class="fa fa-cog fa-3x"></i>
+    </div>
     <div id="topbar-button-mainmenu" class="topbarbutton">
       <i class="fa fa-bars fa-3x"></i>
     </div>
   </div>
   <div id="addbar" class="sidebar left">
-    <a href="#" onclick="closeSidebar()" style="color: #FFF;">Click here to close</a>
+    <i class="fa fa-times fa-3x closeleft" id="addbar-close"></i>
   </div>
 
   <!-- Bench -->
