@@ -10,8 +10,5 @@ Content-Type: application/json
 RESPONSE
 {
   "token": "<client token>",
-  "agent": {
-    "id": "<user id>",
-    "user": "<username>"
-  }
+  "id": id;
 }
