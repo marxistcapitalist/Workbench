@@ -13,8 +13,6 @@ RESPONSE
   "success": "<boolean>",
   "error": "<formatted string for output>",
   "token": "<client token>",
-  "agent": {
-    "id": "<user id>",
-    "user": "<username>"
-  }
+  "id": "<user id>",
+  "user": "<username>"
 }
