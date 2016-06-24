@@ -13,9 +13,12 @@ $(document).ready(function() {
   });
 
   $("#addbar-close").click(function() {
-    $("#addbar").animate({left:"-250px"}, 200, "swing", function() {
-      $("#addbar").css("display", "none");
-    });
+    toggleAddbar();
+  });
+
+  $("#addbar-add-text").click(function() {
+    toggleAddbar();
+    toggleTestPopup();
   });
 });
 
@@ -23,9 +26,27 @@ $(window).load(function() {
   $("#bench-viewport").mCustomScrollbar({
     axis:"yx"
   });
+  $("#popuptest > .body").mCustomScrollbar({
+    axis:"y"
+  });
   // Workbench drag and drop
   $(".node").draggable({
     containment:"#workbench"
   });
   $(".workbench").droppable();
 });
+
+function toggleAddbar() {
+  $("#addbar").animate({left:-$("#addbar").width()}, 200, "swing", function() {
+    $("#addbar").css("display", "none");
+  });
+}
+function toggleCover() {
+  $("#cover").fadeToggle(200);
+}
+
+function toggleTestPopup() {
+  toggleCover();
+  $("#popup-container").fadeToggle(200);
+  $("#popuptest").fadeToggle(200);
+}
