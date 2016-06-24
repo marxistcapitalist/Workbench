@@ -1,9 +1,22 @@
-var RequestController = function(remoteAddress, userId, token, notificationController) {
+var RequestController = function(remoteAddress, notificationController) {
 
-  function send(payload) {
+  var token;
+  var userId;
+
+  this.send = function(payload, callbackDone, callbackError) {
     payload.dataType = "json";
-    $.ajax(payload);
-  }
+    $.ajax(payload).done(function(data) {
+      callbackDone(data);
+    }).error(function(data) {
+      callbackError(data);
+    });
+  };
+
+  this.setAgent = function(i, t)
+  {
+    userId = i;
+    token = t;
+  };
 
   function agent(payload) {
     payload.agent = {
@@ -13,7 +26,7 @@ var RequestController = function(remoteAddress, userId, token, notificationContr
     return payload;
   }
 
-  var protocol = {
+  this.protocol = {
     ping: {
       request: function() {
         return {
@@ -24,9 +37,7 @@ var RequestController = function(remoteAddress, userId, token, notificationContr
         };
       },
       handler: function(data, status, jqXHR) {
-        return {
-
-        };
+        notificationController.notify("PONG!");
       }
     },
     account: {
@@ -40,11 +51,10 @@ var RequestController = function(remoteAddress, userId, token, notificationContr
           };
         },
         handler: function(data, status, jqXHR) {
-          return {
-
-          };
+          token = data.token;
+          userId = data.id;
         }
-      },`
+      },
       login: {
         request: function(login, password) {
           return {
@@ -58,9 +68,8 @@ var RequestController = function(remoteAddress, userId, token, notificationContr
           };
         },
         handler: function(data, status, jqXHR) {
-          return {
-
-          };
+          token = data.token;
+          userId = data.id;
         }
       },
       logout: {
@@ -75,9 +84,8 @@ var RequestController = function(remoteAddress, userId, token, notificationContr
           };
         },
         handler: function(data, status, jqXHR) {
-          return {
-
-          };
+          token = "";
+          userId = "";
         }
       },
       register: {
@@ -94,9 +102,8 @@ var RequestController = function(remoteAddress, userId, token, notificationContr
           };
         },
         handler: function(data, status, jqXHR) {
-          return {
-
-          };
+          token = data.token;
+          userId = data.id;
         }
       },
       user: {

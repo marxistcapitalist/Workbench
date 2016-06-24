@@ -1,7 +1,7 @@
-var SocketController = function(socketAddress, userId, token, nodeController, benchController, notificationController, chatController, userController) {
+var SocketController = function(socketAddress, userController, nodeController, benchController, notificationController, chatController) {
   var persist = false;
   var socket = null;
-  var agent = { id: userId, token: token };
+  var agent = { id: userController.userId, token: userController.token };
   var benchList = [];
 
   function basicValidate(node, bench, id) {
@@ -98,8 +98,8 @@ var SocketController = function(socketAddress, userId, token, nodeController, be
     server: {
       verify: function(payload) {
         if(typeof payload.bench === 'number' && payload.bench > 0 &&
-        typeof payload.role === 'number' && payload.role >= 0 && payload.role <= 6) {
-          notificationController.chat("Connected to chat...");
+        typeof payload.role === 'number' && payload.role >= 2 && payload.role <= 3) {
+          chatController.chat("Connected to chat...");
         }
       },
       core: {
@@ -175,7 +175,7 @@ var SocketController = function(socketAddress, userId, token, nodeController, be
           if(basicValidate(payload.node, payload.bench, payload.agent.id) &&
             typeof payload.dimensions.w === 'number' && payload.dimensions.w >= 0 &&
             typeof payload.dimensions.h === 'number' && payload.dimensions.h >= 0) {
-            nodeController.move(
+            nodeController.resize(
               payload.node,
               payload.bench,
               payload.dimensions.w,
@@ -219,7 +219,7 @@ var SocketController = function(socketAddress, userId, token, nodeController, be
           if(basicValidate(payload.node, payload.bench, payload.agent.id) &&
             typeof payload.content.begin === 'number' && payload.content.begin >= 0 &&
             typeof payload.content.end === 'number' && payload.content.end > 0) {
-            nodeController.modify(
+            nodeController.select(
               payload.node,
               payload.bench,
               payload.content.begin,
@@ -235,7 +235,7 @@ var SocketController = function(socketAddress, userId, token, nodeController, be
           if(typeof payload.bench === 'number' && payload.bench >= 0 &&
             typeof payload.level === 'number' && payload.level >= 0 && payload.level <= 6 &&
             typeof payload.agent.id === 'number' && payload.agent.id > 0) {
-            chatController.chat(
+            chatController.userChat(
               payload.bench,
               payload.message,
               payload.level,
@@ -262,18 +262,19 @@ var SocketController = function(socketAddress, userId, token, nodeController, be
           if(typeof payload.bench === 'number' && payload.bench >= 0 &&
             typeof payload.id === 'number' && payload.id > 0) {
             if(payload.action == 'add') {
-              userController.addUser(
+              benchController.addUser(
                 payload.bench,
                 payload.level,
                 payload.user,
-                payload.id
+                payload.id,
+                payload.avatar
               );
               notificationController.notify(
                 "User Join!",
-                payload.user + " joined " + benchController.getBench(payload.bench).title + " as " + userController.translateLevel(payload.level) + "."
+                payload.user + " joined " + benchController.getBench(payload.bench).title + " as " + benchController.translateLevel(payload.level) + "."
               );
             } else if(payload.action == 'remove') {
-              userController.removeUser(
+              benchController.removeUser(
                 payload.bench,
                 payload.user,
                 payload.id
@@ -283,7 +284,7 @@ var SocketController = function(socketAddress, userId, token, nodeController, be
                 payload.user + " was removed from " + benchController.getBench(payload.bench).title + "."
               );
             } else if(payload.action == 'modify') {
-              userController.modifyUser(
+              benchController.modifyUser(
                 payload.bench,
                 payload.level,
                 payload.user,
@@ -291,7 +292,7 @@ var SocketController = function(socketAddress, userId, token, nodeController, be
               );
               notificationController.notify(
                 "Permission Change!",
-                payload.user + " changed to " + userController.translateLevel(payload.level) + " in " + benchController.getBench(payload.bench).title + "."
+                payload.user + " changed to " + benchController.translateLevel(payload.level) + " in " + benchController.getBench(payload.bench).title + "."
               );
             }
           }
