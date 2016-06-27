@@ -6,8 +6,8 @@ public enum ContentType
 	TEXT("text"),
 	IMAGE("image"),
 	VIDEO("video"),
-	G_DOC("googledoc"),
 	TWEET("tweet"),
+	G_DOC("googledoc"),
 	IFRAME("iFrame");
 
 	private String _label;
