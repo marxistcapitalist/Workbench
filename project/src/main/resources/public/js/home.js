@@ -43,24 +43,20 @@ function workbench_launch() {
   // TODO Failure handling
   $.getScript("js/controllers/NotificationController.js");
   $.getScript("js/controllers/RequestController.js");
-  $.getScript("js/controllers/UserController.js");
-  $.getScript("js/controllers/BenchController.js");
 
   $.getScript("js/cookies.js");
 
-  /* === Test for user login and instnatiate if true === */
+  /* === Test for user login === */
   wb_notificiation = new NotificiationController();
   wb_request = new RequestController(workbench_settings.api.uri, wb_notificiation);
   if(docCookies.hasItem("workbench_userid") && docCookies.hasItem("workbench_token")) {
     wb_request.send(wb_request.protocol.account.auth(), function(data) {
-      wb_user = new UserController(wb_request, data.id, data.token);
+      // TODO : Grab user data
       wb_bench = new BenchController(wb_user, wb_notificiation, wb_request);
-    }, function(data) {
-      window.location("/");
+    }, function(data) { // Fail
       return;
     });
   } else {
-    window.location("/");
     return;
   }
 
@@ -74,7 +70,10 @@ function workbench_launch() {
   $.getScript("js/controllers/SocketController.js");
 
   /* === Instantiate === */
-  notification = new NotificationController();
-  request = new RequestController("http://workbench.online/api");
 
+}
+
+var HomeController = function() {
+  // TODO pass in controllers through constructor
+  
 }

@@ -12,8 +12,17 @@
   font-weight: bold;
 }
 
-/* Move down content because we have a fixed navbar that is 50px tall */
 body {
   padding-top: 50px;
   padding-bottom: 20px;
+}
+
+/* === Login/Register Modals === */
+.link-modal {
+  cursor: pointer;
+}
+
+/* === Bench List === */
+#bench-list {
+  display: none;
 }

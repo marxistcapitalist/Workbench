@@ -5,7 +5,6 @@
 |*|  A complete cookies reader/writer framework with full unicode support.
 |*|
 |*|  Revision #1 - September 4, 2014
-|*|  Revision #2 - June 27, 2016
 |*|
 |*|  https://developer.mozilla.org/en-US/docs/Web/API/document.cookie
 |*|  https://developer.mozilla.org/User:fusionchess
@@ -31,17 +30,10 @@ var docCookies = {
   setItem: function (sKey, sValue, vEnd, sPath, sDomain, bSecure) {
     if (!sKey || /^(?:expires|max\-age|path|domain|secure)$/i.test(sKey)) { return false; }
     var sExpires = "";
-    var vExpiryDate = {
-      getInStringFormat: function (nMaxAge) { //"max-age" in second
-      if (nMaxAge === Infinity) { return "Fri, 31 Dec 9999 23:59:59 GMT"; }
-      var dDate = new Date();
-      dDate.setTime(dDate.getTime() + (nMaxAge * 1000));
-      return dDate.toGMTString();
-    };
     if (vEnd) {
       switch (vEnd.constructor) {
         case Number:
-          sExpires = "; expires=" + vExpiryDate.getInStringFormat(vEnd) + vEnd === Infinity ? "" : "; max-age=" + vEnd;
+          sExpires = vEnd === Infinity ? "; expires=Fri, 31 Dec 9999 23:59:59 GMT" : "; max-age=" + vEnd;
           break;
         case String:
           sExpires = "; expires=" + vEnd;

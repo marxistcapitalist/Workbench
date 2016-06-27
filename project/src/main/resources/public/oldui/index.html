@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" type="text/css" href="css/main.css" />
+    <link rel="stylesheet" type="text/css" href="css/jquery.mCustomScrollbar.min.css" />
+    <link rel="stylesheet" type="text/css" href="css/font-awesome.min.css" />
+    <title>Workbench.online</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+    <script>if(!window.jQuery) document.write('<script src="js/jquery-2.2.2.min.js"><\/script>');</script>
+    <script src="js/jquery.mCustomScrollbar.concat.min.js"></script>
+    <!--<script src="js/jquery.ba-hashchange.min.js"></script>-->
+    <script src="js/cookies.js"></script>
+    <script src="js/workbench.js"></script>
+  </head>
+  <body>
+    <div id="backcover"></div>
+    <div id="intro">
+      <div class="centertext">
+        <div class="headertext"><h1>Workbench</h1></div>
+      </div>
+      <div class="buttons">
+
+      </div>
+      <div class="centertext">
+        <div class="subtext">
+          <p>Pre-Alpha</p>
+          <p class="copyright">&copy; 2016 Jeremy Teissler, Ethan Crowder, All Rights Reserved</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Login Screen -->
+    <div id="login" class="authbox"><div class="inner">
+      <h1>Login</h1>
+      <form id="loginform">
+        <input type="text" name="username" id="login_user" placeholder="Username/Email" /><br />
+        <input type="password" name="password" id="login_pass" placeholder="Password" /><br /><br />
+        <input type="submit" value="Login" id="login_submit" /><br /><br />
+        <div class="formcover"><i class="fa fa-cog fa-spin fa-5x"></i><p>Loading</p></div>
+      </form>
+      <!--<a href="#forgotpass" id="login_forgotlink">Forgot password?</a><br />-->
+      <a href="#register" id="login_registerlink">Register new account</a>
+    </div></div>
+
+    <!-- Forgot Password Screen -->
+    <div id="forgotpass" class="authbox"><div class="inner">
+      <h1>Forgot<br /> Password</h1>
+      <form id="forgotpassform">
+        <input type="text" name="email" id="forgotpass_email" placeholder="Email" /><br /><br />
+        <input type="submit" value="Submit" id="forgotpass_submit" /><br /><br />
+        <div class="formcover"></div>
+      </form>
+      <a href="#login" id="forgotpass_backlink">&larr; Back to Login</a>
+    </div></div>
+
+    <!-- Registration Screen -->
+    <div id="register" class="authbox"><div class="inner">
+      <h1>Register</h1>
+      <form id="registerform">
+        <input type="text" name="username" id="register_user" placeholder="Username" /><br />
+        <input type="password" name="password" id="register_pass" placeholder="Password" /><br />
+        <input type="password" name="password2" id="register_pass2" placeholder="Password (again)" /><br />
+        <input type="text" name="email" id="register_email" placeholder="Email" /><br /><br />
+        <input type="submit" value="Submit" id="register_submit" /><br /><br />
+        <div class="formcover"><i class="fa fa-cog fa-spin fa-5x"></i><p>Loading</p></div>
+      </form>
+      <a href="#login" id="register_backlink">&larr; Back to Login</a>
+    </div></div>
+
+    <div class="property_menu" id="create_bench"><div class="inner">
+      <div class="menu_title"><h1>Create new Bench</h1></div>
+      <div class="menu_content">
+        <form id="createbenchform">
+          <label for="createbench_title">Name your Bench</label>
+          <input type="text" name="createbench_title" id="createbench_title" placeholder="My Bench" required="required" /><br /><br />
+          <input type="submit" name="submit" value="Create Bench" /><br /><br />
+          <a class="link_benchselect" href="">&larr; Back to Bench Select</a>
+        </form>
+      </div>
+      <div class="menu_footer"></div>
+    </div></div>
+
+    <div class="property_menu" id="create_node"><div class="inner">
+      <div class="menu_title"><h1>Create new Card</h1></div>
+      <div class="menu_content">
+        <form id="createnodeform">
+          <h2>Dimensions</h2>
+          <label for="nodewidth">Width: </label><input type="number" name="nodewidth" id="createnode_width" min="30" placeholder="400" /><br />
+          <label for="nodeheight">Height: </label><input type="number" name="nodeheight" id="createnode_height" min="30" placeholder="300" /><br /><br />
+          <h2>Content</h2>
+          <label for="nodetitle">Title: </label><input type="text" name="nodetitle" id="createnode_title", placeholder="Fancy Node" /><br />
+          <label for="nodecontenttype">Content Type: </label><select name="nodecontenttype" id="createnode_contenttype">
+            <option value="text">Text</option>
+            <option value="image">Image</option>
+            <!-- <option value="video">Video (YouTube)</option> -->
+          </select><br />
+          <label>Content: </label>
+          <div id="nodecontentbox">
+            <textarea id="createnode_content_text"></textarea>
+          </div>
+          <input type="submit" value="Submit" name="submit" />
+        </form>
+      </div>
+      <div class="menu_footer">
+      </div>
+    </div></div>
+
+    <!-- Bench Selection Menu (Block Verison) --><!-- TODO WARNING: More than ~3 benches will currently break the row formatting. Fix ASAP. -->
+    <div class="block_menu" id="bench_select"><div class="inner">
+      <div class="menu_header">
+        <div class="left">
+          <h1>Bench Select</h1>
+          <p>Select a bench below, or <a href="" class="link_createbench">create a new bench</a></p>
+        </div>
+        <div class="right">
+          <div class="profile_info_small"><a class="link_logout" href="">Logout</a></div>
+        </div>
+        <div class="clear"></div>
+      </div>
+      <div class="menu_content">
+        <div class="nobenches">There are no benches available. <a href="" class="link_createbench">Create a new bench</a></div>
+        <div class="item_row">
+        </div>
+      </div>
+      <div class="menu_footer">
+      </div>
+    </div></div>
+
+    <!-- Toolbar -->
+    <div id="toolbar">
+      <div class="left">
+        <h1></h1>
+      </div>
+      <div class="right">
+        <div class="menubutton" id="toolbar_maindropdown_button">
+          <i class="fa fa-chevron-down fa-2x"></i>
+        </div>
+      </div>
+      <div class="center">
+        <h1 class="logo">Workbench</h1>
+      </div>
+      <div class="clear"></div>
+      <div class="menu" id="toolbar_maindropdown">
+        <nav><ul class="dropdown">
+          <li><a href="" class="link_createnode">Create new node</a></li>
+          <li><a href="" class="link_benchproperties">Bench Properties...</a><li>
+          <li><a href="" class="link_benchselect">Select Bench...</a></li>
+          <li><a href="" class="link_logout">Logout</a></li>
+        </ul></nav>
+      </div>
+    </div>
+
+    <!-- Workbench Body -->
+    <div id="workbench">
+    </div>
+
+    <!-- End Document -->
+  </body>
+</html>
