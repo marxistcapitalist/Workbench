@@ -1,0 +1,19 @@
+/* Workbench (c) 2016 J Teissler and Ethan Crowder, All Rights Reserved. */
+
+/* === IMPORTS === */
+@import url(https://fonts.googleapis.com/css?family=Open+Sans:400,400italic,700,700italic);
+@import url(https://fonts.googleapis.com/css?family=Raleway);
+@import url(https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css);
+
+/* === Main === */
+
+#logo {
+  font-family: 'Raleway', sans-serif;
+  font-weight: bold;
+}
+
+/* Move down content because we have a fixed navbar that is 50px tall */
+body {
+  padding-top: 50px;
+  padding-bottom: 20px;
+}

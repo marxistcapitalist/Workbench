@@ -1,10 +1,12 @@
 /*
     Workbench (c) 2016 Ethan Crowder and J. Teissler, All Rights Reserved
-    Main workbench JS for creating Workbench app instance.
+    Homepage JS for login, registration, and bench listing.
     jQuery MUST be loaded before this script will function.
 */
 
 var workbench_debug = false;
+var workbench_launch_attempts = 0;
+var workbench_launch_timeout;
 var workbench_settings = {
   api: {
     uri: "http://workbench.online/api",
@@ -41,6 +43,7 @@ function workbench_launch() {
   // TODO Failure handling
   $.getScript("js/controllers/NotificationController.js");
   $.getScript("js/controllers/RequestController.js");
+  $.getScript("js/controllers/UserController.js");
   $.getScript("js/controllers/BenchController.js");
 
   $.getScript("js/cookies.js");
