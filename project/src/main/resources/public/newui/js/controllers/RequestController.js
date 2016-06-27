@@ -77,9 +77,7 @@ var RequestController = function(remoteAddress, notificationController) {
           return {
             method: "POST",
             url: remoteAddress + "/logout",
-            data: agent({
-              "token": token
-            }),
+            data: agent({}),
             success: this.handler
           };
         },
@@ -107,11 +105,26 @@ var RequestController = function(remoteAddress, notificationController) {
         }
       },
       user: {
-        request: function(userId, username, email, password) {
+        request: function(userId) {
           return {
             method: "GET",
             url: remoteAddress + "/user/" + userId,
             data: agent({}),
+            success: this.handler
+          };
+        },
+        handler: function(data, status, jqXHR) {
+          return {
+
+          };
+        }
+      },
+      user_noauth: {
+        request: function(userId) {
+          return {
+            method: "GET",
+            url: remoteAddress + "/user/" + userId,
+            data: {},
             success: this.handler
           };
         },
@@ -145,9 +158,10 @@ var RequestController = function(remoteAddress, notificationController) {
     bench: {
       user: {
         add: {
+          // permission can be "viewer" "editor" "owner"
           request: function(benchId, userId, permission) {
             return {
-              method: "PUT",
+              method: "POST",
               url: remoteAddress + "/bench/" + benchId + "/user/" + userId,
               data: agent({
                 "permission": permission
@@ -195,6 +209,7 @@ var RequestController = function(remoteAddress, notificationController) {
         },
       },
       bench: {
+        // verybosity can be "low" "medium" "high"
         request: function(benchId, verbosity) {
           return {
             method: "GET",
@@ -212,10 +227,10 @@ var RequestController = function(remoteAddress, notificationController) {
         }
       },
       create: {
-        request: function(benchId, title, width, height) {
+        request: function(title, width, height) {
           return {
             method: "POST",
-            url: remoteAddress + "/bench/" + benchId,
+            url: remoteAddress + "/bench",
             data: agent({
               "title": title,
               "dimensions": {
@@ -291,10 +306,10 @@ var RequestController = function(remoteAddress, notificationController) {
         }
       },
       create: {
-        request: function(benchId, nodeId, x, y, width, height, title, type, data) {
+        request: function(benchId, x, y, width, height, title, type, data) {
           return {
             method: "POST",
-            url: remoteAddress + "/bench/" + benchId + "/node/" + nodeId,
+            url: remoteAddress + "/bench/" + benchId + "/node",
             data: agent({
               "dimensions": {
                 "x": x,
@@ -333,14 +348,32 @@ var RequestController = function(remoteAddress, notificationController) {
         }
       },
       edit: {
-        request: function(benchId, nodeId, type, data, title) {
+        request: function(benchId, nodeId, type, data) {
           return {
-            method: "POST",
+            method: "PUT",
             url: remoteAddress + "/bench/" + benchId + "/node/" + nodeId,
             data: agent({
               "content": {
                 "type": type,
-                "data": data,
+                "data": data
+              }
+            }),
+            success: this.handler
+          };
+        },
+        handler: function(data, status, jqXHR) {
+          return {
+
+          };
+        }
+      },
+      rename: {
+        request: function(benchId, nodeId, title) {
+          return {
+            method: "PUT",
+            url: remoteAddress + "/bench/" + benchId + "/node/" + nodeId + "/name",
+            data: agent({
+              "content": {
                 "title": title
               }
             }),
@@ -356,7 +389,7 @@ var RequestController = function(remoteAddress, notificationController) {
       move: {
         request: function(benchId, nodeId, x, y) {
           return {
-            method: "POST",
+            method: "PUT",
             url: remoteAddress + "/bench/" + benchId + "/node/" + nodeId + "/move",
             data: agent({
               "dimensions": {
@@ -376,8 +409,8 @@ var RequestController = function(remoteAddress, notificationController) {
       resize: {
         request: function(benchId, nodeId, width, height) {
           return {
-            method: "POST",
-            url: remoteAddress + "/bench/" + benchId + "/node/" + nodeId + "/resize",
+            method: "PUT",
+            url: remoteAddress + "/bench/" + benchId + "/node/" + nodeId + "/size",
             data: agent({
               "dimensions": {
                 "width": width,

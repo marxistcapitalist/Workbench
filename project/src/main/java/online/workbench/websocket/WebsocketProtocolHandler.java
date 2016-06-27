@@ -25,9 +25,8 @@ public class WebsocketProtocolHandler
 	private static ArrayList<Session> pendingSessions = new ArrayList<>();
 	public static  Map<Integer, HashMap<Session, User>> sessions = new HashMap<>();
 	private List<String> incomingValids = new ArrayList<>(Arrays.asList(
-			"move", "resize", "textcursor", "textmodify", "textselect", "verify"
+			"core.move", "core.resize", "text.cursor", "text.modify", "text.select", "verify", "misc.chat"
 
-			//Chat is not handled by this handler class
 	));
 
 	private static BenchManager benchManager;
@@ -162,10 +161,17 @@ public class WebsocketProtocolHandler
 	{
 		Protocol.ClientResize message = gson.fromJson(json, Protocol.ClientResize.class);
 		int node = message.getNode();
-		int w = message.getDimensions().getW();
-		int h = message.getDimensions().getH();
+		int w = message.getDimensions().getWidth();
+		int h = message.getDimensions().getHeight();
 
 		websocket.sendBenchNodeResize(bench, user, node, w, h);
+	}
+
+	private void chat(Bench bench, User user, String json)
+	{
+		Protocol.ClientChat message = gson.fromJson(json, Protocol.ClientChat.class);
+
+		websocket.sendChat(bench, user.Username, message.getMessage());
 	}
 
 	private void textcursor(Bench bench, User user, String json)
@@ -183,24 +189,29 @@ public class WebsocketProtocolHandler
 
 	}
 
+
+
 	private void evaluate(Bench bench, User user, String message, String type)
 	{
 		switch(type)
 		{
-			case "move":
+			case "core.move":
 				move(bench, user, message);
 				break;
-			case "resize":
+			case "core.resize":
 				resize(bench, user, message);
 				break;
-			case "textcursor":
+			case "text.cursor":
 				textcursor(bench, user, message);
 				break;
-			case "textmodify":
+			case "text.modify":
 				textmodify(bench, user, message);
 				break;
-			case "textselect":
+			case "text.select":
 				textselect(bench, user, message);
+				break;
+			case "misc.chat":
+				chat(bench, user, message);
 				break;
 			default:
 		}

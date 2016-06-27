@@ -30,7 +30,7 @@ public class BenchManager
 	{
 		User user = userManager.load(userId);
 
-		if (user != null && !level.equals(PermissionLevel.ADMIN))
+		if (user != null && !level.equals(PermissionLevel.NONE))
 		{
 			user.Benches.add(BenchData.metafy(bench));
 			bench.Users.put(user.Id, level);
@@ -48,7 +48,7 @@ public class BenchManager
 		{
 			if (bench.Owner.Id != user.Id && bench.Users.containsKey(user.Id))
 			{
-				if (!bench.Users.get(user.Id).equals(level) && !level.equals(PermissionLevel.ADMIN))
+				if (!bench.Users.get(user.Id).equals(level) && !level.equals(PermissionLevel.NONE))
 				{
 					bench.Users.put(user.Id, level);
 					database.modifyUserInBench(bench, user.Id, level);

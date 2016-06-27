@@ -54,7 +54,7 @@ public class WorkbenchAPI
 		///////// BENCH - CORE ////////////
 		bench();
 		create();
-		delete();
+		deleteBench();
 		edit();
 
 		///////// BENCH - USERS ///////////////
@@ -68,7 +68,6 @@ public class WorkbenchAPI
 		deleteBenchNode();
 		editBenchNode();
 		moveBenchNode();
-		renameBenchNode();
 		resizeBenchNode();
 		//spawnBenchNode();
 
@@ -116,6 +115,11 @@ public class WorkbenchAPI
 				{
 					User user = this.userManager.load(id);
 
+					if (user == null)
+					{
+						res.status(401);
+					}
+
 					ServerLogin response = new ServerLogin();
 					response.getAgent().setId(user.Id);
 					response.getAgent().setUser(user.Username);
@@ -131,7 +135,8 @@ public class WorkbenchAPI
 				return "";
 			}
 
-			return "{}";
+			res.status(500);
+			return "";
 		});
 	}
 
@@ -229,7 +234,7 @@ public class WorkbenchAPI
 
 	public void authenticate()
 	{
-		post(API + "authenticate", (req, res) ->
+		post(API + "auth", (req, res) ->
 		{
 
 			try
@@ -238,7 +243,8 @@ public class WorkbenchAPI
 
 				if (!tokenManager.check(body.getId(), body.getToken()))
 				{
-					return "{}";
+					res.status(401);
+					return "";
 				}
 
 				Authenticate response = new Authenticate();
@@ -266,7 +272,8 @@ public class WorkbenchAPI
 				ClientToken body = gson.fromJson(req.body(), ClientToken.class);
 				this.database.invalidateToken(body.getToken());
 				tokenManager.invalidate(body.getToken());
-				return "{}";
+				res.status(200);
+				return "";
 			}
 			catch (Exception e)
 			{
@@ -278,73 +285,92 @@ public class WorkbenchAPI
 
 	public void user()
 	{
-		post(API + "user", (req, res) ->
+		get(API + "user/:userId", (req, res) ->
 		{
+			int requestedUser;
+
+			try
+			{
+				requestedUser = Integer.valueOf(req.params(":userId"));
+			}
+			catch (Exception e)
+			{
+				res.status(400);
+				return "";
+			}
 
 			try
 			{
 				ClientUserData body = gson.fromJson(req.body(), ClientUserData.class);
 				int id = body.getAgent().getId();
-				User user = userManager.load(id);
+
+				if (requestedUser != id || !tokenManager.check(id, body.getAgent().getToken()))
+				{
+					throw new Exception();
+				}
+
+				User user = userManager.load(requestedUser);
 
 				if (user != null)
 				{
 					String avatar = user.Avatar;
-					String token = body.getAgent().getToken();
 
-					if (token.isEmpty())
+					ServerUserDataAuthenticated response = new ServerUserDataAuthenticated();
+					response.setId(user.Id);
+					response.setUser(user.Username);
+					response.setAvatar(avatar);
+					response.setEmail(user.Email);
+
+					ArrayList<ServerUserDataAuthenticated.MemberNode> member = new ArrayList<>();
+					ArrayList<ServerUserDataAuthenticated.OwnerNode> owner = new ArrayList<>();
+
+					for (BenchData bench : user.Benches)
 					{
-						ServerUserDataUnauthenticated response = new ServerUserDataUnauthenticated();
-						response.setAvatar(avatar);
-						response.setUser(user.Username);
-						response.setId(user.Id);
-						return gson.toJson(response);
-					} else
-					{
-						if (tokenManager.check(id, token))
+						if (bench.OwnerId == user.Id)
 						{
-							ServerUserDataAuthenticated response = new ServerUserDataAuthenticated();
-							response.setId(user.Id);
-							response.setUser(user.Username);
-							response.setAvatar(avatar);
-							response.setEmail(user.Email);
-
-							ArrayList<ServerUserDataAuthenticated.MemberNode> member = new ArrayList<>();
-							ArrayList<ServerUserDataAuthenticated.OwnerNode> owner = new ArrayList<>();
-
-							for (BenchData bench : user.Benches)
-							{
-								if (bench.OwnerId == user.Id)
-								{
-									ServerUserDataAuthenticated.OwnerNode o = new ServerUserDataAuthenticated.OwnerNode();
-									o.setId(bench.Id);
-									o.setPreview(bench.PreviewImagePath);
-									o.setTitle(bench.Title);
-									o.setUsers(benchManager.countBenchUsers(bench.Id));
-									owner.add(o);
-								} else
-								{
-									ServerUserDataAuthenticated.MemberNode m = new ServerUserDataAuthenticated.MemberNode();
-									m.setId(bench.Id);
-									m.setTitle(bench.Title);
-									m.setPreview(bench.PreviewImagePath);
-									m.setOwner(bench.Owner);
-									member.add(m);
-								}
-							}
-
-							response.setOwner(owner);
-							response.setMember(member);
-							response.setAvatar(avatar);
-							return gson.toJson(response);
+							ServerUserDataAuthenticated.OwnerNode o = new ServerUserDataAuthenticated.OwnerNode();
+							o.setId(bench.Id);
+							o.setPreview(bench.PreviewImagePath);
+							o.setTitle(bench.Title);
+							o.setUsers(benchManager.countBenchUsers(bench.Id));
+							owner.add(o);
+						}
+						else
+						{
+							ServerUserDataAuthenticated.MemberNode m = new ServerUserDataAuthenticated.MemberNode();
+							m.setId(bench.Id);
+							m.setTitle(bench.Title);
+							m.setPreview(bench.PreviewImagePath);
+							m.setOwner(bench.Owner);
+							member.add(m);
 						}
 					}
+
+					response.setOwner(owner);
+					response.setMember(member);
+					response.setAvatar(avatar);
+					res.status(200);
+					return gson.toJson(response);
 				}
-				return "{}";
+
+				res.status(400);
+				return "";
 			}
 			catch (Exception e)
 			{
-				res.status(400);
+				User user = userManager.load(requestedUser);
+
+				if (user != null)
+				{
+					ServerUserDataUnauthenticated response = new ServerUserDataUnauthenticated();
+					response.setAvatar(user.Avatar);
+					response.setUser(user.Username);
+					response.setId(user.Id);
+					res.status(200);
+					return gson.toJson(response);
+				}
+
+				res.status(404);
 				return "";
 			}
 		});
@@ -352,9 +378,8 @@ public class WorkbenchAPI
 
 	public void useredit()
 	{
-		post(API + "useredit", (req, res) ->
+		put(API + "user/:userId", (req, res) ->
 		{
-
 			try
 			{
 				UserEditRequest body = gson.fromJson(req.body(), UserEditRequest.class);
@@ -401,7 +426,8 @@ public class WorkbenchAPI
 
 					return gson.toJson(response);
 				}
-				return "{}";
+				res.status(403);
+				return "";
 			}
 			catch (Exception e)
 			{
@@ -415,19 +441,32 @@ public class WorkbenchAPI
 
 	public void bench()
 	{
-		post(API + "bench", (req, res) ->
+		get(API + "bench/:benchId", (req, res) ->
 		{
+			int requestedBench;
+
+			try
+			{
+				requestedBench = Integer.valueOf(req.params(":benchId"));
+			}
+			catch (Exception e)
+			{
+				res.status(400);
+				return "";
+			}
+
 			try
 			{
 				BenchInfoRequest request = gson.fromJson(req.body(), BenchInfoRequest.class);
 
 				if (tokenManager.check(request.getAgent().getId(), request.getAgent().getToken()))
 				{
-					Bench bench = benchManager.load(request.getId());
+					Bench bench = benchManager.load(requestedBench);
 
 					if (bench == null)
 					{
-						return "{}";
+						res.status(404);
+						return "";
 					}
 
 					if (bench.Users.containsKey(request.getAgent().getId()))
@@ -456,8 +495,8 @@ public class WorkbenchAPI
 									object.setBench(bench.Id);
 									object.setContentType(node.ContentType.toString());
 									object.setCreated(TimeConverter.get(node.Created));
-									object.getPosition().setH(node.Position.Height);
-									object.getPosition().setW(node.Position.Width);
+									object.getPosition().setHeight(node.Position.Height);
+									object.getPosition().setWidth(node.Position.Width);
 									object.getPosition().setX(node.Position.X);
 									object.getPosition().setY(node.Position.Y);
 									object.getCreator().setId(node.Creator.Id);
@@ -503,8 +542,8 @@ public class WorkbenchAPI
 									object.setBench(bench.Id);
 									object.setContentType(node.ContentType.toString());
 									object.setCreated(TimeConverter.get(node.Created));
-									object.getPosition().setH(node.Position.Height);
-									object.getPosition().setW(node.Position.Width);
+									object.getPosition().setHeight(node.Position.Height);
+									object.getPosition().setWidth(node.Position.Width);
 									object.getPosition().setX(node.Position.X);
 									object.getPosition().setY(node.Position.Y);
 									object.getCreator().setId(node.Creator.Id);
@@ -562,7 +601,8 @@ public class WorkbenchAPI
 					}
 
 				}
-				return "{}";
+				res.status(403);
+				return "";
 			}
 			catch (Exception e)
 			{
@@ -574,9 +614,8 @@ public class WorkbenchAPI
 
 	public void create()
 	{
-		post(API + "create", (req, res) ->
+		post(API + "bench", (req, res) ->
 		{
-
 			try
 			{
 				BenchCreate request = gson.fromJson(req.body(), BenchCreate.class);
@@ -585,12 +624,13 @@ public class WorkbenchAPI
 				{
 					IdResponse response = new IdResponse();
 
-					int id = benchManager.createBench(userManager.load(request.getAgent().getId()), request.getTitle(), request.getDimensions().getW(), request.getDimensions().getH()).Id;
+					int id = benchManager.createBench(userManager.load(request.getAgent().getId()), request.getTitle(), request.getDimensions().getWidth(), request.getDimensions().getHeight()).Id;
 
 					response.setId(id);
 					return gson.toJson(response);
 				}
-				return "{}";
+				res.status(403);
+				return "";
 			}
 			catch (Exception e)
 			{
@@ -600,10 +640,21 @@ public class WorkbenchAPI
 		});
 	}
 
-	public void delete()
+	public void deleteBench()
 	{
-		post(API + "delete", (req, res) ->
+		delete(API + "bench/:benchId", (req, res) ->
 		{
+			int requestedBench;
+
+			try
+			{
+				requestedBench = Integer.valueOf(req.params(":benchId"));
+			}
+			catch (Exception e)
+			{
+				res.status(400);
+				return "";
+			}
 
 			try
 			{
@@ -611,26 +662,27 @@ public class WorkbenchAPI
 
 				if (tokenManager.check(request.getAgent().getId(), request.getAgent().getToken()))
 				{
-					Bench bench = benchManager.load(request.getId());
-					BooleanResponse response = new BooleanResponse();
+					Bench bench = benchManager.load(requestedBench);
 
 					if (bench == null)
 					{
-						response.setResult(false);
-						return gson.toJson(response);
+						res.status(404);
+						return "";
 					}
 
-					if (bench != null && bench.Owner.Id == request.getAgent().getId())
+					if (bench.Owner.Id == request.getAgent().getId())
 					{
 						benchManager.deleteBench(bench);
-						response.setResult(true);
-					} else
-					{
-						response.setResult(false);
+						res.status(200);
 					}
-					return gson.toJson(response);
+					else
+					{
+						res.status(403);
+					}
+					return "";
 				}
-				return "{}";
+				res.status(403);
+				return "";
 			}
 			catch (Exception e)
 			{
@@ -642,24 +694,36 @@ public class WorkbenchAPI
 
 	public void edit()
 	{
-		post(API + "edit", (req, res) ->
+		put(API + "edit/:benchId", (req, res) ->
 		{
+			int requestedBench;
+
+			try
+			{
+				requestedBench = Integer.valueOf(req.params(":benchId"));
+			}
+			catch (Exception e)
+			{
+				res.status(400);
+				return "";
+			}
+
 			try
 			{
 				BenchEdit request = gson.fromJson(req.body(), BenchEdit.class);
 				if (tokenManager.check(request.getAgent().getId(), request.getAgent().getToken()))
 				{
-					Bench bench = benchManager.load(request.getId());
+					Bench bench = benchManager.load(requestedBench);
 
-					if (bench != null && bench.Id != 0 && bench.Users.get(request.getAgent().getId()).val() >= PermissionLevel.MANAGER.val())
+					if (bench != null && bench.Id != 0 && bench.Users.get(request.getAgent().getId()).val() >= PermissionLevel.OWNER.val())
 					{
 
 						BenchEditResponse response = new BenchEditResponse();
 
 						String background = request.getContent().getBackground();
 						String title = request.getContent().getTitle();
-						int height = request.getDimensions().getH();
-						int width = request.getDimensions().getW();
+						int height = request.getDimensions().getHeight();
+						int width = request.getDimensions().getWidth();
 
 						if (width >= 512 && height >= 400)
 						{
@@ -687,7 +751,8 @@ public class WorkbenchAPI
 						return gson.toJson(response);
 					}
 				}
-				return "{}";
+				res.status(403);
+				return "";
 			}
 			catch (Exception e)
 			{
@@ -699,32 +764,31 @@ public class WorkbenchAPI
 
 	public void adduser()
 	{
-		post(API + ":benchId/adduser", (req, res) ->
+		post(API + "bench/:benchId/user/:userId", (req, res) ->
 		{
-
 			try
 			{
 				Bench bench = benchManager.load(Integer.valueOf(req.params(":benchId")));
 				UserModObject request = gson.fromJson(req.body(), UserModObject.class);
-				BooleanResponse response = new BooleanResponse();
 
 				if (tokenManager.check(request.getAgent().getId(), request.getAgent().getToken()))
 				{
 					if (bench.Owner.Id == request.getAgent().getId())
 					{
 						PermissionLevel level = PermissionLevel.get(request.getPermission());
-						if (!level.equals(PermissionLevel.NONE))
+						if (level.val() >= PermissionLevel.EDITOR.val())
 						{
-							benchManager.addUser(bench, request.getUserId(), level);
+							benchManager.addUser(bench, Integer.valueOf(req.params(":userId")), level);
 
-							response.setResult(true);
-							return gson.toJson(response);
+							res.status(200);
+							return "";
 						}
 					}
-					response.setResult(false);
-					return gson.toJson(response);
+					res.status(403);
+					return "";
 				}
-				return "{}";
+				res.status(403);
+				return "";
 			}
 			catch (Exception e)
 			{
@@ -736,32 +800,32 @@ public class WorkbenchAPI
 
 	public void moduser()
 	{
-		post(API + ":benchId/moduser", (req, res) ->
+		put(API + "bench/:benchId/user/:userId", (req, res) ->
 		{
 
 			try
 			{
 				Bench bench = benchManager.load(Integer.valueOf(req.params(":benchId")));
 				UserModObject request = gson.fromJson(req.body(), UserModObject.class);
-				BooleanResponse response = new BooleanResponse();
 
 				if (tokenManager.check(request.getAgent().getId(), request.getAgent().getToken()))
 				{
 					if (bench.Owner.Id == request.getAgent().getId())
 					{
 						PermissionLevel level = PermissionLevel.get(request.getPermission());
-						if (!level.equals(PermissionLevel.NONE))
+						if (level.val() >= PermissionLevel.EDITOR.val())
 						{
-							benchManager.modUser(bench, request.getUserId(), level);
+							benchManager.modUser(bench, Integer.valueOf(req.params(":userId")), level);
 
-							response.setResult(true);
-							return gson.toJson(response);
+							res.status(200);
+							return "";
 						}
 					}
-					response.setResult(false);
-					return gson.toJson(response);
+					res.status(403);
+					return "";
 				}
-				return "{}";
+				res.status(403);
+				return "";
 			}
 			catch (Exception e)
 			{
@@ -773,29 +837,29 @@ public class WorkbenchAPI
 
 	public void removeuser()
 	{
-		post(API + ":benchId/removeuser", (req, res) ->
+		delete(API + "bench/:benchId/user/:userId", (req, res) ->
 		{
 
 			try
 			{
 				Bench bench = benchManager.load(Integer.valueOf(req.params(":benchId")));
 				UserModNoPermObject request = gson.fromJson(req.body(), UserModNoPermObject.class);
-				BooleanResponse response = new BooleanResponse();
 
 				if (tokenManager.check(request.getAgent().getId(), request.getAgent().getToken()))
 				{
 					if (bench.Owner.Id == request.getAgent().getId())
 					{
-						benchManager.removeUser(bench, request.getUserId());
+						benchManager.removeUser(bench, Integer.valueOf(req.params(":userId")));
 
-						response.setResult(true);
-						return gson.toJson(response);
+						res.status(200);
+						return "";
 
 					}
-					response.setResult(false);
-					return gson.toJson(response);
+					res.status(403);
+					return "";
 				}
-				return "{}";
+				res.status(403);
+				return "";
 			}
 			catch (Exception e)
 			{
@@ -814,7 +878,7 @@ public class WorkbenchAPI
 
 	public void createBenchNode()
 	{
-		post(API + ":benchId/create", (req, res) ->
+		post(API + "bench/:benchId/node", (req, res) ->
 		{
 
 			try
@@ -822,7 +886,6 @@ public class WorkbenchAPI
 				Bench bench = benchManager.load(Integer.valueOf(req.params(":benchId")));
 				BenchNodeCreate request = gson.fromJson(req.body(), BenchNodeCreate.class);
 				int id = request.getAgent().getId();
-				BooleanResponse response = new BooleanResponse();
 
 				if (tokenManager.check(id, request.getAgent().getToken()))
 				{
@@ -832,8 +895,8 @@ public class WorkbenchAPI
 
 						int x = request.getDimensions().getX();
 						int y = request.getDimensions().getY();
-						int w = request.getDimensions().getW();
-						int h = request.getDimensions().getH();
+						int w = request.getDimensions().getWidth();
+						int h = request.getDimensions().getHeight();
 						String title = request.getContent().getTitle();
 						ContentType contentType = ContentType.get(request.getContent().getType());
 						String content = request.getContent().getData();
@@ -843,14 +906,15 @@ public class WorkbenchAPI
 						{
 							BenchNode node = new BenchNode(0, bench, user, x, y, w, h, title, contentType, content, time, time, false);
 							benchManager.createNode(user, bench, node);
-							response.setResult(true);
-							return gson.toJson(response);
+							res.status(200);
+							return "";
 						}
 					}
-					response.setResult(false);
-					return gson.toJson(response);
+					res.status(403);
+					return "";
 				}
-				return "{}";
+				res.status(403);
+				return "";
 			}
 			catch (Exception e)
 			{
@@ -862,7 +926,7 @@ public class WorkbenchAPI
 
 	public void deleteBenchNode()
 	{
-		post(API + ":benchId/delete", (req, res) ->
+		delete(API + "bench/:benchId/node/:nodeId", (req, res) ->
 		{
 
 			try
@@ -871,25 +935,74 @@ public class WorkbenchAPI
 				BenchNodeDelete request = gson.fromJson(req.body(), BenchNodeDelete.class);
 				int id = request.getAgent().getId();
 				User user = userManager.load(id);
-				BooleanResponse response = new BooleanResponse();
 
 				if (tokenManager.check(id, request.getAgent().getToken()))
 				{
 					if (bench.Users.containsKey(id) && !bench.Users.get(id).equals(PermissionLevel.VIEWER) && !bench.Users.get(id).equals(PermissionLevel.NONE))
 					{
-						BenchNode node = benchManager.getNode(bench, request.getNode());
+						BenchNode node = benchManager.getNode(bench, Integer.valueOf(req.params(":nodeId")));
 
 						if (node != null)
 						{
 							benchManager.deleteNode(user, bench, node);
-							response.setResult(true);
-							return gson.toJson(response);
+							res.status(200);
+							return "";
+						}
+						res.status(404);
+						return "";
+					}
+					res.status(403);
+					return "";
+				}
+				res.status(403);
+				return "";
+			}
+			catch (Exception e)
+			{
+				res.status(400);
+				return "";
+			}
+		});
+	}
+
+	public void renameBenchNode()
+	{
+		put(API + "bench/:benchId/node/:nodeId/name", (req, res) ->
+		{
+
+			try
+			{
+				Bench bench = benchManager.load(Integer.valueOf(req.params(":benchId")));
+				BenchNodeRename request = gson.fromJson(req.body(), BenchNodeRename.class);
+				int id = request.getAgent().getId();
+				User user = userManager.load(id);
+
+				if (tokenManager.check(id, request.getAgent().getToken()))
+				{
+					if (bench.Users.containsKey(id) && !bench.Users.get(id).equals(PermissionLevel.VIEWER) && !bench.Users.get(id).equals(PermissionLevel.NONE))
+					{
+						String title = request.getContent().getTitle();
+
+						if (title.length() <= 256)
+						{
+							BenchNode node = benchManager.getNode(bench, Integer.valueOf(req.params(":nodeId")));
+
+							if (node != null && bench.Id != 0)
+							{
+								benchManager.renameNode(user, bench, node, title);
+
+								res.status(200);
+								return "";
+							}
+							res.status(400);
+							return "";
 						}
 					}
-					response.setResult(false);
-					return gson.toJson(response);
+					res.status(403);
+					return "";
 				}
-				return "{}";
+				res.status(403);
+				return "";
 			}
 			catch (Exception e)
 			{
@@ -901,7 +1014,7 @@ public class WorkbenchAPI
 
 	public void editBenchNode()
 	{
-		post(API + ":benchId/edit", (req, res) ->
+		put(API + "bench/:benchId/node/:nodeId", (req, res) ->
 		{
 
 			try
@@ -910,13 +1023,12 @@ public class WorkbenchAPI
 				BenchNodeEdit request = gson.fromJson(req.body(), BenchNodeEdit.class);
 				int id = request.getAgent().getId();
 				User user = userManager.load(id);
-				BooleanResponse response = new BooleanResponse();
 
 				if (tokenManager.check(id, request.getAgent().getToken()))
 				{
 					if (bench.Users.containsKey(id) && !bench.Users.get(id).equals(PermissionLevel.VIEWER) && !bench.Users.get(id).equals(PermissionLevel.NONE))
 					{
-						BenchNode node = benchManager.getNode(bench, request.getNode());
+						BenchNode node = benchManager.getNode(bench, Integer.valueOf(req.params(":nodeId")));
 
 						if (node != null && node.Id != 0)
 						{
@@ -933,14 +1045,17 @@ public class WorkbenchAPI
 								benchManager.editNode(user, bench, node, content);
 							}
 
-							response.setResult(true);
-							return gson.toJson(response);
+							res.status(200);
+							return "";
 						}
+						res.status(404);
+						return "";
 					}
-					response.setResult(false);
-					return gson.toJson(response);
+					res.status(403);
+					return "";
 				}
-				return "{}";
+				res.status(403);
+				return "";
 			}
 			catch (Exception e)
 			{
@@ -952,7 +1067,7 @@ public class WorkbenchAPI
 
 	public void moveBenchNode()
 	{
-		post(API + ":benchId/move", (req, res) ->
+		put(API + "bench/:benchId/node/:nodeId/move", (req, res) ->
 		{
 
 			try
@@ -961,13 +1076,12 @@ public class WorkbenchAPI
 				BenchNodeMove request = gson.fromJson(req.body(), BenchNodeMove.class);
 				int id = request.getAgent().getId();
 				User user = userManager.load(id);
-				BooleanResponse response = new BooleanResponse();
 
 				if (tokenManager.check(id, request.getAgent().getToken()))
 				{
 					if (bench.Users.containsKey(id) && !bench.Users.get(id).equals(PermissionLevel.VIEWER) && !bench.Users.get(id).equals(PermissionLevel.NONE))
 					{
-						BenchNode node = benchManager.getNode(bench, request.getNode());
+						BenchNode node = benchManager.getNode(bench, Integer.valueOf(req.params(":nodeId")));
 
 						if (node != null && node.Id != 0)
 						{
@@ -980,60 +1094,20 @@ public class WorkbenchAPI
 								node.Position.Y = y;
 								benchManager.moveNode(user, bench, node, x, y);
 
-								response.setResult(true);
-								return gson.toJson(response);
+								res.status(200);
+								return "";
 							}
+							res.status(400);
+							return "";
 						}
+						res.status(404);
+						return "";
 					}
-					response.setResult(false);
-					return gson.toJson(response);
+					res.status(403);
+					return "";
 				}
-				return "{}";
-			}
-			catch (Exception e)
-			{
-				res.status(400);
+				res.status(403);
 				return "";
-			}
-		});
-	}
-
-	public void renameBenchNode()
-	{
-		post(API + ":benchId/rename", (req, res) ->
-		{
-
-			try
-			{
-				Bench bench = benchManager.load(Integer.valueOf(req.params(":benchId")));
-				BenchNodeRename request = gson.fromJson(req.body(), BenchNodeRename.class);
-				int id = request.getAgent().getId();
-				User user = userManager.load(id);
-				BooleanResponse response = new BooleanResponse();
-
-				if (tokenManager.check(id, request.getAgent().getToken()))
-				{
-					if (bench.Users.containsKey(id) && !bench.Users.get(id).equals(PermissionLevel.VIEWER) && !bench.Users.get(id).equals(PermissionLevel.NONE))
-					{
-						String title = request.getContent().getTitle();
-
-						if (title.length() <= 256)
-						{
-							BenchNode node = benchManager.getNode(bench, request.getNode());
-
-							if (node != null && bench.Id != 0)
-							{
-								benchManager.renameNode(user, bench, node, title);
-
-								response.setResult(true);
-								return gson.toJson(response);
-							}
-						}
-					}
-					response.setResult(false);
-					return gson.toJson(response);
-				}
-				return "{}";
 			}
 			catch (Exception e)
 			{
@@ -1045,7 +1119,7 @@ public class WorkbenchAPI
 
 	public void resizeBenchNode()
 	{
-		post(API + ":benchId/resize", (req, res) ->
+		put(API + "bench/:benchId/node/:nodeId/size", (req, res) ->
 		{
 
 			try
@@ -1054,32 +1128,34 @@ public class WorkbenchAPI
 				BenchNodeResize request = gson.fromJson(req.body(), BenchNodeResize.class);
 				int id = request.getAgent().getId();
 				User user = userManager.load(id);
-				BooleanResponse response = new BooleanResponse();
 
 				if (tokenManager.check(id, request.getAgent().getToken()))
 				{
 					if (bench.Users.containsKey(id) && !bench.Users.get(id).equals(PermissionLevel.VIEWER) && !bench.Users.get(id).equals(PermissionLevel.NONE))
 					{
-						int w = request.getDimensions().getW();
-						int h = request.getDimensions().getH();
+						int w = request.getDimensions().getWidth();
+						int h = request.getDimensions().getHeight();
 
 						if (w >= 32 && h >= 32 && w <= bench.Dimensions.Width && h <= bench.Dimensions.Height)
 						{
-							BenchNode node = benchManager.getNode(bench, request.getNode());
+							BenchNode node = benchManager.getNode(bench, Integer.valueOf(req.params(":nodeId")));
 
 							if (node != null && node.Id != 0)
 							{
 								benchManager.resizeNode(user, bench, node, w, h);
 
-								response.setResult(true);
-								return gson.toJson(response);
+								res.status(200);
+								return "";
 							}
+							res.status(400);
+							return "";
 						}
 					}
-					response.setResult(false);
-					return gson.toJson(response);
+					res.status(403);
+					return "";
 				}
-				return "{}";
+				res.status(403);
+				return "";
 			}
 			catch (Exception e)
 			{
@@ -1098,7 +1174,7 @@ public class WorkbenchAPI
 
 	public void ignoreBenchNode()
 	{
-		
+
 	}
 
 	public void watchBenchNode()

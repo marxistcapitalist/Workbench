@@ -139,9 +139,9 @@ public enum Protocol
 	@Data
 	public static class BenchInfoRequest
 	{
-		int id;
 		String verbosity;
-		ClientAgent agent;// = new ClientAgent();
+		//TODO: the new was commented out before?
+		ClientAgent agent = new ClientAgent();
 	}
 
 	@Data
@@ -266,7 +266,6 @@ public enum Protocol
 		String type;
 		int bench;
 		String message;
-		String level;
 		ClientAgent agent = new ClientAgent();
 	}
 
@@ -338,10 +337,10 @@ public enum Protocol
 	}
 
 	@Data
-	public static class ServerChat extends ServerBase
+	public static class ServerChat
 	{
+		String username;
 		String message;
-		String level;
 	}
 
 	@Data
@@ -382,6 +381,7 @@ public enum Protocol
 		@Data
 		public static class Content
 		{
+			String title;
 			String type;
 			String data;
 		}
@@ -416,8 +416,8 @@ public enum Protocol
 	{
 		int x;
 		int y;
-		int w;
-		int h;
+		int width;
+		int height;
 	}
 
 	@Data
@@ -573,7 +573,6 @@ public enum Protocol
 	@Data
 	public static class BenchNodeResize
 	{
-		int node;
 		WH dimensions = new WH();
 		ClientAgent agent = new ClientAgent();
 	}
@@ -581,7 +580,6 @@ public enum Protocol
 	@Data
 	public static class BenchNodeRename
 	{
-		int node;
 		Content content = new Content();
 		ClientAgent agent = new ClientAgent();
 		@Data
@@ -594,7 +592,6 @@ public enum Protocol
 	@Data
 	public static class BenchNodeMove
 	{
-		int node;
 		XY dimensions = new XY();
 		ClientAgent agent = new ClientAgent();
 	}
@@ -602,7 +599,6 @@ public enum Protocol
 	@Data
 	public static class BenchNodeEdit
 	{
-		int node;
 		Content content = new Content();
 		ClientAgent agent = new ClientAgent();
 		@Data
@@ -616,7 +612,6 @@ public enum Protocol
 	@Data
 	public static class BenchNodeDelete
 	{
-		int node;
 		ClientAgent agent = new ClientAgent();
 	}
 
@@ -651,7 +646,6 @@ public enum Protocol
 	@Data
 	public static class BenchEdit
 	{
-		int id;
 		WH dimensions = new WH();
 		Content content = new Content();
 		ClientAgent agent = new ClientAgent();
@@ -675,7 +669,6 @@ public enum Protocol
 	@Data
 	public static class BenchDelete
 	{
-		int id;
 		ClientAgent agent = new ClientAgent();
 	}
 
@@ -696,8 +689,8 @@ public enum Protocol
 	@Data
 	public static class WH
 	{
-		int w;
-		int h;
+		int width;
+		int height;
 	}
 
 	@Data
@@ -726,7 +719,6 @@ public enum Protocol
 	@Data
 	public static class UserModObject
 	{
-		int userId;
 		String permission;
 		ClientAgent agent = new ClientAgent();
 	}
@@ -734,7 +726,6 @@ public enum Protocol
 	@Data
 	public static class UserModNoPermObject
 	{
-		int userId;
 		ClientAgent agent = new ClientAgent();
 	}
 

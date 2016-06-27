@@ -49,16 +49,6 @@ public class Table
 					"archived tinyint(1) DEFAULT 0 " +
 					")";
 
-	//TODO: Fix for SQLite
-	public static final String Folders =
-			"CREATE TABLE IF NOT EXISTS Folders " +
-					"( " +
-					"folderId bigint PRIMARY KEY AUTOINCREMENT, " +
-					"userId int UNSIGNED NOT NULL, " +
-					"name char(255), " +
-					"archived tinyint(1) DEFAULT 0 " +
-					")";
-
 	public static final String Members =
 			"CREATE TABLE IF NOT EXISTS Members " +
 					"( " +
@@ -97,5 +87,15 @@ public class Table
 					"archived tinyint(1) DEFAULT 0, " +
 					"PRIMARY KEY (uNodeId), " +
 					"FOREIGN KEY (folder) REFERENCES Folders(folderId) " +
+					")";
+
+	//TODO: Fix for SQLite
+	public static final String Folders =
+			"CREATE TABLE IF NOT EXISTS Folders " +
+					"( " +
+					"folderId bigint PRIMARY KEY AUTOINCREMENT, " +
+					"userId int UNSIGNED NOT NULL, " +
+					"name char(255), " +
+					"archived tinyint(1) DEFAULT 0 " +
 					")";
 }

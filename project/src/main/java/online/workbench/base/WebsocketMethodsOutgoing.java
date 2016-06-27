@@ -113,4 +113,9 @@ public interface WebsocketMethodsOutgoing
 	 * Notifies all online users that the width or height of a benchnode has changed
 	 */
 	void sendBenchNodeResize(Bench bench, User user, int node, int w, int h);
+
+	/**
+	 * Sends a chat message
+	 */
+	void sendChat(Bench bench, String username, String message);
 }

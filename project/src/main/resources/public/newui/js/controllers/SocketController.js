@@ -38,8 +38,8 @@ var SocketController = function(socketAddress, userController, nodeController, b
             node: nodeId,
             bench: benchId,
             dimensions: {
-              w: w,
-              h: h
+              width: w,
+              height: h
             },
             agent: agent
           };
@@ -107,15 +107,15 @@ var SocketController = function(socketAddress, userController, nodeController, b
           if(basicValidate(payload.node, payload.bench, payload.agent.id) &&
             typeof payload.dimensions.x === 'number' && payload.dimensions.x >= 0 &&
             typeof payload.dimensions.y === 'number' && payload.dimensions.y >= 0 &&
-            typeof payload.dimensions.w === 'number' && payload.dimensions.w >= 0 &&
-            typeof payload.dimensions.h === 'number' && payload.dimensions.h >= 0) {
+            typeof payload.dimensions.width === 'number' && payload.dimensions.width >= 0 &&
+            typeof payload.dimensions.height === 'number' && payload.dimensions.height >= 0) {
             nodeController.create(
               payload.node,
               payload.bench,
               payload.dimensions.x,
               payload.dimensions.y,
-              payload.dimensions.w,
-              payload.dimensions.h,
+              payload.dimensions.width,
+              payload.dimensions.height,
               payload.content.title,
               payload.content.type,
               payload.content.data,
@@ -173,13 +173,13 @@ var SocketController = function(socketAddress, userController, nodeController, b
         },
         resize: function(payload) {
           if(basicValidate(payload.node, payload.bench, payload.agent.id) &&
-            typeof payload.dimensions.w === 'number' && payload.dimensions.w >= 0 &&
-            typeof payload.dimensions.h === 'number' && payload.dimensions.h >= 0) {
+            typeof payload.dimensions.width === 'number' && payload.dimensions.width >= 0 &&
+            typeof payload.dimensions.height === 'number' && payload.dimensions.height >= 0) {
             nodeController.resize(
               payload.node,
               payload.bench,
-              payload.dimensions.w,
-              payload.dimensions.h,
+              payload.dimensions.width,
+              payload.dimensions.height,
               payload.agent.name,
               payload.agent.id
             );
@@ -232,15 +232,9 @@ var SocketController = function(socketAddress, userController, nodeController, b
       },
       misc: {
         chat: function(payload) {
-          if(typeof payload.bench === 'number' && payload.bench >= 0 &&
-            typeof payload.level === 'number' && payload.level >= 0 && payload.level <= 6 &&
-            typeof payload.agent.id === 'number' && payload.agent.id > 0) {
             chatController.userChat(
-              payload.bench,
-              payload.message,
-              payload.level,
-              payload.agent.name,
-              payload.agent.id
+              payload.username,
+              payload.message
             );
           }
         },

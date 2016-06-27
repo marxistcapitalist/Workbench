@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Workbench</title>
+  <meta charset="UTF-8" />
+  <link rel="stylesheet" type="text/css" href="css/master.css" />
+  <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css" />
+  <link rel="stylesheet" href="css/jquery.mCustomScrollbar.min.css" />
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+  <script src="js/jquery.scrollTo.min.js"></script>
+  <script src="js/jquery.mCustomScrollbar.concat.min.js"></script>
+  <script src="js/testing.js"></script>
+  <script src="js/Workbench.js"></script>
+</head>
+<body>
+  <!-- Notifications -->
+  <div id="notification-container" class="notificationcontainer">
+  </div>
+
+  <!-- Popups -->
+  <div id="popup-container" class="popupcontainer">
+    <div class="popup" id="popuptest">
+      <div class="header">Test Popup</div>
+      <div class="body">
+        <h2>Testing</h2>
+        <p>This is the popup content.<br />Hello darkness, my old friend.</p><br />
+        <form>
+          <label>Textbox: </label><br /><input type="text" id="test-popup-textbox" /><br /><br />
+          <label>Password: </label><br /><input type="password" id="test-popup-password" /><br /><br />
+          <select id="test-popup-select">
+            <option value="opta">Option A</option>
+            <option value="optb">Option B</option>
+            <option value="potatoes">Potatoes</option>
+          </select><br /><br />
+          <button type="button">Clickable Button</button><br /><br />
+          <textarea id="test-popup-textarea" cols="100" rows="6"></textarea><br /><br />
+          <p>Radio Button Test:</p><br />
+          <input type="radio" name="gender" value="male" /><label>Male</label><br />
+          <input type="radio" name="gender" value="female" /><label>Female</label><br />
+          <input type="radio" name="gender" value="other" /><label>Other</label><br /><br />
+          <p>Checkbox Test:</p><br />
+          <input type="checkbox" name="yesno" value="yes" /><label>Yes</label><br />
+          <input type="checkbox" name="yesno" value="no" /><label>No</label><br /><br />
+          <p>End of testing popup</p><br />
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cover (For popups) -->
+  <div id="cover" class="cover"></div>
+
+  <!-- On-bench menus -->
+  <div id="topbar-left" class="topbar left">
+    <div id="topbar-button-add" class="topbarbutton">
+      <i class="fa fa-plus fa-3x"></i>
+    </div>``
+  </div>
+  <div id="topbar-right" class="topbar right">
+    <div id="topbar-button-settings" class="topbarbutton">
+      <i class="fa fa-cog fa-3x"></i>
+    </div>
+    <div id="topbar-button-mainmenu" class="topbarbutton">
+      <i class="fa fa-bars fa-3x"></i>
+    </div>
+  </div>
+  <div id="addbar" class="sidebar left">
+    <h1 class="title left">Add Cards</h1>
+    <i class="fa fa-times fa-3x closebutton right" id="addbar-close"></i>
+    <div class="clearfloat"></div>
+    <div class="cardbutton" id="addbar-add-text">
+      <i class="fa fa-font fa-2x"></i>
+      <h2>Text</h2>
+    </div>
+    <div class="cardbutton" id="addbar-add-image">
+      <i class="fa fa-image fa-2x"></i>
+      <h2>Image</h2>
+    </div>
+    <div class="cardbutton" id="addbar-add-youtube">
+      <i class="fa fa-youtube-play fa-2x"></i>
+      <h2>YouTube</h2>
+    </div>
+    <div class="cardbutton" id="addbar-add-tweet">
+      <i class="fa fa-twitter fa-2x"></i>
+      <h2>Tweet</h2>
+    </div>
+  </div>
+
+  <!-- Bench -->
+  <div id="bench-viewport" class="benchviewport">
+    <div id="workbench" class="workbench">
+      <div id="node-12345" class="node">
+        <div class="header">Node Title</div>
+        <div class="body">
+          <h1>This is a basic HTML node!</h1>
+          <p>Hello World!</p>
+        </div>
+      </div>
+    </div>
+    <div class="nozone"></div>
+  </div>
+</body>
+</html>

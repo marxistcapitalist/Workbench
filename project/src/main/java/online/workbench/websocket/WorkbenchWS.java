@@ -16,7 +16,8 @@ import static spark.Spark.*;
 
 public class WorkbenchWS implements WebsocketMethodsOutgoing
 {
-    private @Getter WorkbenchAPI api;
+    private @Getter
+	WorkbenchAPI api;
 	private Gson gson;
 
 	public WorkbenchWS(WorkbenchAPI api)
@@ -26,7 +27,6 @@ public class WorkbenchWS implements WebsocketMethodsOutgoing
 		this.api = api;
 
 		initialize();
-		chat();
 	}
 
 	/**
@@ -38,12 +38,14 @@ public class WorkbenchWS implements WebsocketMethodsOutgoing
 		webSocket(api.API + "ws", WebsocketProtocolHandler.class);
 	}
 
-	/**
-	 * Initializes chat protocol websocket
-	 */
-	private void chat()
+	@Override
+	public void sendChat(Bench bench, String username, String message)
 	{
+		Protocol.ServerChat cMessage = new Protocol.ServerChat();
+		cMessage.setUsername(username);
+		cMessage.setMessage(message);
 
+		send(bench, cMessage);
 	}
 
 	@Override
@@ -110,8 +112,8 @@ public class WorkbenchWS implements WebsocketMethodsOutgoing
 		message.getContent().setType(node.ContentType.toString());
 		message.getContent().setData(node.Content);
 		message.getContent().setTitle(node.Title);
-		message.getDimensions().setH(node.Position.Height);
-		message.getDimensions().setW(node.Position.Width);
+		message.getDimensions().setHeight(node.Position.Height);
+		message.getDimensions().setWidth(node.Position.Width);
 		message.getDimensions().setX(node.Position.X);
 		message.getDimensions().setY(node.Position.Y);
 		message.setNode(node.Id);
@@ -187,8 +189,8 @@ public class WorkbenchWS implements WebsocketMethodsOutgoing
 		message.setType(Protocol.Out.RESIZE);
 		message.getAgent().setId(userTrigger.Id);
 		message.getAgent().setName(userTrigger.Username);
-		message.getDimensions().setH(h);
-		message.getDimensions().setW(w);
+		message.getDimensions().setHeight(h);
+		message.getDimensions().setWidth(w);
 
 		send(bench, message);
 	}

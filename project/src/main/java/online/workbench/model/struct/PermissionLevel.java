@@ -6,9 +6,7 @@ public enum PermissionLevel
 	NONE("", 0),
 	VIEWER("Viewer", 1),
 	EDITOR("Editor", 2),
-	MANAGER("Manager", 3),
-	OWNER("Owner", 4),
-	ADMIN("Admin", 5);
+	OWNER("Owner", 4);
 
 	private String level;
 	private int perm;
@@ -42,8 +40,6 @@ public enum PermissionLevel
 				return PermissionLevel.EDITOR;
 			case "owner":
 				return PermissionLevel.OWNER;
-			case "admin":
-				return PermissionLevel.ADMIN;
 			default:
 				return PermissionLevel.NONE;
 		}
@@ -57,10 +53,8 @@ public enum PermissionLevel
 				return PermissionLevel.VIEWER;
 			case 2:
 				return PermissionLevel.EDITOR;
-			case 4:
+			case 3:
 				return PermissionLevel.OWNER;
-			case 5:
-				return PermissionLevel.ADMIN;
 			default:
 				return PermissionLevel.NONE;
 		}
