@@ -1,0 +1,307 @@
+/* Workbench (c) 2016 J Teissler and Ethan Crowder, All Rights Reserved. */
+
+/*
+   === ORGANIZATION ===
+   This CSS document serves as the main stylesheet of the Workbench application.
+   It sets styles of the document down to individual nodes.
+
+   Sections:
+   (I) Imports
+   1. Global - Defines global, element-wide styles
+   2. On-Bench Menus
+      2.1 - Topbar - The top buttons
+      2.2 - Topmenus - The top menus the top buttons open
+   3. Workbench
+
+   Z-Index Reference:
+   NEG  - 0     :: BACKGROUND range, goes behind everything. Used for Workbench "backgrounds" and the like.
+   1    - 49    :: RESERVED range, for anything that goes in front of background but behind nodes
+   50   - 4099  :: NODE range, for current node usage (Assuming 4096 possible nodes, plus 3 to make things even)
+   4100 - 4198  :: TOOL range, for toolbars, bench tool buttons, tool panels, and the like
+   4199         :: COVER, goes between nodes/tools and popups to prevent interaction
+   4200 - 4249  :: POPUP range, for popups that do not allow bench interaction during use
+   4250 -  ??   :: NOT ASSIGNED
+
+   0 - Background
+   4100 - Topbar
+   4105 - Sidebars
+*/
+
+/* === IMPORTS === */
+@import url(https://fonts.googleapis.com/css?family=Open+Sans:400,400italic,700,700italic);
+@import url(https://fonts.googleapis.com/css?family=Raleway);
+@import url(https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css);
+
+/* ===================================== */
+/* === GLOBAL                        === */
+/* ===================================== */
+
+body, html {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+}
+
+body {
+  font-family: 'Open Sans', sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6, p {
+  margin: 0;
+}
+
+/* ===================================== */
+/* === Popups                        === */
+/* ===================================== */
+
+/* === Popup Container === */
+.popupcontainer {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 4200;
+  display: none;
+}
+
+/* === General Popup === */
+.popup {
+  width: 60%;
+  max-height: 80%;
+  margin: auto;
+  top: 10%;
+  position: relative;
+  z-index: 4201;
+  display: none;
+  color: #FFF;
+  background: #555;
+  box-shadow: 0 0 40px 5px #536dfe;
+  border-radius: 5px;
+}
+
+.popup .header {
+  background: #000;
+  padding: 5px;
+  overflow: hidden;
+}
+
+.popup .body {
+  padding: 12px;
+  overflow: auto;
+}
+
+/* Popup - Forms */
+.popup input[type=text],
+.popup input[type=password],
+.popup textarea {
+  background: #4A4A4A;
+  border: 2px solid #7B7B7B;
+  border-radius: 3px;
+  font-family: "Open Sans", sans-serif;
+  color: #FFF;
+  padding: 5px;
+  resize: none;
+}
+
+.popup input[type=button],
+.popup input[type=submit],
+.popup button {
+  padding: 5px;
+  color: #FFF;
+  background: none;
+  border: 2px solid #7B7B7B;
+  border-radius: 5px;
+}
+
+.popup input[type=button]:hover,
+.popup input[type=submit]:hover,
+.popup button:hover {
+  background: #5F5F5F;
+  cursor: pointer;
+}
+
+.popup input[type=button]:active,
+.popup input[type=submit]:active,
+.popup button:active {
+  background: #333;
+}
+
+.popup select {
+  background: none;
+  color: #FFF;
+  padding: 5px;
+}
+
+.popup select option {
+  background-color: #4A4A4A;
+  color: #FFF;
+}
+
+/* === Cover === */
+.cover {
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.7);
+  z-index: 4199;
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: none;
+}
+
+/* ===================================== */
+/* === On-Bench Menus                === */
+/* ===================================== */
+
+/* === Topbar  === */
+.topbar {
+  position: fixed;
+  top: 0;
+  height: 60px;
+  z-index: 4100;
+  overflow: hidden;
+  white-space: nowrap;
+  font-size: 0px;
+}
+
+.topbar.left {
+  left: 0;
+}
+
+.topbar.right {
+  right: 16px;
+}
+
+
+.topbarbutton {
+  text-align: center;
+  width: 60px;
+  height: 60px;
+  color: #666;
+  display: inline-block;
+  font-size: 12px;
+}
+
+.topbarbutton:hover,
+.topbarbutton:active {
+  cursor: pointer;
+  color: #FFF;
+}
+
+.topbarbutton i {
+  margin-top: 10px;
+}
+
+/* === Sidebar === */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: -300px;
+  height: 100%;
+  width: 300px;
+  background: #536dfe;
+  color: #FFF;
+  display: none;
+  z-index: 4105;
+  box-shadow: 3px 3px 10px #000;
+}
+
+.sidebar .title {
+  font-size: 28px;
+  margin: 24px 14px;
+}
+
+.sidebar .closebutton {
+  padding: 10px;
+  margin: 10px;
+  cursor: pointer;
+}
+
+.sidebar .title.right { float: right; }
+.sidebar .title.left { float: left; }
+.sidebar .closebutton.right { float: right; }
+.sidebar .closebuton.left { float: left; }
+.sidebar .closebutton:after { clear: both; }
+
+/* === Sidebar - Add card */
+.sidebar .cardbutton {
+  width: 80%;
+  margin: 16px auto;
+  padding: 16px 0;
+  border-radius: 10px;
+  text-align: center;
+  border: 3px solid #FFF;
+}
+
+.sidebar .cardbutton:hover {
+  cursor: pointer;
+}
+
+
+/* ===================================== */
+/* === Bench                         === */
+/* ===================================== */
+
+.benchviewport {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+}
+
+.workbench {
+  /* TODO: Temporary, will eventually be actual bench size */
+  width: 4096px;
+  height: 2160px;
+  /* */
+  background: #333;
+  color: #FFF;
+  z-index: 0;
+  position: relative;
+  top: 60px;
+  left: 60px;
+  bottom: 60px;
+  right: 60px;
+}
+
+.workbench .node {
+  position: absolute;
+  top: 75px;
+  left: 75px;
+  z-index: 50;
+  background: #777;
+  overflow: hidden;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.nozone {
+  width: 4216px;
+  height: 2280px;
+  background: #222;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -1;
+}
+
+.workbench .node .header {
+  background: #000;
+  padding: 5px;
+  overflow: hidden;
+}
+
+.workbench .node .body {
+  padding: 12px;
+}
+
+/* ===================================== */
+/* === Miscellaneous                 === */
+/* ===================================== */
+.clearfloat {
+  clear: both;
+}
