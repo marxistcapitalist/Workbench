@@ -44,6 +44,7 @@ public class WorkbenchWS implements WebsocketMethodsOutgoing
 		Protocol.ServerChat cMessage = new Protocol.ServerChat();
 		cMessage.setUsername(username);
 		cMessage.setMessage(message);
+		cMessage.setType(Protocol.Out.CHAT);
 
 		send(bench, cMessage);
 	}

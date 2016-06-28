@@ -51,7 +51,7 @@ var RequestController = function(remoteAddress, notificationController) {
           };
         },
         handler: function(data, status, jqXHR) {
-          token = data.agent.token;
+          token = data.token;
           userId = data.agent.id;
         }
       },
@@ -93,11 +93,11 @@ var RequestController = function(remoteAddress, notificationController) {
           return {
             method: "POST",
             url: remoteAddress + "/register",
-            data: agent({
+            data: {
               "username": username,
               "email": email,
               "password": password
-            }),
+            },
             success: this.handler
           };
         },
@@ -109,7 +109,7 @@ var RequestController = function(remoteAddress, notificationController) {
       user: {
         request: function(userId) {
           return {
-            method: "GET",
+            method: "POST",
             url: remoteAddress + "/user/" + userId,
             data: agent({}),
             success: this.handler
@@ -124,7 +124,7 @@ var RequestController = function(remoteAddress, notificationController) {
       user_noauth: {
         request: function(userId) {
           return {
-            method: "GET",
+            method: "POST",
             url: remoteAddress + "/user/" + userId,
             data: {},
             success: this.handler
@@ -214,7 +214,7 @@ var RequestController = function(remoteAddress, notificationController) {
         // verybosity can be "low" "medium" "high"
         request: function(benchId, verbosity) {
           return {
-            method: "GET",
+            method: "POST",
             url: remoteAddress + "/bench/" + benchId,
             data: agent({
               "verbosity": verbosity

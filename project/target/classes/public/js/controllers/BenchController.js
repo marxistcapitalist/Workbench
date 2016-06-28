@@ -1,4 +1,4 @@
-var BenchController = function(userController, notificationController, requestController) {
+var BenchController = function(userId, userToken, notificationController, requestController) {
 
   this.bench = {};
 
@@ -34,7 +34,7 @@ var BenchController = function(userController, notificationController, requestCo
 
   this.nodeController = new NodeController(this);
   this.chatController = new ChatController();
-  this.socketController = new SocketController("ws://workbench.online/ws", userController, this.nodeController, this, notificationController, this.chatController);
+  this.socketController = new SocketController("ws://workbench.online/ws", userId, userToken, this.nodeController, this, notificationController, this.chatController);
 
   function finishInitialization() {
     this.socketController.beginCommunication(this.bench.id);

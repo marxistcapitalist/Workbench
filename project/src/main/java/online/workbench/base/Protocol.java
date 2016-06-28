@@ -340,6 +340,7 @@ public enum Protocol
 	@Data
 	public static class ServerChat
 	{
+		String type;
 		String username;
 		String message;
 	}
@@ -810,20 +811,20 @@ public enum Protocol
 	public static class Out
 	{
 		public static final String VERIFY = "verify";
-		public static final String CREATE = "create";
-		public static final String DELETE = "delete";
-		public static final String EDIT = "edit";
-		public static final String MOVE = "move";
-		public static final String RENAME = "rename";
-		public static final String RESIZE = "resize";
-		public static final String CHAT = "chat";
-		public static final String IGNORE = "ignore";
-		public static final String MOD = "mod";
-		public static final String NOTIFY = "notify";
-		public static final String WATCH = "watch";
-		public static final String TEXTCURSOR = "textcursor";
-		public static final String TEXTMODIFY = "textmodify";
-		public static final String TEXTSELECT = "textselect";
+		public static final String CREATE = "core.create";
+		public static final String DELETE = "core.delete";
+		public static final String EDIT = "core.edit";
+		public static final String MOVE = "core.move";
+		public static final String RENAME = "core.rename";
+		public static final String RESIZE = "core.resize";
+		public static final String CHAT = "misc.chat";
+		public static final String IGNORE = "misc.ignore";
+		public static final String MOD = "misc.mod";
+		public static final String NOTIFY = "misc.notify";
+		public static final String WATCH = "misc.watch";
+		public static final String TEXTCURSOR = "text.cursor";
+		public static final String TEXTMODIFY = "text.modify";
+		public static final String TEXTSELECT = "text.select";
 	}
 }
 

@@ -70,7 +70,17 @@ public class WebsocketProtocolHandler
 	@OnWebSocketMessage
 	public void onMessage(Session session, String message)
 	{
-		JSONObject json = new JSONObject(message.trim());
+		JSONObject json;
+
+		try
+		{
+			json = new JSONObject(message.trim());
+		}
+		catch (Exception e)
+		{
+			return;
+		}
+
 		if (json.has("type") && incomingValids.contains(json.getString("type").toLowerCase())
 				&& json.has("bench") && json.has("agent") && json.getJSONObject("agent").has("id")
 				&& json.getJSONObject("agent").has("token") && json.getJSONObject("agent").getInt("id") != 0)

@@ -1,7 +1,7 @@
-var SocketController = function(socketAddress, userController, nodeController, benchController, notificationController, chatController) {
+var SocketController = function(socketAddress, userId, userToken, nodeController, benchController, notificationController, chatController) {
   var persist = false;
   var socket = null;
-  var agent = { id: userController.userId, token: userController.token };
+  var agent = { id: userId, token: userToken };
   var benchList = [];
 
   function basicValidate(node, bench, id) {
@@ -232,11 +232,10 @@ var SocketController = function(socketAddress, userController, nodeController, b
       },
       misc: {
         chat: function(payload) {
-            chatController.userChat(
-              payload.username,
-              payload.message
-            );
-          }
+          chatController.userChat(
+            payload.username,
+            payload.message
+          );
         },
         ignore: function(payload) {
           if(basicValidate(payload.node, payload.bench, payload.agent.id)) {
