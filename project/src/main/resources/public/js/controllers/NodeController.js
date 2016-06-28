@@ -13,7 +13,7 @@ var NodeController = function(benchController) {
   };
 
   this.create = function(nodeId, benchId, x, y, w, h, title, dataType, data, userName, userId) {
-    $("#workbench").append('<div id="node-' + nodeId + '" class="node"><div class="title">' + title + '</div><div class="body"></div></div>');
+    $("#workbench").append('<div id="node-' + nodeId + '" class="node" data-nodeid=' + nodeId + '><div class="title">' + title + '</div><div class="body"></div></div>');
     var curNode = "#workbench #node-" + nodeId;
     if(dataType == "text") {
       $(curNode + " .body").html(data);
