@@ -13,7 +13,13 @@ var NodeController = function(benchController) {
   };
 
   this.create = function(nodeId, benchId, x, y, w, h, title, dataType, data, userName, userId) {
-    //TODO: create a node on the bench
+    $("#workbench").append('<div id="node-' + nodeId + '" class="node"><div class="title">' + title + '</div><div class="body"></div></div>');
+    var curNode = "#workbench #node-" + nodeId;
+    if(dataType == "text") {
+      $(curNode + " .body").html(data);
+    } else if(dataType == "image") {
+      $(curNode + " .body").html('<img src="' + data + '" />');
+    }
   };
 
   this.delete = function(nodeId, benchId, userName, userId) {
