@@ -67,14 +67,14 @@ function workbench_launch() {
           //login changes and reload
           $("#nav-register").remove();
           $("#nav-login").remove();
-          $("#navbar_buttons").append('<button id="nav-logout" class="btn btn-default">Logout</button>').click(function() {
-            wb_request.send(wb_request.protocol.account.logout.request(), function(data) {
+          $("#navbar_buttons").append('<button id="nav-logout" class="btn btn-default">' + workbench_user.user + '  -  Logout</button>');
+          $("#bench-list").show();
+          $("#nologin").hide();
+
+          $("#nav-logout").click(function() {
             docCookies.removeItem("workbench_userid");
             docCookies.removeItem("workbench_token");
             location.reload(true);
-          }, function(data) {
-              wb_notificiation.notify("Logout Error!");
-            });
           });
         }, function(data) {
           wb_notificiation.notify("User data Error!");
@@ -150,7 +150,21 @@ var HomeController = function() {
     };
 
     this.register = function() {
+      var username = $("#register-username").val();
+      var email = $("#register-email").val();
+      var password = $("#register-password").val();
 
+      wb_request.send(wb_request.protocol.account.register.request(username, email, password), function(data) {
+        if (data.success === true) {
+          docCookies.setItem("workbench_userid", data.agent.id);
+          docCookies.setItem("workbench_token", data.token);
+          location.reload(true);
+        } else {
+          wb_notificiation.notify("Invalid Registration!", data.error);
+        }
+      }, function(data) {
+        wb_notification.notify("Registration Failed!");
+      });
     };
 
     this.showLoginAlert = function(message, type) {
