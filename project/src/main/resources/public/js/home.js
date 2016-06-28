@@ -201,7 +201,7 @@ function loadBenchTiles() {
     $("#bench-list").append(manufactureElement(workbench_user.member[i], false));
   }
 
-  $("#bench-list").append('<p><a id="new_bench_button" class="btn btn-default" href="#" role="button">New Bench +</a></p>');
+  $("#bench-list").append('<p><a id="new_bench_button" class="btn btn-default" href="#" role="button" data-toggle="modal" data-target="#newbench">New Bench +</a></p>');
 
   //TODO: MODAL POPUP FOR ADDING BENCHES
 }

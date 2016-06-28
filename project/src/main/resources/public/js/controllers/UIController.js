@@ -51,7 +51,8 @@ var UIController = function() {
           } else {
             // TODO right here
             wb_request.send(wb_request.protocol.bnode.create.request(), function(data) {
-
+              // success!
+              console.log("SUCCESS!");
             }, function(data) {
               wb_ui.showNewNodeError("<strong>Error:</strong> Failed to create new node (see console for details)");
             });
