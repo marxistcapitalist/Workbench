@@ -37,7 +37,7 @@ var docCookies = {
       var dDate = new Date();
       dDate.setTime(dDate.getTime() + (nMaxAge * 1000));
       return dDate.toGMTString();
-    };
+    }};
     if (vEnd) {
       switch (vEnd.constructor) {
         case Number:

@@ -5,24 +5,25 @@
 */
 
 var workbench_debug = false;
-var workbench_launch_attempts = 0;
-var workbench_launch_timeout;
 var workbench_settings = {
   api: {
     uri: "http://workbench.online/api",
     port: "80"
   }
 };
+var workbench_user = {};
+var workbench_launchtimeout;
+var workbench_launchattempts = 1;
 
 /* ===================================== */
 /* === STARTUP                       === */
 /* === Only used for loading         === */
 /* ===================================== */
-window.onload = function() {
+function workbench_startup() {
   if(window.jQuery) {
     if(workbench_debug)
       console.log("[Workbench] jQuery is loaded, starting...");
-    workbench_launch();
+    workbench_dependencies();
     return;
   } else {
     if(workbench_debug)
@@ -30,8 +31,21 @@ window.onload = function() {
     var jreplace = document.createElement("script");
     jreplace.src = "js/jquery-2.2.4.min.js";
     document.getElementsByTagName("head").appendChild(jreplace);
-    setTimeout(workbench_launch, 2000);
+    setTimeout(workbench_startup, 2000);
   }
+}
+
+function workbench_dependencies() {
+  // TODO failure handling
+  $.getScript("js/controllers/NotificationController.js");
+  $.getScript("js/controllers/RequestController.js");
+
+  $.getScript("https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js");
+  $.getScript("https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js");
+  $.getScript("js/cookies.js");
+  $.getScript("js/jquery.mCustomScrollbar.concat.min.js");
+  $.getScript("js/jquery.scrollTo.min.js");
+  workbench_launch();
 }
 
 /* ===================================== */
@@ -39,40 +53,53 @@ window.onload = function() {
 /* === Start Workbench instance      === */
 /* ===================================== */
 function workbench_launch() {
-  /* === Include dependencies for testing user and bench validity === */
-  // TODO Failure handling
-  $.getScript("js/controllers/NotificationController.js");
-  $.getScript("js/controllers/RequestController.js");
+  try {
+    wb_notificiation = new NotificationController();
+    wb_request = new RequestController(workbench_settings.api.uri, wb_notificiation);
+    wb_ui = new HomeController();
+    wb_ui.attachHandlers();
 
-  $.getScript("js/cookies.js");
-
-  /* === Test for user login === */
-  wb_notificiation = new NotificiationController();
-  wb_request = new RequestController(workbench_settings.api.uri, wb_notificiation);
-  if(docCookies.hasItem("workbench_userid") && docCookies.hasItem("workbench_token")) {
-    wb_request.send(wb_request.protocol.account.auth(), function(data) {
-      // TODO : Grab user data
-      wb_bench = new BenchController(wb_user, wb_notificiation, wb_request);
-    }, function(data) { // Fail
+    if(docCookies.hasItem("workbench_userid") && docCookies.hasItem("workbench_token")) {
+      wb_request.setAgent(docCookies.getItem("workbench_userid"), docCookies.getItem("workbench_token"));
+      wb_request.send(wb_request.protocol.account.auth(), function(data) {
+        wb_request.send(wb_request.protocol.account.user(docCookies.getItem("workbench_userid")), function(data) {
+          workbench_user = data;
+          //login changes and reload
+          $("#nav-register").remove();
+          $("#nav-login").remove();
+          $("#navbar_buttons").append('<button id="nav-logout" class="btn btn-default">Logout</button>').click(function() {
+            wb_request.send(wb_request.protocol.account.logout(), function(data) {
+            docCookies.removeItem("workbench_userid");
+            docCookies.removeItem("workbench_token");
+            location.reload(true);
+          }, function(data) {
+              wb_notificiation.notify("Logout Error!");
+            });
+          });
+        }, function(data) {
+          wb_notificiation.notify("User data Error!");
+        });
+      }, function(data) {
+        wb_notificiation.notify("Authentification Error!");
+      });
+    } else {
       return;
-    });
-  } else {
-    return;
+    }
+  } catch(e) {
+    console.error(e.message);
+    if(workbench_launchattempts < 11) {
+      console.warn("[Workbench] Load attempt " + workbench_launchattempts + " failed, retrying in 1 second...");
+      clearTimeout(workbench_launchtimeout);
+      workbench_launchtimeout = setTimeout(workbench_launch, 1000);
+      workbench_launchattempts++;
+    } else {
+      clearTimeout(workbench_launchtimeout);
+      console.error("[Workbench] Failed to load after 10 tries.");
+      return;
+    }
   }
-
-  /* === Include Remaning Dependencies === */
-  $.getScript("js/jquery.mCustomScrollbar.js");
-  $.getScript("js/jquery.scrollTo.min.js");
-  $.getScript("https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js");
-
-  $.getScript("js/controllers/NodeController.js");
-  $.getScript("js/controllers/ChatController.js");
-  $.getScript("js/controllers/SocketController.js");
-
-  /* === Instantiate === */
-  wb_ui = new HomeController();
-  wb_ui.attachHandlers();
 }
+  /* === Instantiate === */
 
 var HomeController = function() {
   // TODO pass in controllers through constructor
@@ -104,32 +131,46 @@ var HomeController = function() {
     $("#register-submit").click(function() {
       wb_ui.register();
     });
+  };
 
-    this.login = function() {
+  this.login = function() {
+    var loginkey = $("#login-email").val();
+    var password = $("#login-password").val();
 
-    };
+    wb_request.send(wb_request.protocol.account.login(loginkey, password), function(data) {
+      docCookies.setItem("workbench_userid", data.agent.id);
+      docCookies.setItem("workbench_token", data.token);
+      location.reload(true);
+    }, function(data) {
+      wb_notification.notify("Login Failed!", "Invalid username, email, or password");
+    });
+  };
 
-    this.register = function() {
+  this.register = function() {
 
-    };
+  };
 
-    this.showLoginAlert = function(message, type) {
-      if($("#login .alert").length)
-        $("#login .alert").remove();
-      $("#login .messagebox").append('<div class="alert alert-dismissable" id="login-alert" role="alert"><button type="button" class="close" data-dismiss="alert">&times;</button>' + message + '</div>');
-      if(typeof type === 'undefined') {
-        $("#login-alert").addClass("alert-info");
-        return;
-      }
-      if(type == "error")
-        $("#login-alert").addClass("alert-danger");
-      else if(type == "warning")
-        $("#login-alert").addClass("alert-warning");
-      else if(type == "success")
-        $("#login-alert").addClass("alert-success");
-      else {
-        $("#login-alert").addClass("alert-info");
-      }
-    };
-  }
-}
+  this.showLoginAlert = function(message, type) {
+    if($("#login .alert").length)
+      $("#login .alert").remove();
+    $("#login .messagebox").append('<div class="alert alert-dismissable" id="login-alert" role="alert"><button type="button" class="close" data-dismiss="alert">&times;</button>' + message + '</div>');
+    if(typeof type === 'undefined') {
+      $("#login-alert").addClass("alert-info");
+      return;
+    }
+    if(type == "error")
+      $("#login-alert").addClass("alert-danger");
+    else if(type == "warning")
+      $("#login-alert").addClass("alert-warning");
+    else if(type == "success")
+      $("#login-alert").addClass("alert-success");
+    else {
+      $("#login-alert").addClass("alert-info");
+    }
+  };
+};
+
+
+// === STARTUP RAW JS
+window.onload = workbench_startup;
+document.ready = workbench_launch;
