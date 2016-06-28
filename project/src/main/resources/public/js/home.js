@@ -13,6 +13,7 @@ var workbench_settings = {
     port: "80"
   }
 };
+var workbench_user = {};
 
 /* ===================================== */
 /* === STARTUP                       === */
@@ -50,9 +51,15 @@ function workbench_launch() {
   wb_notificiation = new NotificationController();
   wb_request = new RequestController(workbench_settings.api.uri, wb_notificiation);
   if(docCookies.hasItem("workbench_userid") && docCookies.hasItem("workbench_token")) {
+    wb_request.setAgent(docCookies.getItem("workbench_userid"), docCookies.getItem("workbench_token"))
     wb_request.send(wb_request.protocol.account.auth(), function(data) {
-      // TODO : Grab user data
-      wb_bench = new BenchController(wb_user, wb_notificiation, wb_request);
+      wb_request.send(wb_request.protocol.account.user(docCookies.getItem("workbench_userid")), function(data) {
+        workbench_user = data;
+        //TODO: HANDLE CHANGE LOGIN
+
+      }, function(data) {
+        //TODO: handle unable to get user info
+      });
     }, function(data) { // Fail
       return;
     });
@@ -106,7 +113,16 @@ var HomeController = function() {
     });
 
     this.login = function() {
+      var loginkey = $("#login-email").val();
+      var password = $("#login-password").val();
 
+      wb_request.send(wb_request.protocol.account.login(loginkey, password), function(data) {
+        docCookies.setItem("workbench_userid", data.agent.id);
+        docCookies.setItem("workbench_token", data.token);
+        location.reload(true);
+      }, function(data) {
+        wb_notification.notify("Login Failed!", "Invalid username, email, or password");
+      })
     };
 
     this.register = function() {
