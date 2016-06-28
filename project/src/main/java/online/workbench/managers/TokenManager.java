@@ -41,7 +41,7 @@ public class TokenManager
 			}
 			else
 			{
-				return false;
+				return true;
 			}
 		}
 

@@ -88,7 +88,7 @@ public class WorkbenchAPI
 
 	private void ping()
 	{
-		post(API + "ping", (req, res) -> "{}");
+		post(API + "ping", (req, res) -> "pong!");
 	}
 
 	private void ping2()
@@ -118,6 +118,7 @@ public class WorkbenchAPI
 					if (user == null)
 					{
 						res.status(401);
+						return "";
 					}
 
 					ServerLogin response = new ServerLogin();
@@ -128,15 +129,14 @@ public class WorkbenchAPI
 
 					return gson.toJson(response);
 				}
+				res.status(403);
+				return "";
 			}
 			catch (Exception e)
 			{
 				res.status(400);
 				return "";
 			}
-
-			res.status(500);
-			return "";
 		});
 	}
 
@@ -250,8 +250,8 @@ public class WorkbenchAPI
 				Authenticate response = new Authenticate();
 				response.setToken(body.getToken().toUpperCase());
 				response.setId(body.getId());
-				res.body();
 
+				res.status(200);
 				return gson.toJson(response);
 			}
 			catch (Exception e)
