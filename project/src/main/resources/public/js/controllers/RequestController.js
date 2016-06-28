@@ -5,6 +5,7 @@ var RequestController = function(remoteAddress, notificationController) {
 
   this.send = function(payload, callbackDone, callbackError) {
     payload.dataType = "json";
+    payload.data = JSON.stringify(payload.data);
     $.ajax(payload).done(function(data) {
       callbackDone(data);
     }).error(function(data) {
