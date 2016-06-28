@@ -19,25 +19,48 @@ var UIController = function() {
       wb_ui.toggleAddbar();
     });
 
-    // Show text node
+    // Show text add popup
     $("#addbar-add-text").click(function() {
-      $("#popup-add-node").modal("show");
+      wb_ui.prepareNewNodePopup("text");
+      wb_ui.toggleAddbar();
     });
 
-    // On any modal show, record modal opening
+    // Show image add popup
+    $("#addbar-add-image").click(function() {
+      wb_ui.prepareNewNodePopup("image");
+      wb_ui.toggleAddbar();
+    });
+
+    // Toggle cover on popup hide
     $(".modal").on("hide.bs.modal", function(e) {
       wb_ui.toggleCover();
-      /*if(wb_ui.currentPopup !== "") {
-        $(wb_ui.currentPopup).on("hidden.bs.modal", function() {
-
-        });
-        $(wb_ui.currentPopup).modal("hide");
-      }
-      wb_ui.currentPopup = e.target;*/
     });
 
+    // Toggle cover on popup show
     $(".modal").on("show.bs.modal", function(e) {
       wb_ui.toggleCover();
+    });
+
+    // Process node create button press
+    $(".add-node-button").click(function(e) {
+      var type = $(e.target).data("type");
+      switch(type) {
+        case "text":
+          if($("#add-node-text-text").val().length < 1) {
+            wb_ui.showNewNodeError("<strong>Error:</strong> You must enter text for the new node")
+          } else {
+            // TODO right here
+            wb_request.send(wb_request.protocol.bnode.create.request(), function(data) {
+              // success!
+              console.log("SUCCESS!");
+            }, function(data) {
+              wb_ui.showNewNodeError("<strong>Error:</strong> Failed to create new node (see console for details)");
+            });
+          }
+        break;
+        default:
+        break;
+      };
     });
 
     // End
@@ -68,5 +91,21 @@ var UIController = function() {
 
   this.toggleCover = function() {
     $("#cover").fadeToggle(200);
+  };
+
+  this.prepareNewNodePopup = function(type) {
+    $("#add-node-title").html(" - " + type.charAt(0).toUpperCase() + type.slice(1));
+    $("#popup-add-node .messagebox .alert").remove();
+    $("#popup-add-node .hidden-form").hide();
+    $("#popup-add-node .hidden-form." + type).show();
+    $("#popup-add-node").modal("show");
+  };
+
+  this.showNewNodeError = function(error) {
+    $("#popup-add-node .messagebox").html('<div class="alert alert-danger alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' + error + '</div>');
+  }
+
+  this.addNode = function(data) {
+
   };
 };

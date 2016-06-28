@@ -13,6 +13,7 @@ var workbench_settings = {
 };
 var workbench_launchtimeout;
 var workbench_launchattempts = 1;
+var workbench_benchid;
 
 /* ===================================== */
 /* === STARTUP                       === */
@@ -67,6 +68,11 @@ function workbench_launch() {
     wb_request.send(wb_request.protocol.account.auth(), function(data) {
       // TODO get cookie userid and token
       wb_bench = new BenchController(wb_user, wb_notificiation, wb_request);
+      if(getUrlParameter("id") === undefined) {
+        //window.location = "/";
+        //return;
+      }
+      workbench_benchid = getUrlParameter("id");
     }, function(data) {
       //window.location = "/";
       //return;
@@ -98,3 +104,19 @@ function workbench_launch() {
 // === STARTUP RAW JS
 window.onload = workbench_startup;
 document.ready = workbench_launch;
+
+// === Miscellaneous Code ===
+var getUrlParameter = function getUrlParameter(sParam) {
+    var sPageURL = decodeURIComponent(window.location.search.substring(1)),
+        sURLVariables = sPageURL.split('&'),
+        sParameterName,
+        i;
+
+    for (i = 0; i < sURLVariables.length; i++) {
+        sParameterName = sURLVariables[i].split('=');
+
+        if (sParameterName[0] === sParam) {
+            return sParameterName[1] === undefined ? true : sParameterName[1];
+        }
+    }
+};

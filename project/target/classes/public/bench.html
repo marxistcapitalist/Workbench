@@ -50,24 +50,30 @@
       <div class="modal-content">
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal">&times;</button>
-          <h4 class="modal-title">New Card</h4>
+          <h4 class="modal-title">New Card<span id="add-node-title"></span></h4>
         </div>
         <div class="modal-body">
           <div class="messagebox"></div>
-          <form>
-            <div class="form-group">
-              <label for="login-user">Username or E-Mail:</label>
-              <input type="text" class="form-control" id="login-email" placeholder="Username/E-Mail" />
-            </div>
-            <div class="form-group">
-              <label for="login-password">Password:</label>
-              <input type="password" class="form-control" id="login-password" placeholder="Password" />
-            </div>
-            <a class="link-modal" id="login-nav-forgot">Forgot password?</a><br />
-            <a class="link-modal" id="login-nav-register">No account? Click here to register</a><br /><br />
-            <button type="button" class="btn btn-info" id="login-submit">Login</button>
-            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-          </form>
+          <div class="hidden-form text">
+            <form>
+              <div class="form-group">
+                <label for="add-node-text">Text:</label><br />
+                <textarea id="add-node-text-text" class="form-control" placeholder="Your text here" rows="8"></textarea>
+              </div>
+              <button type="button" class="btn btn-info add-node-button" id="add-node-submit-text" data-type="text">Create Node</button>
+              <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+            </form>
+          </div>
+          <div class="hidden-form image">
+            <form>
+              <div class="form-group">
+                <label for="add-node-text">Image URL:</label><br />
+                <input type="text" id="add-node-text-text" class="form-control" placeholder="URL" />
+              </div>
+              <button type="button" class="btn btn-info add-node-button" id="add-node-submit-text" data-type="text">Create Node</button>
+              <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+            </form>
+          </div>
         </div>
       </div>
     </div>
@@ -94,11 +100,11 @@
     <h1 class="title left">Add Cards</h1>
     <i class="fa fa-times fa-3x closebutton right" id="addbar-close"></i>
     <div class="clearfloat"></div>
-    <div class="cardbutton" id="addbar-add-text">
+    <div class="cardbutton" id="addbar-add-text" data-type="text">
       <i class="fa fa-font fa-2x"></i>
       <h2>Text</h2>
     </div>
-    <div class="cardbutton" id="addbar-add-image">
+    <div class="cardbutton" id="addbar-add-image" data-type="image">
       <i class="fa fa-image fa-2x"></i>
       <h2>Image</h2>
     </div>
