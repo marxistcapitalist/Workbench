@@ -32,6 +32,18 @@ window.onload = function() {
   }
 }
 
+
+var UIController = function() {
+
+  /* === UIController.attachHandlers ===
+    Attach NEARLY ALL event handlers.
+    Separated into sections for categorization.
+  */
+  this.attachHandlers = function() {
+
+  }
+}
+
 /* ===================================== */
 /* === INITIALIZATION                === */
 /* === Start Workbench instance      === */
@@ -71,7 +83,6 @@ function workbench_launch() {
   $.getScript("js/controllers/SocketController.js");
 
   /* === Instantiate === */
-  notification = new NotificationController();
-  request = new RequestController("http://workbench.online/api");
-
+  wb_ui = new UIController();
+  wb_ui.attachHandlers();
 }

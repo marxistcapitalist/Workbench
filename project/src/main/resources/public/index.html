@@ -49,6 +49,7 @@
         <h3>Some extra Bootstrap fanciness and extra descriptive elements here.</h3>
       </div>
       <div id="bench-list">
+        <h2>Your Benches</h2>
         <div class="col-md-4">
           <h2>Heading</h2>
           <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
@@ -73,6 +74,8 @@
       </footer>
     </div> <!-- /container -->
     <!-- MODALS -->
+
+    <!-- LOGIN -->
     <div class="modal fade" id="login" role="dialog">
       <div class="modal-dialog">
         <div class="modal-content">
@@ -81,18 +84,51 @@
             <h4 class="modal-title">Login</h4>
           </div>
           <div class="modal-body">
+            <div class="messagebox"></div>
             <form>
               <div class="form-group">
                 <label for="login-user">Username or E-Mail:</label>
-                <input type="email" class="form-control" id="login-email" placeholder="Username/E-Mail" />
+                <input type="text" class="form-control" id="login-email" placeholder="Username/E-Mail" />
               </div>
               <div class="form-group">
                 <label for="login-password">Password:</label>
-                <input type="password" class="form-control" id="login-password" placeholder="password" />
+                <input type="password" class="form-control" id="login-password" placeholder="Password" />
               </div>
               <a class="link-modal" id="login-nav-forgot">Forgot password?</a><br />
               <a class="link-modal" id="login-nav-register">No account? Click here to register</a><br /><br />
-              <button type="submit" class="btn btn-info">Login</button>
+              <button type="button" class="btn btn-info" id="login-submit">Login</button>
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- REGISTER -->
+    <div class="modal fade" id="register" role="dialog">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">Register</h4>
+          </div>
+          <div class="modal-body">
+            <div class="messagebox"></div>
+            <form>
+              <div class="form-group">
+                <label for="login-user">Username:</label>
+                <input type="text" class="form-control" id="register-username" placeholder="Username" />
+              </div>
+              <div class="form-group">
+                <label for="login-user">E-Mail:</label>
+                <input type="email" class="form-control" id="register-email" placeholder="E-Mail" />
+              </div>
+              <div class="form-group">
+                <label for="login-password">Password:</label>
+                <input type="password" class="form-control" id="register-password" placeholder="Password" />
+              </div>
+              <a class="link-modal" id="register-nav-login">Already have an account? Click here to login</a><br /><br />
+              <button type="button" class="btn btn-info" id="register-submit">Register</button>
               <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
             </form>
           </div>

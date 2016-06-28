@@ -70,10 +70,66 @@ function workbench_launch() {
   $.getScript("js/controllers/SocketController.js");
 
   /* === Instantiate === */
-
+  wb_ui = new HomeController();
+  wb_ui.attachHandlers();
 }
 
 var HomeController = function() {
   // TODO pass in controllers through constructor
-  
+
+  // === Attach UI handlers ===
+  this.attachHandlers = function() {
+    // Login to register button
+    $("#login-nav-register").click(function() {
+      $("#login").on("hidden.bs.modal", function() {
+        $("#register").modal("show");
+        $("#login").off("hidden.bs.modal");
+      });
+      $("#login").modal("hide");
+    });
+
+    // Register to login button
+    $("#register-nav-login").click(function() {
+      $("#register").on("hidden.bs.modal", function() {
+        $("#login").modal("show");
+        $("#register").off("hidden.bs.modal");
+      });
+      $("#register").modal("hide");
+    });
+
+    $("#login-submit").click(function() {
+      wb_ui.login();
+    });
+
+    $("#register-submit").click(function() {
+      wb_ui.register();
+    });
+
+    this.login = function() {
+
+    };
+
+    this.register = function() {
+
+    };
+
+    this.showLoginAlert = function(message, type) {
+      if($("#login .alert").length)
+        $("#login .alert").remove();
+      $("#login .messagebox").append('<div class="alert alert-dismissable" id="login-alert" role="alert"><button type="button" class="close" data-dismiss="alert">&times;</button>' + message + '</div>');
+      if(typeof type === 'undefined') {
+        $("#login-alert").addClass("alert-info");
+        return;
+      }
+      if(type == "error")
+        $("#login-alert").addClass("alert-danger");
+      else if(type == "warning")
+        $("#login-alert").addClass("alert-warning");
+      else if(type == "success")
+        $("#login-alert").addClass("alert-success");
+      else {
+        $("#login-alert").addClass("alert-info");
+      }
+    };
+  }
 }
