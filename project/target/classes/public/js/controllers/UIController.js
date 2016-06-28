@@ -77,7 +77,13 @@ var UIController = function() {
     });
 
     $(".node").draggable({
-      containment:"#workbench"
+      containment:"#workbench",
+      drag: function(event, ui) {
+        var n = $(event.target).data("nodeid");
+        console.log(n);
+        console.log(ui);
+        //wb_bench.socketController.sendMove(workbench_benchid, n, ui.offset.left, ui.offset.top);
+      }
     });
 
     $(".workbench").droppable();

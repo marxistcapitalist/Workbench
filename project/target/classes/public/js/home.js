@@ -143,7 +143,7 @@ var HomeController = function() {
   };
 
     this.createBench = function() {
-      wb_request.send(wb_request.bench.create.request($("#newbench-title").val(), 1000, 1000), function(data) {
+      wb_request.send(wb_request.protocol.bench.create.request($("#newbench-title").val(), 1000, 1000), function(data) {
         location.reload(true);
       }, function(data) {
         wb_notification.notify("Error!", "bench could not be created");
