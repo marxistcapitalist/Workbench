@@ -56,12 +56,31 @@ function workbench_launch() {
   try {
     wb_notificiation = new NotificationController();
     wb_request = new RequestController(workbench_settings.api.uri, wb_notificiation);
+    wb_ui = new HomeController();
+    wb_ui.attachHandlers();
+
     if(docCookies.hasItem("workbench_userid") && docCookies.hasItem("workbench_token")) {
+      wb_request.setAgent(docCookies.getItem("workbench_userid"), docCookies.getItem("workbench_token"));
       wb_request.send(wb_request.protocol.account.auth(), function(data) {
-        // TODO : Grab user data
-        wb_bench = new BenchController(wb_user, wb_notificiation, wb_request);
-      }, function(data) { // Fail
-        return;
+        wb_request.send(wb_request.protocol.account.user(docCookies.getItem("workbench_userid")), function(data) {
+          workbench_user = data;
+          //login changes and reload
+          $("#nav-register").remove();
+          $("#nav-login").remove();
+          $("#navbar_buttons").append('<button id="nav-logout" class="btn btn-default">Logout</button>').click(function() {
+            wb_request.send(wb_request.protocol.account.logout(), function(data) {
+            docCookies.removeItem("workbench_userid");
+            docCookies.removeItem("workbench_token");
+            location.reload(true);
+          }, function(data) {
+              wb_notificiation.notify("Logout Error!");
+            });
+          });
+        }, function(data) {
+          wb_notificiation.notify("User data Error!");
+        });
+      }, function(data) {
+        wb_notificiation.notify("Authentification Error!");
       });
     } else {
       return;
@@ -80,20 +99,7 @@ function workbench_launch() {
     }
   }
 }
-
-  /* === Include Remaning Dependencies === */
-  $.getScript("js/jquery.mCustomScrollbar.js");
-  $.getScript("js/jquery.scrollTo.min.js");
-  $.getScript("https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js");
-
-  $.getScript("js/controllers/NodeController.js");
-  $.getScript("js/controllers/ChatController.js");
-  $.getScript("js/controllers/SocketController.js");
-
   /* === Instantiate === */
-  wb_ui = new HomeController();
-  wb_ui.attachHandlers();
-}
 
 var HomeController = function() {
   // TODO pass in controllers through constructor
@@ -136,7 +142,7 @@ var HomeController = function() {
         location.reload(true);
       }, function(data) {
         wb_notification.notify("Login Failed!", "Invalid username, email, or password");
-      })
+      });
     };
 
     this.register = function() {
@@ -161,8 +167,8 @@ var HomeController = function() {
         $("#login-alert").addClass("alert-info");
       }
     };
-  }
-}
+  };
+};
 
 // === STARTUP RAW JS
 window.onload = workbench_startup;
