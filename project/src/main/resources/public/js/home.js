@@ -11,6 +11,7 @@ var workbench_settings = {
     port: "80"
   }
 };
+var workbench_user = {};
 var workbench_launchtimeout;
 var workbench_launchattempts = 1;
 
@@ -126,7 +127,16 @@ var HomeController = function() {
     });
 
     this.login = function() {
+      var loginkey = $("#login-email").val();
+      var password = $("#login-password").val();
 
+      wb_request.send(wb_request.protocol.account.login(loginkey, password), function(data) {
+        docCookies.setItem("workbench_userid", data.agent.id);
+        docCookies.setItem("workbench_token", data.token);
+        location.reload(true);
+      }, function(data) {
+        wb_notification.notify("Login Failed!", "Invalid username, email, or password");
+      })
     };
 
     this.register = function() {
