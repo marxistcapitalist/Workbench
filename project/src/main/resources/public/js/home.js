@@ -47,7 +47,7 @@ function workbench_launch() {
   $.getScript("js/cookies.js");
 
   /* === Test for user login === */
-  wb_notificiation = new NotificiationController();
+  wb_notificiation = new NotificationController();
   wb_request = new RequestController(workbench_settings.api.uri, wb_notificiation);
   if(docCookies.hasItem("workbench_userid") && docCookies.hasItem("workbench_token")) {
     wb_request.send(wb_request.protocol.account.auth(), function(data) {
