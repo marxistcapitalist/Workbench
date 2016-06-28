@@ -1,5 +1,5 @@
 /*
-    Workbench (c) 2016 Ethan Crowder and J. Teissler, All Rights Reserved
+    Workbench (c) 2016, All Rights Reserved
     Homepage JS for login, registration, and bench listing.
     jQuery MUST be loaded before this script will function.
 */
@@ -76,6 +76,9 @@ function workbench_launch() {
             docCookies.removeItem("workbench_token");
             location.reload(true);
           });
+
+          loadBenchTiles();
+
         }, function(data) {
           wb_notificiation.notify("User data Error!");
         });
@@ -188,6 +191,44 @@ var HomeController = function() {
   };
 };
 
+function loadBenchTiles() {
+  for (i = 0; i < workbench_user.owner.length; i++)
+  {
+    $("#bench-list").append(manufactureElement(workbench_user.owner[i], true));
+  }
+  for (i = 0; i < workbench_user.member.length; i++)
+  {
+    $("#bench-list").append(manufactureElement(workbench_user.member[i], false));
+  }
+
+  $("#bench-list").append('<p><a id="new_bench_button" class="btn btn-default" href="#" role="button">New Bench +</a></p>');
+
+  //TODO: MODAL POPUP FOR ADDING BENCHES
+}
+
+function manufactureElement(bench, owner) {
+
+  if (bench.title.length > 18)
+  {
+    bench.title = bench.title.substring(0,18) + "...";
+  }
+
+  var you_own = "";
+
+  if (owner) {
+    you_own = "You are the owner of this bench.";
+  } else {
+    you_own = "You are a member of this bench.";
+  }
+
+  return '<div class="col-md-4">' +
+    '<h2>' + bench.title + '</h2>' +
+    '<hr style="border: 2px solid ' + bench.preview + ';">' +
+    '<p>This bench has ' + bench.users + ' members.</p>' +
+    '<p>' + you_own + '</p>' +
+    '<p><a class="btn btn-default" href="http://workbench.online/bench?id=' + bench.id + '" role="button">View details &raquo;</a></p>' +
+  '</div>';
+}
 
 // === STARTUP RAW JS
 window.onload = workbench_startup;

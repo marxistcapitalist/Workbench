@@ -1,4 +1,4 @@
-/* Workbench (c) 2016 J Teissler and Ethan Crowder, All Rights Reserved. */
+/* Workbench (c) 2016, All Rights Reserved. */
 
 /* === IMPORTS === */
 @import url(https://fonts.googleapis.com/css?family=Open+Sans:400,400italic,700,700italic);
@@ -25,4 +25,9 @@ body {
 /* === Bench List === */
 #bench-list {
   display: none;
+}
+
+#new_bench_button {
+  margin-left: 15px;
+  margin-top: 160px;
 }
