@@ -1,7 +1,7 @@
 {
   "_type": "export",
   "__export_format": 1,
-  "__export_date": "2016-06-28T04:35:08.535Z",
+  "__export_date": "2016-06-28T06:31:51.031Z",
   "__export_source": "insomnia.chrome.app:v2.6.10",
   "items": [
     {
@@ -110,7 +110,7 @@
           "_id": "req_1467081872847",
           "url": "http://workbench.online/api/user/1",
           "method": "PUT",
-          "body": "{\n    \"agent\": {\n        \"token\": \"ULBPUUQTSAG1JG39ERUR21V1KVQPDU0OPJALEG12E6U55CPV9KCP1J5OI5I7AG1R21BRVST00PNNMTE1A6UC5ELFC2EK0LSIM5T8QJ0OK8EKODJDR0LN9OB8THUL7INA\",\n        \"id\": \"1\"\n    },\n    \"username\": \"\",\n    \"email\": \"\",\n    \"password\": \"\",\n    \"avatar\": \"TEST\"\n}",
+          "body": "{\n    \"agent\": {\n        \"token\": \"ULBPUUQTSAG1JG39ERUR21V1KVQPDU0OPJALEG12E6U55CPV9KCP1J5OI5I7AG1R21BRVST00PNNMTE1A6UC5ELFC2EK0LSIM5T8QJ0OK8EKODJDR0LN9OB8THUL7INA\",\n        \"id\": \"1\"\n    },\n    \"username\": \"\",\n    \"email\": \"\",\n    \"password\": \"\",\n    \"avatar\": \"\"\n}",
           "headers": [],
           "params": [],
           "authentication": {
@@ -262,7 +262,7 @@
           "_id": "req_1467086769509",
           "url": "http://workbench.online/api/bench/5/node",
           "method": "POST",
-          "body": "{\n    \"agent\": {\n        \"token\": \"ULBPUUQTSAG1JG39ERUR21V1KVQPDU0OPJALEG12E6U55CPV9KCP1J5OI5I7AG1R21BRVST00PNNMTE1A6UC5ELFC2EK0LSIM5T8QJ0OK8EKODJDR0LN9OB8THUL7INA\",\n        \"id\": \"1\"\n    },\n    \"dimensions\": {\n        \"x\": 200,\n        \"y\": 300,\n        \"width\": 400,\n        \"height\": 500\n    },\n    \"content\": {\n        \"title\": \"Restest\",\n        \"type\": \"text\",\n        \"data\": \"bees\"\n    }\n}",
+          "body": "{\n    \"agent\": {\n        \"token\": \"LNJUI8JUT6GTMLO258U2G37OQRBC6SADP5BET7BSSRSMGVG56BL23JSHN5HFMNCPTN0O91UAAQESSO0QKD05DA4LHEJ8R9J6D4912B9RSP4L0UFNK4NIATMHTETU82KJ\",\n        \"id\": \"1\"\n    },\n    \"dimensions\": {\n        \"x\": 200,\n        \"y\": 300,\n        \"width\": 400,\n        \"height\": 500\n    },\n    \"content\": {\n        \"title\": \"My Node Title\",\n        \"type\": \"text\",\n        \"data\": \"Look, some content!\"\n    }\n}",
           "headers": [],
           "params": [],
           "authentication": {
@@ -279,9 +279,9 @@
         {
           "_type": "request",
           "_id": "req_1467087742770",
-          "url": "http://workbench.online/api/bench/5/node/1",
+          "url": "http://workbench.online/api/bench/5/node/4",
           "method": "DELETE",
-          "body": "{\n    \"agent\": {\n        \"token\": \"ULBPUUQTSAG1JG39ERUR21V1KVQPDU0OPJALEG12E6U55CPV9KCP1J5OI5I7AG1R21BRVST00PNNMTE1A6UC5ELFC2EK0LSIM5T8QJ0OK8EKODJDR0LN9OB8THUL7INA\",\n        \"id\": \"1\"\n    }\n}",
+          "body": "{\n    \"agent\": {\n        \"token\": \"LNJUI8JUT6GTMLO258U2G37OQRBC6SADP5BET7BSSRSMGVG56BL23JSHN5HFMNCPTN0O91UAAQESSO0QKD05DA4LHEJ8R9J6D4912B9RSP4L0UFNK4NIATMHTETU82KJ\",\n        \"id\": \"1\"\n    }\n}",
           "headers": [],
           "params": [],
           "authentication": {
