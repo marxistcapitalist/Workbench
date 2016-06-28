@@ -44,7 +44,12 @@ body, html {
 }
 
 body {
-  font-family: 'Open Sans', sans-serif;
+  font-family: 'Open Sans', sans-serif !important;
+  line-height: normal !important;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: bold !important;
 }
 
 h1, h2, h3, h4, h5, h6, p {
@@ -56,7 +61,7 @@ h1, h2, h3, h4, h5, h6, p {
 /* ===================================== */
 
 /* === Popup Container === */
-.popupcontainer {
+/*.popupcontainer {
   width: 100%;
   height: 100%;
   position: absolute;
@@ -64,10 +69,10 @@ h1, h2, h3, h4, h5, h6, p {
   left: 0;
   z-index: 4200;
   display: none;
-}
+}*/
 
 /* === General Popup === */
-.popup {
+/*.popup {
   width: 60%;
   max-height: 80%;
   margin: auto;
@@ -90,10 +95,10 @@ h1, h2, h3, h4, h5, h6, p {
 .popup .body {
   padding: 12px;
   overflow: auto;
-}
+}*/
 
 /* Popup - Forms */
-.popup input[type=text],
+/*.popup input[type=text],
 .popup input[type=password],
 .popup textarea {
   background: #4A4A4A;
@@ -137,6 +142,9 @@ h1, h2, h3, h4, h5, h6, p {
 .popup select option {
   background-color: #4A4A4A;
   color: #FFF;
+}*/
+.modal {
+  z-index: 4201 !important;
 }
 
 /* === Cover === */
@@ -164,6 +172,7 @@ h1, h2, h3, h4, h5, h6, p {
   overflow: hidden;
   white-space: nowrap;
   font-size: 0px;
+  font-family: 'Open Sans', sans-serif;
 }
 
 .topbar.left {
@@ -254,10 +263,12 @@ h1, h2, h3, h4, h5, h6, p {
 }
 
 .workbench {
-  /* TODO: Temporary, will eventually be actual bench size */
+  /* TODO: Temporary, will eventually be actual bench size
   width: 4096px;
   height: 2160px;
-  /* */
+   */
+  width: 1920px;
+  height: 1080px;
   background: #333;
   color: #FFF;
   z-index: 0;
@@ -266,6 +277,7 @@ h1, h2, h3, h4, h5, h6, p {
   left: 60px;
   bottom: 60px;
   right: 60px;
+  font-family: 'Open Sans', sans-serif;
 }
 
 .workbench .node {
@@ -287,6 +299,30 @@ h1, h2, h3, h4, h5, h6, p {
   top: 0;
   left: 0;
   z-index: -1;
+}
+
+.workbench .node {
+  font-family: 'Open Sans', sans-serif !important;
+  line-height: normal !important;
+}
+
+.workbench .node h1,
+.workbench .node h2,
+.workbench .node h3,
+.workbench .node h4,
+.workbench .node h5,
+.workbench .node h6,
+.workbench .node p {
+  margin: 0;
+}
+
+.workbench .node h1,
+.workbench .node h2,
+.workbench .node h3,
+.workbench .node h4,
+.workbench .node h5,
+.workbench .node h6 {
+  font-weight: bold;
 }
 
 .workbench .node .header {

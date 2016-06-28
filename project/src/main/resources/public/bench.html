@@ -6,8 +6,8 @@
   <link rel="stylesheet" type="text/css" href="css/master.css" />
   <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css" />
   <link rel="stylesheet" href="css/jquery.mCustomScrollbar.min.css" />
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" />
+  <link rel="stylesheet" href="css/bench/bootstrap.min.css" />
+  <link rel="stylesheet" href="css/bench/bootstrap-theme.min.css" />
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js" id="jquery"></script>
   <script src="js/Workbench.js"></script>
 </head>
@@ -17,7 +17,7 @@
   </div>
 
   <!-- Popups -->
-  <div id="popup-container" class="popupcontainer">
+  <!--<div id="popup-container" class="popupcontainer">
     <div class="popup" id="popuptest">
       <div class="header">Test Popup</div>
       <div class="body">
@@ -42,6 +42,33 @@
           <input type="checkbox" name="yesno" value="no" /><label>No</label><br /><br />
           <p>End of testing popup</p><br />
         </form>
+      </div>
+    </div>
+  </div>-->
+  <div class="modal fade" id="popup-add-node" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">New Card</h4>
+        </div>
+        <div class="modal-body">
+          <div class="messagebox"></div>
+          <form>
+            <div class="form-group">
+              <label for="login-user">Username or E-Mail:</label>
+              <input type="text" class="form-control" id="login-email" placeholder="Username/E-Mail" />
+            </div>
+            <div class="form-group">
+              <label for="login-password">Password:</label>
+              <input type="password" class="form-control" id="login-password" placeholder="Password" />
+            </div>
+            <a class="link-modal" id="login-nav-forgot">Forgot password?</a><br />
+            <a class="link-modal" id="login-nav-register">No account? Click here to register</a><br /><br />
+            <button type="button" class="btn btn-info" id="login-submit">Login</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </form>
+        </div>
       </div>
     </div>
   </div>
@@ -75,14 +102,14 @@
       <i class="fa fa-image fa-2x"></i>
       <h2>Image</h2>
     </div>
-    <div class="cardbutton" id="addbar-add-youtube">
+    <!--<div class="cardbutton" id="addbar-add-youtube">
       <i class="fa fa-youtube-play fa-2x"></i>
       <h2>YouTube</h2>
     </div>
     <div class="cardbutton" id="addbar-add-tweet">
       <i class="fa fa-twitter fa-2x"></i>
       <h2>Tweet</h2>
-    </div>
+    </div>-->
   </div>
 
   <!-- Bench -->

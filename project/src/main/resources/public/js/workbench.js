@@ -46,7 +46,7 @@ function workbench_dependencies() {
   $.getScript("js/controllers/UIController.js");
 
   $.getScript("https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js");
-  $.getScript("https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js");
+  $.getScript("js/bench/bootstrap.min.js");
   $.getScript("js/cookies.js");
   $.getScript("js/jquery.mCustomScrollbar.concat.min.js");
   $.getScript("js/jquery.scrollTo.min.js");
