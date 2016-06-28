@@ -80,9 +80,15 @@ var UIController = function() {
       containment:"#workbench",
       drag: function(event, ui) {
         var n = $(event.target).data("nodeid");
-        console.log(n);
-        console.log(ui);
-        //wb_bench.socketController.sendMove(workbench_benchid, n, ui.offset.left, ui.offset.top);
+        console.log("MOVE SENT");
+        wb_bench.socketController.sendMove(workbench_benchid, n, ui.offset.left, ui.offset.top);
+      },
+      stop: function(event, ui) {
+        wb_request.send(wb_request.protocol.bnode.move.request(workbench_benchid, $(event.target).data("nodeid"), ui.offset.left, ui.offset.top), function(data) {
+          console.log("MOVE-END SENT")
+        }, function(data) {
+          // TODO Notificiation - Failed to send node move event
+        });
       }
     });
 
