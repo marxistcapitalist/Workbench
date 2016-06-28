@@ -43,24 +43,13 @@ function workbench_dependencies() {
   $.getScript("js/controllers/NodeController.js");
   $.getScript("js/controllers/ChatController.js");
   $.getScript("js/controllers/SocketController.js");
+  $.getScript("js/controllers/UIController.js");
 
   $.getScript("https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js");
   $.getScript("js/cookies.js");
   $.getScript("js/jquery.mCustomScrollbar.concat.min.js");
   $.getScript("js/jquery.scrollTo.min.js");
   workbench_launch();
-}
-
-
-var UIController = function() {
-
-  /* === UIController.attachHandlers ===
-    Attach NEARLY ALL event handlers.
-    Separated into sections for categorization.
-  */
-  this.attachHandlers = function() {
-
-  }
 }
 
 /* ===================================== */
@@ -75,21 +64,23 @@ function workbench_launch() {
   wb_request = new RequestController(workbench_settings.api.uri, wb_notificiation);
   if(docCookies.hasItem("workbench_userid") && docCookies.hasItem("workbench_token")) {
     wb_request.send(wb_request.protocol.account.auth(), function(data) {
-      // TODO : Grab user data
+      // TODO get cookie userid and token
       wb_bench = new BenchController(wb_user, wb_notificiation, wb_request);
     }, function(data) {
-      window.location("/");
-      return;
+      //window.location = "/";
+      //return;
     });
   } else {
-    window.location("/");
-    return;
+    //window.location = "/";
+    //return;
   }
 
   /* === Instantiate === */
   wb_ui = new UIController();
   wb_ui.attachHandlers();
+  wb_ui.initialize();
   } catch(e) {
+    console.error(e.message);
     if(workbench_launchattempts < 11) {
       console.warn("[Workbench] Load attempt " + workbench_launchattempts + " failed, retrying in 1 second...");
       clearTimeout(workbench_launchtimeout);
