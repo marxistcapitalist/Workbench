@@ -51,8 +51,8 @@ var RequestController = function(remoteAddress, notificationController) {
           };
         },
         handler: function(data, status, jqXHR) {
-          token = data.token;
-          userId = data.id;
+          token = data.agent.token;
+          userId = data.agent.id;
         }
       },
       login: {
@@ -60,16 +60,16 @@ var RequestController = function(remoteAddress, notificationController) {
           return {
             method: "POST",
             url: remoteAddress + "/login",
-            data: agent({
+            data: {
               "loginkey": login,
               "password": password
-            }),
+            },
             success: this.handler
           };
         },
         handler: function(data, status, jqXHR) {
           token = data.token;
-          userId = data.id;
+          userId = data.agent.id;
         }
       },
       logout: {
@@ -77,7 +77,9 @@ var RequestController = function(remoteAddress, notificationController) {
           return {
             method: "POST",
             url: remoteAddress + "/logout",
-            data: agent({}),
+            data: {
+              "token": token
+            },
             success: this.handler
           };
         },

@@ -69,6 +69,7 @@ public class WorkbenchAPI
 		editBenchNode();
 		moveBenchNode();
 		resizeBenchNode();
+		renameBenchNode();
 		//spawnBenchNode();
 
 		/////////// BENCHNODE - MISC ///////////
@@ -241,15 +242,16 @@ public class WorkbenchAPI
 			{
 				Authenticate body = gson.fromJson(req.body(), Authenticate.class);
 
-				if (!tokenManager.check(body.getId(), body.getToken()))
+				if (!tokenManager.check(body.getAgent().getId(), body.getAgent().getToken()))
 				{
 					res.status(401);
 					return "";
 				}
 
-				Authenticate response = new Authenticate();
-				response.setToken(body.getToken().toUpperCase());
-				response.setId(body.getId());
+				ServerLogin response = new ServerLogin();
+				response.getAgent().setId(body.getAgent().getId());
+				response.getAgent().setUser(userManager.load(body.getAgent().getId()).Username);
+				response.setToken(body.getAgent().getToken());
 
 				res.status(200);
 				return gson.toJson(response);
@@ -285,7 +287,7 @@ public class WorkbenchAPI
 
 	public void user()
 	{
-		get(API + "user/:userId", (req, res) ->
+		post(API + "user/:userId", (req, res) ->
 		{
 			int requestedUser;
 
@@ -441,7 +443,7 @@ public class WorkbenchAPI
 
 	public void bench()
 	{
-		get(API + "bench/:benchId", (req, res) ->
+		post(API + "bench/:benchId", (req, res) ->
 		{
 			int requestedBench;
 
@@ -476,6 +478,8 @@ public class WorkbenchAPI
 							case "high":
 							{
 								BenchInfoResponseHigh response = new BenchInfoResponseHigh();
+								response.getDimensions().setWidth(bench.Dimensions.Width);
+								response.getDimensions().setHeight(bench.Dimensions.Height);
 								response.setId(bench.Id);
 								response.setBackground(bench.Background);
 								response.setCreated(TimeConverter.get(bench.Created));
@@ -524,6 +528,8 @@ public class WorkbenchAPI
 							case "medium":
 							{
 								BenchInfoResponseMedium response = new BenchInfoResponseMedium();
+								response.getDimensions().setWidth(bench.Dimensions.Width);
+								response.getDimensions().setHeight(bench.Dimensions.Height);
 								response.setId(bench.Id);
 								response.setBackground(bench.Background);
 								response.setCreated(TimeConverter.get(bench.Created));
@@ -573,6 +579,8 @@ public class WorkbenchAPI
 							default:
 							{
 								BenchInfoResponseLow response = new BenchInfoResponseLow();
+								response.getDimensions().setWidth(bench.Dimensions.Width);
+								response.getDimensions().setHeight(bench.Dimensions.Height);
 								response.setId(bench.Id);
 								response.setBackground(bench.Background);
 								response.setCreated(TimeConverter.get(bench.Created));
@@ -694,7 +702,7 @@ public class WorkbenchAPI
 
 	public void edit()
 	{
-		put(API + "edit/:benchId", (req, res) ->
+		put(API + "bench/:benchId", (req, res) ->
 		{
 			int requestedBench;
 
@@ -715,7 +723,7 @@ public class WorkbenchAPI
 				{
 					Bench bench = benchManager.load(requestedBench);
 
-					if (bench != null && bench.Id != 0 && bench.Users.get(request.getAgent().getId()).val() >= PermissionLevel.OWNER.val())
+					if (bench != null && bench.Id != 0 && bench.Owner.Id == request.getAgent().getId())
 					{
 
 						BenchEditResponse response = new BenchEditResponse();
@@ -729,7 +737,8 @@ public class WorkbenchAPI
 						{
 							benchManager.updateDimensions(bench, width, height);
 							response.setDimensions(true);
-						} else if (width + height >= 0)
+						}
+						else if (width + height >= 0)
 						{
 							response.setDimensions(false);
 						}
@@ -813,7 +822,8 @@ public class WorkbenchAPI
 					if (bench.Owner.Id == request.getAgent().getId())
 					{
 						PermissionLevel level = PermissionLevel.get(request.getPermission());
-						if (level.val() >= PermissionLevel.EDITOR.val())
+
+						if (level.val() <= PermissionLevel.EDITOR.val())
 						{
 							benchManager.modUser(bench, Integer.valueOf(req.params(":userId")), level);
 

@@ -168,6 +168,7 @@ public enum Protocol
 			String avatar;
 		}
 		String created;
+		WH dimensions = new WH();
 	}
 
 
@@ -774,8 +775,7 @@ public enum Protocol
 	@Data
 	public static class Authenticate
 	{
-		String token;
-		int id;
+		ClientAgent agent = new ClientAgent();
 	}
 
 	@Data

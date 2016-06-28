@@ -6,7 +6,7 @@ public enum PermissionLevel
 	NONE("", 0),
 	VIEWER("Viewer", 1),
 	EDITOR("Editor", 2),
-	OWNER("Owner", 4);
+	OWNER("Owner", 3);
 
 	private String level;
 	private int perm;
