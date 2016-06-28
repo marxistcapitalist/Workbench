@@ -46,6 +46,8 @@ function workbench_dependencies() {
   $.getScript("js/jquery.mCustomScrollbar.concat.min.js");
   $.getScript("js/jquery.scrollTo.min.js");
   workbench_launch();
+  wb_ui = new HomeController();
+  wb_ui.attachHandlers();
 }
 
 /* ===================================== */
@@ -101,8 +103,7 @@ function workbench_launch() {
       return;
     }
   }
-  wb_ui = new HomeController();
-  wb_ui.attachHandlers();
+
 }
   /* === Instantiate === */
 
@@ -143,6 +144,7 @@ var HomeController = function() {
   };
 
     this.createBench = function() {
+      console.log("bench created!");
       wb_request.send(wb_request.protocol.bench.create.request($("#newbench-title").val(), 1000, 1000), function(data) {
         location.reload(true);
       }, function(data) {
@@ -213,7 +215,7 @@ function loadBenchTiles() {
     $("#bench-list").append(manufactureElement(workbench_user.member[i], false));
   }
 
-  $("#bench-list").append('<p><a id="new_bench_button" class="btn btn-default" href="#" role="button" data-target-"#newbench" data-toggle="modal">New Bench +</a></p>');
+  $("#bench-list").append('<p><a id="new_bench_button" class="btn btn-default" href="#" role="button" data-target="#newbench" data-toggle="modal">New Bench +</a></p>');
 
   //TODO: MODAL POPUP FOR ADDING BENCHES
 }
