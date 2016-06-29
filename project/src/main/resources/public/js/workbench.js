@@ -75,7 +75,7 @@ function workbench_launch() {
         //return;
       }
       workbench_benchid = getUrlParameter("id");
-      wb_request(wb_request.protocol.bench.bench.request(workbench_benchid, "high"), function(data) {
+      wb_request.send(wb_request.protocol.bench.bench.request(workbench_benchid, "high"), function(data) {
         workbench_nodes = data.nodes;
         workbench_properties = data;
         for(node in workbench_nodes) {
