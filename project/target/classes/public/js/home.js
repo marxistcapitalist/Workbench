@@ -243,7 +243,7 @@ function manufactureElement(bench, owner) {
     '<hr style="border: 2px solid ' + bench.preview + ';">' +
     total_members +
     '<p>' + you_own + '</p>' +
-    '<p><a class="btn btn-default" href="http://workbench.online/bench?id=' + bench.id + '" role="button">Launch &raquo;</a></p>' +
+    '<p><a class="btn btn-default" href="http://workbench.online/bench.html?id=' + bench.id + '" role="button">Launch &raquo;</a></p>' +
   '</div>';
 }
 
