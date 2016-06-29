@@ -12,7 +12,7 @@ var workbench_settings = {
   }
 };
 var workbench_properties = {}
-var workbench_nodes =
+var workbench_nodes = [];
 var workbench_launchtimeout;
 var workbench_launchattempts = 1;
 var workbench_benchid;
