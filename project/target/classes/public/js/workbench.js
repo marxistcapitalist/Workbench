@@ -11,6 +11,8 @@ var workbench_settings = {
     port: "80"
   }
 };
+var workbench_properties = {}
+var workbench_nodes =
 var workbench_launchtimeout;
 var workbench_launchattempts = 1;
 var workbench_benchid;
@@ -65,14 +67,23 @@ function workbench_launch() {
   wb_notificiation = new NotificationController();
   wb_request = new RequestController(workbench_settings.api.uri, wb_notificiation);
   if(docCookies.hasItem("workbench_userid") && docCookies.hasItem("workbench_token")) {
+    wb_request.setAgent(docCookies.getItem("workbench_userid"), docCookies.getItem("workbench_token"));
     wb_request.send(wb_request.protocol.account.auth(), function(data) {
-      // TODO get cookie userid and token
       wb_bench = new BenchController(wb_user, wb_notificiation, wb_request);
       if(getUrlParameter("id") === undefined) {
         //window.location = "/";
         //return;
       }
       workbench_benchid = getUrlParameter("id");
+      wb_request(wb_request.protocol.bench.bench(workbench_benchid, "high"), function(data) {
+        workbench_nodes = data.nodes;
+        workbench_properties = data;
+        for(node in workbench_nodes) {
+          wb_bench.nodeController.create(node.id, node.bench, node.position.x, node.position.y, node.position.w, node.position.h, node.title, node.contentType, node.content, node.creator.user, node.creator.id);
+        }
+      }, function(data) {
+        console.error("[Workbench] Failed to load bench nodes!");
+      });
     }, function(data) {
       //window.location = "/";
       //return;
