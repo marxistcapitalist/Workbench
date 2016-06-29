@@ -229,16 +229,19 @@ function manufactureElement(bench, owner) {
 
   var you_own = "";
 
+  var total_members = '<p>This bench has ' + bench.users + ' member(s).</p>';
+
   if (owner) {
     you_own = "You are the owner of this bench.";
   } else {
+    total_members = "";
     you_own = "You are a member of this bench.";
   }
 
   return '<div class="col-md-4">' +
     '<h2>' + bench.title + '</h2>' +
     '<hr style="border: 2px solid ' + bench.preview + ';">' +
-    '<p>This bench has ' + bench.users + ' member(s).</p>' +
+    total_members +
     '<p>' + you_own + '</p>' +
     '<p><a class="btn btn-default" href="http://workbench.online/bench?id=' + bench.id + '" role="button">Launch &raquo;</a></p>' +
   '</div>';
