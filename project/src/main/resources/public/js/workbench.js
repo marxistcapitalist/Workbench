@@ -69,7 +69,7 @@ function workbench_launch() {
   if(docCookies.hasItem("workbench_userid") && docCookies.hasItem("workbench_token")) {
     wb_request.setAgent(docCookies.getItem("workbench_userid"), docCookies.getItem("workbench_token"));
     wb_request.send(wb_request.protocol.account.auth.request(), function(data) {
-      wb_bench = new BenchController(wb_user, wb_notificiation, wb_request);
+      wb_bench = new BenchController(docCookies.getItem("workbench_userid"), docCookies.getItem("workbench_token"), wb_notificiation, wb_request);
       if(getUrlParameter("id") === undefined) {
         //window.location = "/";
         //return;
