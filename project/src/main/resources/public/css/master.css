@@ -267,8 +267,8 @@ h1, h2, h3, h4, h5, h6, p {
   width: 4096px;
   height: 2160px;
    */
-  width: 1920px;
-  height: 1080px;
+  width: 3840px;
+  height: 2160px;
   background: #333;
   color: #FFF;
   z-index: 0;
@@ -292,7 +292,7 @@ h1, h2, h3, h4, h5, h6, p {
 }
 
 .nozone {
-  width: 4216px;
+  width: 3960px;
   height: 2280px;
   background: #222;
   position: absolute;
