@@ -46,11 +46,11 @@ var UIController = function() {
       var type = $(e.target).data("type");
       switch(type) {
         case "text":
-          if($("#add-node-text-text").val().length < 1) {
-            wb_ui.showNewNodeError("<strong>Error:</strong> You must enter text for the new node")
+          if($("#add-node-text-text").val().length < 1 || $("#add-node-text-title").val().length < 1) {
+            wb_ui.showNewNodeError("<strong>Error:</strong> You must enter title and text for the new node")
           } else {
             // TODO right here
-            wb_request.send(wb_request.protocol.bnode.create.request(), function(data) {
+            wb_request.send(wb_request.protocol.bnode.create.request(workbench_benchid, 75, 75, 600, 400, $("#add-node-text-title").val(), "text", $("#add-node-text-text").val()), function(data) {
               // success!
               console.log("SUCCESS!");
             }, function(data) {
